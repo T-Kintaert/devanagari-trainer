@@ -54,9 +54,10 @@ Details: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de
 
         /* 2. Die intelligente Schrift-Einbindung */
         @font-face {
-            /* Das ist der "Spitzname", unter dem die App die Schrift sucht */
             font-family: 'Sanskrit2003'; 
-            src: url("Sanskrit2003 - 30.07.2019.otf") format('opentype'),
+            src: local('Sanskrit 2003'), 
+                 local('Sanskrit2003'),
+                 url("Sanskrit2003 - 30.07.2019.otf") format('opentype'),
                  url("https://t-kintaert.github.io/devanagari-trainer/Sanskrit2003%20-%2030.07.2019.otf") format('opentype');
             font-weight: normal;
             font-style: normal;
