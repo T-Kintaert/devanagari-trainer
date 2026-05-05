@@ -13,7 +13,7 @@
 **Erstellungszeitraum:** November 2025 – Mai 2026
 
 ### Technische Umsetzung
-Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini-Modelle 2.5 und 3 (Flash und Pro, inkl. der Gemini-Funktion Canvas) ermöglicht.
+Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini-Modelle 2.5 und 3 (Flash und Pro, inkl. der Gemini-Funktion Canvas) ermöglicht. 
 
 ### Quellen & Urheberrechte
 *   **360 häufigste Devanāgarī-Ligaturen:** Stiehl, Ulrich. „2. Die häufigsten Ligaturen im klassischen Sanskrit“. Devanagari, Sanskrit Web, S. 7–25.
