@@ -48,29 +48,28 @@ Details: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de
         }
     </script>
 
-    <style>
-        /* Google Fonts als Fallback */
+<style>
+        /* 1. Google Fonts als Fallback */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Serif+Devanagari:wght@400;700&display=swap');
 
-        /* Custom-Font-Einbindung - Start */
-        /* Diese Regel erlaubt das Laden der lokalen Datei, WENN die HTML-Datei lokal ausgeführt wird. */
+        /* 2. Die intelligente Schrift-Einbindung */
         @font-face {
-			font-family: 'Sanskrit2003';
-			src: url('Sanskrit2003 - 30.07.2019.otf') format('opentype');
-			font-weight: normal;
-			font-style: normal;
-			font-display: swap; 
-		}
-        /* Custom-Font-Einbindung - Ende */
+            /* Das ist der "Spitzname", unter dem die App die Schrift sucht */
+            font-family: 'Sanskrit2003'; 
+            src: url("Sanskrit2003 - 30.07.2019.otf") format('opentype'),
+                 url("https://t-kintaert.github.io/devanagari-trainer/Sanskrit2003%20-%2030.07.2019.otf") format('opentype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
         
+        /* 3. Standard-Schriften für die App */
         body { font-family: 'Noto Sans', sans-serif; }
         .font-serif { font-family: 'Noto Serif', serif; }
         
-        /* Hier wird die Priorität gesetzt:
-           1. 'Sanskrit2003': Wird geladen, WENN @font-face erfolgreich ist (z. B. lokal ausgeführt).
-           2. 'Noto Serif Devanagari': Der Fallback-Font, der in dieser Online-Umgebung funktioniert.
-        */
+        /* 4. Die Devanagari-Priorität */
         .font-deva { 
+            /* Hier wird jetzt exakt der Name aus @font-face (oben) verwendet */
             font-family: 'Sanskrit2003', 'Noto Serif Devanagari', serif; 
             font-size: 1.15em; 
             line-height: 1.3;
