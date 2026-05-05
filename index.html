@@ -1,0 +1,3018 @@
+<!--
+DEVANĀGARĪ-TRAINER 1.0
+Konzeption: Thomas Kintaert (Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB], Universität Wien) Erstellungszeitraum: November 2025 – Mai 2026
+
+TECHNISCHE UMSETZUNG: Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini- Modelle 2.5 und 3 (Flash und Pro, inkl. der Gemini-Funktion Canvas) ermöglicht.
+
+QUELLEN & URHEBERRECHTE: • 360 häufigste Devanāgarī-Ligaturen: Stiehl, Ulrich. „2. Die häufigsten Ligaturen im klassischen Sanskrit (The 360 Ligatures of Classical Sanskrit with Frequency >= 0.010%)“. Devanagari, Sanskrit Web, S. 7–25, www.sanskritweb.net/deutsch/devanagari.pdf. Zugriff 6. Jan. 2026.
+
+• Devanāgarī-Schriftart: Sanskrit 2003. Version 1.20, Omkarananda Ashram, 30. Juli 2019, www.omkarananda-ashram.org/Sanskrit/itranslator2003.htm. Zugriff 6. Jan. 2026.
+
+HINWEIS ZUR DARSTELLUNG: Für eine optimale Anzeige der Schriftzeichen, insbesondere der komplexen Ligaturen, wird die Verwendung der Schriftart "Sanskrit2003 - 30.07.2019.otf" empfohlen. Sofern sich diese Datei im selben Verzeichnis wie die HTML-Datei der App befindet, wird sie automatisch für die Darstellung verwendet.
+
+LIZENZ: Veröffentlicht unter CC BY-NC-SA 4.0. Die App darf geteilt und verändert werden (Namensnennung, nicht-kommerziell, Weitergabe unter gleichen Bedingungen).
+Details: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de
+-->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanskrit Devanāgarī Trainer (Custom Font)</title>
+    
+    <!-- React und ReactDOM laden -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel für JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        stone: {
+                            850: '#1c1917',
+                            900: '#0c0a09',
+                        },
+                        amber: {
+                            450: '#f59e0b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Google Fonts als Fallback */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Serif+Devanagari:wght@400;700&display=swap');
+
+        /* Custom-Font-Einbindung - Start */
+        /* Diese Regel erlaubt das Laden der lokalen Datei, WENN die HTML-Datei lokal ausgeführt wird. */
+        @font-face {
+			font-family: 'Sanskrit2003';
+			src: url('Sanskrit2003 - 30.07.2019.otf') format('opentype');
+			font-weight: normal;
+			font-style: normal;
+			font-display: swap; 
+		}
+        /* Custom-Font-Einbindung - Ende */
+        
+        body { font-family: 'Noto Sans', sans-serif; }
+        .font-serif { font-family: 'Noto Serif', serif; }
+        
+        /* Hier wird die Priorität gesetzt:
+           1. 'Sanskrit2003': Wird geladen, WENN @font-face erfolgreich ist (z. B. lokal ausgeführt).
+           2. 'Noto Serif Devanagari': Der Fallback-Font, der in dieser Online-Umgebung funktioniert.
+        */
+        .font-deva { 
+            font-family: 'Sanskrit2003', 'Noto Serif Devanagari', serif; 
+            font-size: 1.15em; 
+            line-height: 1.3;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px) translateX(var(--tw-translate-x)); }
+            to { opacity: 1; transform: translateY(0) translateX(var(--tw-translate-x)); }
+        }
+        .popup-anim { animation: fadeIn 0.2s ease-out forwards; }
+        .card-flip { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+    /* Stile für den Lesefluss-Trainer */
+        .syllable-hover { 
+            padding-top: 4px;
+            padding-bottom: 2px;
+            outline-offset: 1px;
+            transition: outline 0.1s; 
+            outline: 2px solid transparent; 
+            border-radius: 4px; 
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        .pacer-highlight-light { background-color: #fef3c7; outline: 2px solid #f59e0b; }
+        .pacer-highlight-dark { background-color: #78350f; outline: 2px solid #fbbf24; }
+        .text-area-with-popup-visible { cursor: default; }    
+	/* Definierte Glow-Effekte für den Darkmode */
+        .glow-emerald {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+        .glow-amber {
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Verbessert die Schärfe von IAST-Zeichen */
+        .iast-sharp {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            text-shadow: 0 0 0.1px rgba(0,0,0,0.2);
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+	</style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- ################################################################################## -->
+    <!-- ########################### HAUPT-LOGIK BLOCK (REACT/UI) ######################### -->
+    <!-- ################################################################################## -->
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useCallback } = React;
+
+        // --- ICONS (Basis-UI) ---
+        // ICON_WRAPPER_FIX
+        const IconWrapper = ({ children, className, size = 24 }) => (
+            <div 
+                className={`inline-flex items-center justify-center ${className}`}
+                style={{ width: '24px', height: '24px', flexShrink: 0 }}
+            >
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width={size} 
+                    height={size} 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                    style={{ overflow: 'visible' }}
+                >
+                    {children}
+                </svg>
+            </div>
+        );
+        const OmIcon = ({ size = 32, className = "" }) => ( <span className={`font-deva leading-none select-none ${className}`} style={{ fontSize: size }}>ॐ</span> );
+        const Moon = ({ className = "" }) => ( // JSX in Klammern, um Babel-Fehler zu vermeiden
+            <IconWrapper className={className}>
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </IconWrapper>
+        );
+        const Sun = ({ className = "" }) => ( // JSX in Klammern, um Babel-Fehler zu vermeiden
+            <IconWrapper className={className}>
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </IconWrapper>
+        );
+        const XIcon = ({ className = "" }) => ( // JSX in Klammern, um Babel-Fehler zu vermeiden
+            <IconWrapper className={className}>
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </IconWrapper>
+        );
+        const ArrowRight = ({ className = "" }) => ( // JSX in Klammern, um Babel-Fehler zu vermeiden
+            <IconWrapper className={className}>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </IconWrapper>
+        );
+        const ArrowLeft = ({ className = "" }) => ( // JSX in Klammern, um Babel-Fehler zu vermeiden
+            <IconWrapper className={className}>
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </IconWrapper>
+        );
+const CheckIcon = ({ size = 24, className = "" }) => (
+            <IconWrapper size={size} className={className}><polyline points="20 6 9 17 4 12"></polyline></IconWrapper>
+        );
+		const ArrowUpDown = ({ className = "" }) => (
+			<IconWrapper className={className}>
+				<path d="m21 16-4 4-4-4"></path>
+				<path d="M17 20V4"></path>
+				<path d="m3 8 4-4 4 4"></path>
+				<path d="M7 4v16"></path>
+			</IconWrapper>
+		);
+
+        const ExportIcon = ({ size = 24, className = "" }) => (
+            <IconWrapper size={size} className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></IconWrapper>
+        );
+
+        const ImportIcon = ({ size = 24, className = "" }) => (
+            <IconWrapper size={size} className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></IconWrapper>
+        );
+		const ChevronDown = ({ className = "" }) => (
+            <IconWrapper className={className} size={18}>
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </IconWrapper>
+        );
+        const ChevronRight = ({ className = "" }) => (
+            <IconWrapper className={className} size={18}>
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </IconWrapper>
+        );
+		const ChevronUp = ({ className = "" }) => (
+            <IconWrapper className={className} size={18}>
+                <polyline points="18 15 12 9 6 15"></polyline>
+            </IconWrapper>
+        );
+
+        const EyeIcon = ({ size = 24, className = "" }) => (
+            <IconWrapper size={size} className={className}>
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </IconWrapper>
+        );
+
+        const InfoIcon = ({ size = 24, className = "" }) => (
+            <IconWrapper size={size} className={className}>
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </IconWrapper>
+        );
+
+        // SETTINGS_ICON_FIXED_PATH_V12
+        const ImageIcon = ({ size = 24, className = "" }) => (
+            <IconWrapper size={size} className={className}>
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                <circle cx="9" cy="9" r="2"></circle>
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+            </IconWrapper>
+        );
+
+        const SettingsIcon = ({ size = 24, className = "" }) => (
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width={size} 
+                height={size} 
+                viewBox="-2 -2 28 28" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className={className}
+                style={{ flexShrink: 0, overflow: 'visible' }}
+            >
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+        );
+        
+        // --- HILFSFUNKTIONEN ---
+        const shuffleArray = (array) => {
+          const newArray = [...array];
+          for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+          }
+          return newArray;
+        };
+
+        const InfoPopup = ({ x, y, content, onClose }) => {
+            if (!content || !content.word) return null;
+            const screenW = window.innerWidth;
+            const isMobile = window.matchMedia("(pointer: coarse)").matches;
+            
+            const boxWidth = 220;
+            const threshold = isMobile ? 160 : 240;
+            const spaceRight = screenW - x;
+            const shiftLeft = spaceRight < threshold;
+
+            // Berechnung der X-Position, um Cut-Offs am linken Rand zu vermeiden
+            let finalX = x;
+            if (shiftLeft) {
+                finalX = Math.max(boxWidth + 20, x - 10); 
+            } else {
+                finalX = Math.min(x, screenW - boxWidth - 20);
+            }
+
+            const boxStyle = { 
+                top: `${isMobile ? y - 55 : y}px`, 
+                left: `${finalX}px`,
+                position: 'fixed'
+            };
+            
+            let boxClass = `pointer-events-none z-[3000] bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-sm px-4 py-3 rounded-xl shadow-2xl popup-anim max-w-[220px] border border-stone-200 dark:border-stone-700 transform -translate-y-1/2 ${shiftLeft ? '-translate-x-full' : ''}`;
+
+            return (
+                <div className={boxClass} style={boxStyle}>
+                    <div 
+                        className="font-serif font-bold mb-1 text-rose-700 dark:text-rose-400 border-b border-stone-100 dark:border-stone-700 pb-1"
+                        dangerouslySetInnerHTML={{ __html: content.word }}
+                    />
+                    <div 
+                        className="leading-snug text-xs sm:text-sm"
+                        dangerouslySetInnerHTML={{ __html: content.def }}
+                    />
+                </div>
+            );
+        };
+        
+       // --- TrainerCard ---
+        const TrainerCard = ({ front, back, showBack, setShowBack, isAnimating, frontLang, backLang, themeColor = 'rose', isTouch, customFont, frontImage, backImage, note, onInfoClick, lang }) => {
+            const themeClasses = {
+                rose: 'bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-700/50 text-rose-800 dark:text-rose-200',
+                indigo: 'bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-700/50 text-indigo-800 dark:text-indigo-200',
+                stone: 'bg-stone-50 dark:bg-stone-700/40 border-stone-200 dark:border-stone-500 text-stone-800 dark:text-stone-200'
+            }[themeColor] || themeColor;
+
+            const renderContent = (content, image, lang, isCustomFont) => {
+                if (image) return (
+                    <img src={image} alt="Sanskrit Zeichen" className="max-h-[4.1rem] w-auto object-contain bg-transparent dark:invert dark:opacity-90 dark:mix-blend-screen transition-all select-none" />
+                );
+                return (
+                    <span 
+                        className={lang === 'deva' ? 'text-8xl font-deva' : lang === 'iast' ? 'text-3xl iast-sharp font-bold px-2 text-center' : 'text-3xl font-serif font-bold px-2 text-center'}
+                        style={lang === 'deva' && isCustomFont ? { fontFamily: `"${isCustomFont}", Sanskrit2003, "Noto Serif Devanagari", serif` } : {}}
+                        dangerouslySetInnerHTML={{ __html: content }}
+                    />
+                );
+            };
+
+            return (
+                <div className="flex flex-col items-center justify-center h-64 w-full max-w-sm mx-auto cursor-pointer perspective-1000" onClick={() => setShowBack(!showBack)}>
+                    <div className={`relative w-full h-full transition-transform transform-style-3d ${isAnimating ? 'duration-500' : 'duration-0'} ${showBack ? 'rotate-y-180' : ''}`}>
+                        {/* VORDERSEITE */}
+                        <div className="absolute w-full h-full bg-white dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-600 rounded-xl shadow-xl flex flex-col items-center justify-center backface-hidden overflow-hidden">
+                            {renderContent(front, frontImage, frontLang, customFont)}
+                            <div className="absolute bottom-4 text-stone-400 text-[10px] uppercase tracking-widest text-center px-2">
+								{isTouch ? TRANSLATIONS[lang].flipHintTap : TRANSLATIONS[lang].flipHintClick}
+							</div>
+                        </div>
+                        {/* RÜCKSEITE */}
+                        <div className={`absolute w-full h-full rounded-xl border-2 shadow-xl flex flex-col items-center justify-center backface-hidden rotate-y-180 transition-colors overflow-hidden ${themeClasses}`}>
+                            {/* Info-Icon auf der Rückseite */}
+                            {note && (
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onInfoClick(e, "Information", note);
+                                    }}
+                                    className="absolute top-3 right-3 p-2 text-stone-400/50 hover:text-stone-600 dark:hover:text-stone-200 z-30 transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                </button>
+                            )}
+                            {renderContent(back, backImage, backLang, null)}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- DATENGENERATOR (Vokaldiakritika) ---
+        // Generiert Einträge (33 Konsonanten x 14 Vokalvariationen abzüglich der Ausschlüsse)
+        const generateDiacriticsData = () => {
+            const consonants = [
+                {d:'क', t:'k'}, {d:'ख', t:'kh'}, {d:'ग', t:'g'}, {d:'घ', t:'gh'}, {d:'ङ', t:'ṅ'},
+                {d:'च', t:'c'}, {d:'छ', t:'ch'}, {d:'ज', t:'j'}, {d:'झ', t:'jh'}, {d:'ञ', t:'ñ'},
+                {d:'ट', t:'ṭ'}, {d:'ठ', t:'ṭh'}, {d:'ड', t:'ḍ'}, {d:'ढ', t:'ḍh'}, {d:'ण', t:'ṇ'},
+                {d:'त', t:'t'}, {d:'थ', t:'th'}, {d:'द', t:'d'}, {d:'ध', t:'dh'}, {d:'न', t:'n'},
+                {d:'प', t:'p'}, {d:'फ', t:'ph'}, {d:'ब', t:'b'}, {d:'भ', t:'bh'}, {d:'म', t:'m'},
+                {d:'य', t:'y'}, {d:'र', t:'r'}, {d:'ल', t:'l'}, {d:'व', t:'v'},
+                {d:'श', t:'ś'}, {d:'ष', t:'ṣ'}, {d:'स', t:'s'}, {d:'ह', t:'h'}
+            ];
+
+            // Vokale, Anusvāra (aṃ) und Visarga (aḥ): a, ā, i, ī, u, ū, ṛ, ṝ, ḷ, e, ai, o, au, aṃ, aḥ
+            const vowels = [
+    {d:'', t:'a', excludes: []}, 
+    {d:'ा', t:'ā', excludes: ['ṅ', 'ñ']},  
+    {d:'ि', t:'i', excludes: ['ṅ', 'ñ']},  
+    {d:'ी', t:'ī', excludes: ['ṅ', 'ñ']}, 
+    {d:'ु', t:'u', excludes: ['ṅ', 'ñ']},  
+    {d:'ू', t:'ū', excludes: ['ṅ', 'ñ']}, 
+    {d:'ृ', t:'ṛ', excludes: ['ṅ', 'ñ', 'r']}, // r + ṛ existiert nicht als Diakritikum
+    
+    // ṝ (Langes vokalisches R): Erlaubt nur nach g, j, t, d, n, s
+    {d:'ॄ', t:'ṝ', excludes: [
+        'k', 'kh', 'gh', 'ṅ', 'c', 'ch', 'jh', 'ñ', 'ṭ', 'ṭh', 'ḍ', 'ḍh', 'ṇ', 
+        'th', 'dh', 'p', 'ph', 'b', 'bh', 'm', 'y', 'r', 'l', 'v', 'ś', 'ṣ', 'h'
+    ]},
+    
+    // ḷ (Vokalisches L): Erlaubt nur nach k (√kḷp)
+    {d:'ॢ', t:'ḷ', excludes: [
+        'kh', 'g', 'gh', 'ṅ', 'c', 'ch', 'j', 'jh', 'ñ', 'ṭ', 'ṭh', 'ḍ', 'ḍh', 'ṇ', 
+        't', 'th', 'd', 'dh', 'n', 'p', 'ph', 'b', 'bh', 'm', 'y', 'r', 'l', 'v', 'ś', 'ṣ', 's', 'h'
+    ]},
+    
+    {d:'े', t:'e', excludes: ['ṅ', 'ñ']},  
+    {d:'ै', t:'ai', excludes: ['ṅ', 'ñ']}, 
+    {d:'ो', t:'o', excludes: ['ṅ', 'ñ']},  
+    {d:'ौ', t:'au', excludes: ['ṅ', 'ñ']},
+    {d:'ं', t:'aṃ', excludes: ['ṅ', 'ñ']}, 
+    {d:'ः', t:'aḥ', excludes: ['ṅ', 'ñ']}  
+];
+
+            // Liste der explizit ausgeschlossenen Kombinationen (bleibt leer, da jetzt alles über vowels geregelt wird)
+const EXCLUDED_COMBINATIONS = new Set([]);
+
+            const list = [];
+            consonants.forEach(c => {
+                vowels.forEach(v => {
+                    const combination = c.t + v.t;
+
+                    // 1. Ausschluss von ñ/ṅ mit den meisten Vokaldiakritika (außer a)
+                    if (v.t !== 'a' && v.excludes && v.excludes.includes(c.t)) {
+                        return;
+                    }
+                    
+                    // 2. Standard-Ausschlüsse (für ḷ und einige ṝ Kombinationen)
+                    if (EXCLUDED_COMBINATIONS.has(combination)) return;
+
+                    list.push({
+                        d: c.d + v.d,
+                        t: combination
+                    });
+                });
+            });
+            return list;
+        };
+
+        // --- LIGATUREN LISTE (Basis) ---
+        const LIGATURES_LIST = [
+            {d:"प्र", t:"pra"}, {d:"त्र", t:"tra"}, {d:"स्त", t:"sta"}, {d:"स्य", t:"sya"}, {d:"श्च", t:"śca"}, {d:"न्त", t:"nta"}, {d:"र्व", t:"rva"}, {d:"क्ष", t:"kṣa"},
+{d:"त्य", t:"tya"}, {d:"र्म", t:"rma"}, {d:"त्व", t:"tva"}, {d:"त्त", t:"tta"}, {d:"न्य", t:"nya"}, {d:"र्य", t:"rya"}, {d:"द्ध", t:"ddha"}, {d:"व्य", t:"vya"},
+{d:"द्र", t:"dra"}, {d:"श्र", t:"śra"}, {d:"द्य", t:"dya"}, {d:"क्र", t:"kra"}, {d:"द्व", t:"dva"}, {d:"न्न", t:"nna"}, {d:"स्म", t:"sma"}, {d:"र्थ", t:"rtha"},
+{d:"ष्ट", t:"ṣṭa"}, {d:"क्त", t:"kta"}, {d:"स्व", t:"sva"}, {d:"ज्ञ", t:"jña"}, {d:"ब्र", t:"bra"}, {d:"ण्ड", t:"ṇḍa"}, {d:"ष्ठ", t:"ṣṭha"}, {d:"र्त", t:"rta"},
+{d:"च्छ", t:"ccha"}, {d:"त्म", t:"tma"}, {d:"र्ष", t:"rṣa"}, {d:"स्थ", t:"stha"}, {d:"श्व", t:"śva"}, {d:"ष्य", t:"ṣya"}, {d:"र्ण", t:"rṇa"}, {d:"त्स", t:"tsa"},
+{d:"श्य", t:"śya"}, {d:"भ्य", t:"bhya"}, {d:"ह्म", t:"hma"}, {d:"न्म", t:"nma"}, {d:"स्त्र", t:"stra"}, {d:"ध्य", t:"dhya"}, {d:"प्त", t:"pta"}, {d:"न्व", t:"nva"},
+{d:"न्द", t:"nda"}, {d:"ग्र", t:"gra"}, {d:"न्द्र", t:"ndra"}, {d:"न्ध", t:"ndha"}, {d:"प्य", t:"pya"}, {d:"र्ज", t:"rja"}, {d:"म्य", t:"mya"}, {d:"ह्य", t:"hya"},
+{d:"ङ्ग", t:"ṅga"}, {d:"ज्य", t:"jya"}, {d:"त्प", t:"tpa"}, {d:"त्क", t:"tka"}, {d:"र्द", t:"rda"}, {d:"ष्ण", t:"ṣṇa"}, {d:"ञ्च", t:"ñca"}, {d:"न्स", t:"nsa"}, {d:"च्च", t:"cca"},
+{d:"र्ग", t:"rga"}, {d:"र्ह", t:"rha"}, {d:"द्भ", t:"dbha"}, {d:"ण्य", t:"ṇya"}, {d:"ष्म", t:"ṣma"}, {d:"स्र", t:"sra"}, {d:"क्ष्य", t:"kṣya"}, {d:"र्श", t:"rśa"},
+{d:"र्ध", t:"rdha"}, {d:"ष्ट्व", t:"ṣṭva"}, {d:"त्त्व", t:"ttva"}, {d:"स्त्व", t:"stva"}, {d:"क्य", t:"kya"}, {d:"ख्य", t:"khya"}, {d:"ग्न", t:"gna"}, {d:"र्भ", t:"rbha"},
+{d:"ष्ट्र", t:"rṣṭra"}, {d:"भ्र", t:"bhra"}, {d:"न्प", t:"npa"}, {d:"ल्य", t:"lya"}, {d:"व्र", t:"vra"}, {d:"ष्व", t:"ṣva"}, {d:"र्न", t:"rna"}, {d:"च्य", t:"cya"},
+{d:"ञ्ज", t:"ñja"}, {d:"स्प", t:"spa"}, {d:"त्प्र", t:"tpra"}, {d:"ध्व", t:"dhva"}, {d:"द्द", t:"dda"}, {d:"न्त्य", t:"ntya"}, {d:"न्क", t:"nka"}, {d:"म्ब", t:"mba"},
+{d:"ल्प", t:"lpa"}, {d:"घ्र", t:"ghra"}, {d:"र्ब", t:"rba"}, {d:"न्प्र", t:"npra"}, {d:"स्क", t:"ska"}, {d:"क्त्व", t:"ktva"}, {d:"त्न", t:"tna"}, {d:"प्न", t:"pna"},
+{d:"ज्ज", t:"jja"}, {d:"ष्क", t:"ṣka"}, {d:"ल्ल", t:"lla"}, {d:"घ्न", t:"ghna"}, {d:"म्न", t:"mna"}, {d:"न्र", t:"nra"}, {d:"त्थ", t:"ttha"}, {d:"न्त्र", t:"ntra"},
+{d:"च्छ्र", t:"cchra"}, {d:"र्प", t:"rpa"}, {d:"त्स्य", t:"tsya"}, {d:"ञ्श", t:"ñśa"}, {d:"प्स", t:"psa"}, {d:"ङ्क", t:"ṅka"}, {d:"न्भ", t:"nbha"}, {d:"द्ग", t:"dga"},
+{d:"म्भ", t:"mbha"}, {d:"ब्ध", t:"bdha"}, {d:"ब्द", t:"bda"}, {d:"ष्प", t:"ṣpa"}, {d:"ज्व", t:"jva"}, {d:"स्न", t:"sna"}, {d:"ह्व", t:"hva"}, {d:"द्ब", t:"dba"},
+{d:"क्ल", t:"kla"}, {d:"श्म", t:"śma"}, {d:"र्घ", t:"rgha"}, {d:"र्च", t:"rca"}, {d:"ग्म", t:"gma"}, {d:"थ्य", t:"thya"}, {d:"न्ह", t:"nha"}, {d:"ह्र", t:"hra"},
+{d:"ध्र", t:"dhra"}, {d:"स्त्य", t:"stya"}, {d:"ङ्ख", t:"ṅkha"}, {d:"ज्र", t:"jra"}, {d:"र्क", t:"rka"}, {d:"न्ब", t:"nba"}, {d:"क्ष्ण", t:"kṣṇa"}, {d:"न्ग", t:"nga"},
+{d:"क्व", t:"kva"}, {d:"प्ल", t:"pla"}, {d:"श्न", t:"śna"}, {d:"द्ब्र", t:"dbra"}, {d:"ह्ण", t:"hṇa"}, {d:"द्म", t:"dma"}, {d:"ग्ध", t:"gdha"}, {d:"क्ष्म", t:"kṣma"},
+{d:"म्प", t:"mpa"}, {d:"ष्ट्य", t:"ṣṭya"}, {d:"प्स्य", t:"psya"}, {d:"ल्ग", t:"lga"}, {d:"र्ल", t:"rla"}, {d:"त्स्न", t:"tsna"}, {d:"द्ध्य", t:"ddhya"}, {d:"द्ध्व", t:"ddhva"},
+{d:"श्ल", t:"śla"}, {d:"ह्न", t:"hna"}, {d:"य्य", t:"yya"}, {d:"ङ्क्ष", t:"ṅkṣa"}, {d:"ग्य", t:"gya"}, {d:"त्स्व", t:"tsva"}, {d:"श्छ", t:"ścha"}, {d:"र्ध्व", t:"rdhva"},
+{d:"र्त्य", t:"rtya"}, {d:"क्ष्व", t:"kṣva"}, {d:"र्ष्ण", t:"rṣṇa"}, {d:"ड्ग", t:"ḍga"}, {d:"त्क्ष", t:"tkṣa"}, {d:"क्त्य", t:"ktya"}, {d:"त्र्य", t:"trya"}, {d:"ग्र्य", t:"grya"},
+{d:"र्व्य", t:"rvya"}, {d:"ल्म", t:"lma"}, {d:"ल्व", t:"lva"}, {d:"स्फ", t:"spha"}, {d:"न्त्व", t:"ntva"}, {d:"र्द्व", t:"rdva"}, {d:"क्म", t:"kma"}, {d:"ङ्म", t:"ṅma"},
+{d:"ण्व", t:"ṇva"}, {d:"त्क्र", t:"tkra"}, {d:"ह्ल", t:"hla"}, {d:"न्थ", t:"ntha"}, {d:"र्द्र", t:"rdra"}, {d:"म्र", t:"mra"}, {d:"ग्व", t:"gva"}, {d:"न्ब्र", t:"nbra"},
+{d:"द्द्व", t:"ddva"}, {d:"क्त्र", t:"ktra"}, {d:"ल्क", t:"lka"}, {d:"द्व्य", t:"dvya"}, {d:"न्क्ष", t:"nkṣa"}, {d:"र्ब्र", t:"rbra"}, {d:"ङ्घ्र", t:"ṅghra"}, {d:"द्द्र", t:"ddra"},
+{d:"न्स्व", t:"nsva"}, {d:"र्श्व", t:"rśva"}, {d:"क्न", t:"kna"}, {d:"ग्भ", t:"gbha"}, {d:"त्त्र", t:"ttra"}, {d:"ड्य", t:"ḍya"}, {d:"ल्क्य", t:"lkya"}, {d:"ण्ठ", t:"ṇṭha"},
+{d:"न्द्य", t:"ndya"}, {d:"ब्ध्व", t:"bdhva"}, {d:"ल्ब", t:"lba"}, {d:"ङ्क्त", t:"ṅkta"}, {d:"ट्ट", t:"ṭṭa"}, {d:"न्व्य", t:"nvya"}, {d:"क्प", t:"kpa"}, {d:"न्त्र्य", t:"ntrya"},
+{d:"न्द्व", t:"ndva"}, {d:"ग्न्य", t:"gnya"}, {d:"त्त्य", t:"ttya"}, {d:"र्छ", t:"rcha"}, {d:"र्म्य", t:"rmya"}, {d:"ण्ण", t:"ṇṇa"}, {d:"ञ्श्र", t:"ñśra"}, {d:"ष्प्र", t:"ṣpra"},
+{d:"त्स्थ", t:"tstha"}, {d:"त्फ", t:"tpha"}, {d:"द्भ्य", t:"dbhya"}, {d:"क्क", t:"kka"}, {d:"क्स", t:"ksa"}, {d:"ण्ट", t:"ṇṭa"}, {d:"न्ध्य", t:"ndhya"}, {d:"ध्म", t:"dhma"},
+{d:"न्क्र", t:"nkra"}, {d:"क्च", t:"kca"}, {d:"र्ध्न", t:"rdhna"}, {d:"ज्ज्ञ", t:"jjña"}, {d:"ज्म", t:"jma"}, {d:"द्घ", t:"dgha"}, {d:"ष्क्र", t:"ṣkra"}, {d:"म्ल", t:"mla"},
+{d:"द्भ्र", t:"dbhra"}, {d:"प्म", t:"pma"}, {d:"भ्व", t:"bhva"}, {d:"स्म्य", t:"smya"}, {d:"न्भ्र", t:"nbhra"}, {d:"ग्ल", t:"gla"}, {d:"ङ्ख्य", t:"ṅkhya"}, {d:"त्म्य", t:"tmya"},
+{d:"ण्म", t:"ṇma"}, {d:"र्ज्य", t:"rjya"}, {d:"ड्भ", t:"ḍbha"}, {d:"र्ण्य", t:"rṇya"}, {d:"ष्ण्य", t:"ṣṇya"}, {d:"न्ध्र", t:"ndhra"}, {d:"ण्ड्य", t:"ṇḍya"}, {d:"ञ्छ", t:"ñcha"},
+{d:"श्च्य", t:"ścya"}, {d:"क्श", t:"kśa"}, {d:"ढ्य", t:"ḍhya"}, {d:"न्घ", t:"ngha"}, {d:"र्भ्र", t:"rbhra"}, {d:"र्त्म", t:"rtma"}, {d:"ङ्घ", t:"ṅgha"}, {d:"त्न्य", t:"tnya"},
+{d:"न्स्थ", t:"nstha"}, {d:"र्च्य", t:"rcya"}, {d:"क्प्र", t:"kpra"}, {d:"ट्य", t:"ṭya"}, {d:"ड्व", t:"ḍva"}, {d:"द्न", t:"dna"}, {d:"प्त्व", t:"ptva"}, {d:"र्घ्य", t:"rghya"},
+{d:"र्द्य", t:"rdya"}, {d:"ग्द", t:"gda"}, {d:"च्छ्व", t:"cchva"}, {d:"ज्ज्व", t:"jjva"}, {d:"त्स्म", t:"tsma"}, {d:"ध्न", t:"dhna"}, {d:"र्त्त", t:"rtta"}, {d:"र्भ्य", t:"rbhya"},
+{d:"ट्स", t:"ṭsa"}, {d:"र्त्स्न्य", t:"rtsnya"}, {d:"र्थ्य", t:"rthya"}, {d:"श्व्य", t:"śvya"}, {d:"ब्व", t:"bva"}, {d:"र्ध्र", t:"rdhra"}, {d:"ग्ज्य", t:"gjya"}, {d:"ङ्न", t:"ṅna"},
+{d:"ट्क", t:"ṭka"}, {d:"ब्य", t:"bya"}, {d:"र्ग्र", t:"rgra"}, {d:"र्ङ्ग", t:"rṅga"}, {d:"स्थ्य", t:"sthya"}, {d:"र्ज्ञ", t:"rjña"}, {d:"न्न्य", t:"nnya"}, {d:"क्ष्म्य", t:"kṣmya"},
+{d:"र्च्छ", t:"rccha"}, {d:"र्ष्य", t:"rṣya"}, {d:"श्प", t:"śpa"}, {d:"ग्ग", t:"gga"}, {d:"ग्ज", t:"gja"}, {d:"ङ्क्ष्व", t:"ṅkṣva"}, {d:"त्ख", t:"tkha"}, {d:"द्द्य", t:"ddya"},
+{d:"न्ख", t:"nkha"}, {d:"न्न्व", t:"nnva"}, {d:"र्ष्ट", t:"rṣṭa"}, {d:"र्क्ष्य", t:"rkṣya"}, {d:"ग्ब", t:"gba"}, {d:"न्त्स्य", t:"ntsya"}, {d:"र्ग्य", t:"rgya"}, {d:"र्त्व", t:"rtva"},
+{d:"र्न्य", t:"rnya"}, {d:"च्च्य", t:"ccya"}, {d:"ञ्ज्ञ", t:"ñjña"}, {d:"म्ण", t:"mṇa"}, {d:"र्त्र", t:"rtra"}, {d:"र्ध्य", t:"rdhya"}, {d:"ग्ण", t:"gṇa"}, {d:"द्व्र", t:"dvra"},
+{d:"र्ख", t:"rkha"}, {d:"र्ज्व", t:"rjva"}, {d:"स्त्र्य", t:"strya"}, {d:"ङ्ग्र", t:"ṅgra"}, {d:"र्ह्र", t:"rhra"}, {d:"ग्ध्व", t:"gdhva"}, {d:"ग्भ्य", t:"gbhya"}, {d:"ङ्ग्य", t:"ṅgya"},
+{d:"ञ्श्व", t:"ñśva"}, {d:"ड्र", t:"ḍra"}, {d:"ण्ड्र", t:"ṇḍra"}, {d:"त्क्व", t:"tkva"}, {d:"थ्व", t:"thva"}, {d:"द्ग्र", t:"dgra"}, {d:"र्ह्य", t:"rhya"}, {d:"ज्ज्य", t:"jjya"},
+{d:"त्स्त", t:"tsta"}, {d:"द्ध्र", t:"ddhra"}, {d:"न्स्म", t:"nsma"}, {d:"भ्ण", t:"bhṇa"}, {d:"य्व", t:"yva"}, {d:"र्त्स", t:"rtsa"}, {d:"र्द्ध", t:"rddha"}, {d:"घ्व", t:"ghva"},
+{d:"त्स्त्र", t:"tstra"}, {d:"त्स्र", t:"tsra"}, {d:"द्र्य", t:"drya"}, {d:"स्स्व", t:"ssva"}, {d:"ट्प", t:"ṭpa"}, {d:"त्व्य", t:"tvya"}, {d:"र्ध्म", t:"rdhma"}, {d:"ष्ठ्य", t:"ṣṭhya"},
+{d:"ट्श", t:"ṭśa"}, {d:"न्फ", t:"npha"}, {d:"ब्ज", t:"bja"}, {d:"म्ब्य", t:"mbya"}, {d:"क्थ", t:"ktha"}, {d:"ठ्य", t:"ṭhya"}, {d:"न्क्ल", t:"nkla"}
+        ];
+
+        // --- DEVANAGARI DATEN ---
+        const DEVANAGARI_DATA = {
+            basic: [
+               {d:"अ", t:"a"}, {d:"आ", t:"ā"}, {d:"इ", t:"i"}, {d:"ई", t:"ī"}, {d:"उ", t:"u"}, {d:"ऊ", t:"ū"},
+               {d:"ऋ", t:"ṛ"}, {d:"ॠ", t:"ṝ"}, {d:"ऌ", t:"ḷ"}, {d:"ॡ", t:"ḹ"}, {d:"ए", t:"e"}, {d:"ऐ", t:"ai"}, {d:"ओ", t:"o"}, {d:"औ", t:"au"},
+               {d:"अं", t:"aṃ"}, {d:"अः", t:"aḥ"},
+               {d:"क", t:"ka"}, {d:"ख", t:"kha"}, {d:"ग", t:"ga"}, {d:"घ", t:"gha"}, {d:"ङ", t:"ṅa"},
+               {d:"च", t:"ca"}, {d:"छ", t:"cha"}, {d:"ज", t:"ja"}, {d:"झ", t:"jha"}, {d:"ञ", t:"ña"},
+               {d:"ट", t:"ṭa"}, {d:"ठ", t:"ṭha"}, {d:"ड", t:"ḍa"}, {d:"ढ", t:"ḍha"}, {d:"ण", t:"ṇa"},
+               {d:"त", t:"ta"}, {d:"थ", t:"tha"}, {d:"द", t:"da"}, {d:"ध", t:"dha"}, {d:"न", t:"na"},
+               {d:"प", t:"pa"}, {d:"फ", t:"pha"}, {d:"ब", t:"ba"}, {d:"भ", t:"bha"}, {d:"म", t:"ma"},
+               {d:"य", t:"ya"}, {d:"र", t:"ra"}, {d:"ल", t:"la"}, {d:"व", t:"va"},
+               {d:"श", t:"śa"}, {d:"ष", t:"ṣa"}, {d:"स", t:"sa"}, {d:"ह", t:"ha"}
+            ],
+            // Dynamisch generiert
+            diacritics: generateDiacriticsData(),
+            ligatures: LIGATURES_LIST,
+            // Ziffernzeichen
+            digits: [
+                {d:"०", t:"0"}, {d:"१", t:"1"}, {d:"२", t:"2"}, {d:"३", t:"3"}, {d:"४", t:"4"}, 
+                {d:"५", t:"5"}, {d:"६", t:"6"}, {d:"७", t:"7"}, {d:"८", t:"8"}, {d:"९", t:"9"}
+            ]
+        };
+		const TRANSLATIONS = {
+			de: {
+				// General
+				home: "Home",
+				back: "Zurück",
+				close: "Schließen",
+				saveClose: "Speichern & Schließen",
+				next: "Nächste",
+				nextQuestion: "Nächste Frage",
+				finish: "Abschließen",
+				start: "Starten",
+				info: "Information",
+				search: "Suchen",
+				// Home
+				appTitle: "Devanāgarī für Sanskrit",
+				appSubtitle: "Schrifttrainer",
+				startPractice: "Üben starten",
+				// Setup
+				setupTitle: "Devanāgarī-Trainer",
+				learnChars: "Zeichen lernen",
+				readTexts: "Texte lesen",
+				mode: "Modus",
+				quiz: "Quiz",
+				flashcards: "Flashcards",
+				order: "Reihenfolge",
+				sequential: "Geordnet",
+				random: "Zufällig",
+				direction: "Abfragerichtung",
+				seqNote: "Geordnete Reihenfolge nur bei Auswahl eines einzelnen Pakets möglich",
+				fontSettings: "Schriftart wählen",
+				// Categories
+				catBasic: "Grundzeichen",
+				catBasicDesc: "Eigenständige Vokalzeichen und Konsonanten mit inhärentem Vokal <i>a</i>",
+				catDiacritics: "Vokaldiakritika",
+				catDiacriticsDesc: "Konsonanten mit Vokalsonderzeichen, <i>aṃ</i> und <i>aḥ</i>",
+				catLigatures: "Ligaturen",
+				catLigaturesDesc: "360 häufigste Konsonantenverbindungen",
+				catDigits: "Ziffernzeichen",
+				catDigitsDesc: "0 bis 9",
+				catCustom: "+ Eigene Zeichen",
+				catCustomNone: "Keine Zeichensammlung ausgewählt",
+				catCustomActive: "Aktiv: ",
+				// Editor
+				editTitle: "Eigene Zeichen verwalten",
+				addCat: "+ Sammlung hinzufügen",
+				myCollections: "Meine Sammlungen",
+				sortMode: "Sortiermodus",
+				sortModeDesc: "Reihenfolge der Sammlungen und einzelner Zeichen manuell ändern",
+				all: "Alles",
+				allDesc: "Alle Zeichensammlungen aus- oder abwählen",
+				expand: "Ausklappen",
+				collapse: "Einklappen",
+				viewMode: "Ansichtsmodus",
+				viewModeDesc: "Übersicht aller ausgewählten Zeichensammlungen öffnen",
+				export: "Exportieren",
+				exportDesc: "Ausgewählte Zeichensammlungen als JSON-Datei sichern",
+				import: "Importieren",
+				importDesc: "Zeichen aus einer externen JSON-Datei laden",
+				bulkImport: "Massenimport (z. B.: Devanāgarī;IAST)",
+				bulkFontPlaceholder: "Fontname (für primäres Schriftzeichen)",
+				bulkTextPlaceholder: "क्ष;kṣa\nत्र;tra",
+				ctrlEnter: "Strg + Enter zum Hinzufügen",
+				singleChar: "+ Einzelnes Zeichen hinzufügen",
+				// Info Modal
+				projectInfo: "Projektinformationen",
+				version: "Version",
+				conception: "Konzeption",
+				period: "Erstellungszeitraum",
+				techImp: "Technische Umsetzung",
+				techImpDesc: "Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini-Modelle 2.5 und 3 (Flash und Pro, inkl. der Gemini-Funktion Canvas) ermöglicht.",
+				sources: "Quellen & Urheberrechte",
+				fontHint: "Hinweis zur Darstellung: Für eine optimale Anzeige der Schriftzeichen, insbesondere der komplexen Ligaturen, wird die Verwendung der Schriftart <i>Sanskrit2003 - 30.07.2019.otf</i> empfohlen.",
+				privacy: "Datenschutz",
+				privacyDesc: "Zur korrekten Darstellung der IAST-Diakritika (Google Fonts) sowie für technische Basisfunktionen (React, Tailwind) lädt diese App externe Ressourcen. Dabei wird technisch bedingt die IP-Adresse an die jeweiligen Anbieter übertragen.",
+				license: "Lizenz",
+				newCatDefault: "Neue Zeichensammlung",
+				libraryTitle: "Studierbibliothek",
+				noResults: "Keine Treffer gefunden für",
+				searchActive: "Suche aktiv...",
+				chars: "Zeichen",
+				flipHintClick: "KLICKEN ODER ENTER ZUM UMDREHEN",
+				flipHintTap: "TIPPEN ZUM UMDREHEN",
+				fluencyTitle: "Leseflüssigkeit & Tempo",
+				fluencyStart: "Start",
+				fluencyStop: "Stopp",
+				fluencySpeed: "Geschwindigkeit",
+				fluencyAuto: "Automatischer Durchlauf",
+				charsPerMinute: "Silben pro Minute",
+				nextText: "Nächster Text",
+				textEntryLabel: "Text eingeben (Devanāgarī)",
+				loadBtn: "LADEN",
+				loadSample: "BEISPIELTEXT LADEN",
+				helpTitle: "Hilfe zur Texteingabe:",
+				helpIntro: "Diese App benötigt eine <strong>Devanāgarī-Unicode-Schriftart</strong>. Falls Sie Text in einer anderen indischen Schrift, in Transliteration (z. B. IAST) oder als Bild vorliegen haben, nutzen Sie bitte externe Tools:",
+				helpConv: "Umwandlung in Devanāgarī:",
+				helpOCR: "Bild zu Text (OCR):",
+				showTextBtn: "Text anzeigen",
+				introTouch: "Fügen Sie einen <strong>Devanāgarī-Text</strong> ein und tippen Sie auf „Text anzeigen“. Tippen Sie auf einen <strong>Wortblock</strong>, um dessen <strong>IAST-Transliteration</strong> zu sehen. Ein zweites Tippen auf eine <strong>Schreibsilbe (<i>akṣara</i>)</strong> zeigt nur deren Transliteration.",
+				introMouse: "Fügen Sie einen <strong>Devanāgarī-Text</strong> ein und klicken Sie auf „Text anzeigen“. Beim Lesen können Sie mit der Maus über einen <strong>Wortblock</strong> fahren, um dessen <strong>IAST-Transliteration</strong> zu sehen, oder auf einzelne <strong>Schreibsilben (<i>akṣara</i>)</strong> klicken, um nur diese zu transliterieren.",
+				edit: "Bearbeiten",
+				reviewTitle: "Textüberprüfung & Pacer",
+				pacerEnable: "Pacer (Lesehilfe) aktivieren",
+				target: "Ziel-",
+				spmFull: "Silben pro Minute",
+				readyNote: "Bereit? Timer startet beim Klick",
+				calcSpeedBtn: "Lesegeschwindigkeit ermitteln",
+				readingTitle: "Leseleistung",
+				readingFinishNote: "Fertig gelesen? Drücken Sie Enter oder den Button. Oder klicken Sie auf die Silbe, bei der Sie aufhören möchten.",
+				readingFinishBtn: "Fertig gelesen",
+				resultTitle: "Ihre Lesegeschwindigkeit",
+				syllablesRead: "Gelesene Silben",
+				totalDuration: "Gesamtdauer",
+				newTextBtn: "Neuen Text eingeben",
+				restartBtn: "Erneut lesen",
+				sessionAborted: "Session manuell bei Silbe {count} beendet",
+				pacerTarget: "Pacer-Ziel: {speed} SPM",
+				inputPlaceholder: "Z. B. अस्त्युत्तरस्यां दिशि देवतात्मा हिमालयो नाम नगाधिराजः।",
+				importSuccess: "Import erfolgreich! Die neuen Sets wurden oben hinzugefügt.",
+				importError: "Fehler beim Import: ",
+				istbUrl: "https://stb.univie.ac.at/",
+				ccUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de",
+				expandDesc: "Alle Zeichensammlungen ausklappen",
+				collapseDesc: "Alle Zeichensammlungen einklappen",
+				feedback: {
+					beginner: [
+						"Ein wichtiger erster Schritt! Nehmen Sie sich die Zeit, die Formen der Zeichen genau zu verinnerlichen. Die Geschwindigkeit kommt mit der Vertrautheit ganz von selbst.",
+						"Gut gemacht! Sie bauen gerade die neuronale Verbindung zu den Schriftzeichen auf. Bleiben Sie dran. Beständigkeit ist am Anfang der wichtigste Faktor."
+					],
+					intermediate: [
+						"Das ist ein guter Start! Konzentrieren Sie sich auf eine gleichmäßige Lesegeschwindigkeit, um die SPM weiter zu steigern.",
+						"Ihr Lesefluss stabilisiert sich. Achten Sie darauf, den Blick schon leicht auf das nächste Wort zu richten, während Sie das aktuelle zu Ende lesen."
+					],
+					advanced: [
+						"Sie machen große Fortschritte! Behalten Sie diesen gleichmäßigen Rhythmus bei, um noch mehr Sicherheit zu gewinnen.",
+						"Ein zügiges Tempo! Ihre Erkennung der Zeichen ist nun so gefestigt, dass Sie sich verstärkt auf die korrekte Aussprache und Betonung konzentrieren können."
+					],
+					fluent: [
+						"Sehr flüssig! Selbst komplexe Ligaturen scheinen Sie nicht mehr aufzuhalten.",
+						"Wunderbarer Lesefluss! Sie haben den Übergang vom Entziffern zum echten Lesen gemeistert."
+					],
+					expert: [
+						"Herausragend! Diese Geschwindigkeit zeugt von einer tiefen Vertrautheit mit der Devanāgarī.",
+						"Exzellent! Ihr visuelles Gedächtnis für die Devanāgarī-Zeichen ist hochgradig trainiert."
+					]
+				},
+			},
+			en: {
+				// General
+				home: "Home",
+				back: "Back",
+				close: "Close",
+				saveClose: "Save & close",
+				next: "Next",
+				nextQuestion: "Next question",
+				finish: "Finish",
+				start: "Start",
+				info: "Information",
+				search: "Search",
+				// Home
+				appTitle: "Devanāgarī for Sanskrit",
+				appSubtitle: "Script trainer",
+				startPractice: "Start practice",
+				// Setup
+				setupTitle: "Devanāgarī trainer",
+				learnChars: "Learn characters",
+				readTexts: "Read texts",
+				mode: "Mode",
+				quiz: "Quiz",
+				flashcards: "Flashcards",
+				order: "Order",
+				sequential: "Sequential",
+				random: "Random",
+				direction: "Direction",
+				seqNote: "Sequential order is only available when a single set is selected",
+				fontSettings: "Select font",
+				// Categories
+				catBasic: "Basic characters",
+				catBasicDesc: "Independent vowels and consonants with inherent vowel <i>a</i>",
+				catDiacritics: "Vowel diacritics",
+				catDiacriticsDesc: "Consonants with vowel signs, <i>aṃ</i> and <i>aḥ</i>",
+				catLigatures: "Ligatures",
+				catLigaturesDesc: "360 most common conjunct consonants",
+				catDigits: "Digits",
+				catDigitsDesc: "0 to 9",
+				catCustom: "+ Custom characters",
+				catCustomNone: "No collection selected",
+				catCustomActive: "Active: ",
+				// Editor
+				editTitle: "Manage custom characters",
+				addCat: "+ Add collection",
+				myCollections: "My collections",
+				sortMode: "Sort mode",
+				sortModeDesc: "Manually change the order of collections and individual characters",
+				all: "All",
+				allDesc: "Select / Deselect all character collections",
+				expand: "Expand all",
+				collapse: "Collapse all",
+				viewMode: "View mode",
+				viewModeDesc: "Open overview of all selected character collections",
+				export: "Export",
+				exportDesc: "Save selected character collections as a JSON file",
+				import: "Import",
+				importDesc: "Load characters from an external JSON file",
+				bulkImport: "Bulk import (e.g.: Devanāgarī;IAST)",
+				bulkFontPlaceholder: "Font name (for primary character)",
+				bulkTextPlaceholder: "क्ष;kṣa\nत्र;tra",
+				ctrlEnter: "Ctrl + Enter to add",
+				singleChar: "Add single character",
+				// Info Modal
+				projectInfo: "Project information",
+				version: "Version",
+				conception: "Conceptualization",
+				period: "Creation period",
+				techImp: "Technical implementation",
+				techImpDesc: "This application was developed in a dialogic process with Artificial Intelligence. Programming was made possible through the use of Google Gemini models 2.5 and 3 (Flash and Pro, including the Gemini Canvas feature).",
+				sources: "Sources & Copyrights",
+				fontHint: "Display note: For optimal display of characters, especially complex ligatures, the use of the font <i>Sanskrit2003 - 30.07.2019.otf</i> is recommended.",
+				privacy: "Privacy",
+				privacyDesc: "To correctly display IAST diacritics (Google Fonts) and for basic technical functions (React, Tailwind), this app loads external resources. For technical reasons, your IP address is transmitted to the respective providers.",
+				license: "License",
+				newCatDefault: "New character collection",
+				libraryTitle: "Study library",
+				noResults: "No results found for",
+				searchActive: "Search active...",
+				chars: "Characters",
+				flipHintClick: "CLICK OR ENTER TO FLIP",
+				flipHintTap: "TAP TO FLIP",
+				fluencyTitle: "Reading fluency & tempo",
+				fluencyStart: "Start",
+				fluencyStop: "Stop",
+				fluencySpeed: "Speed",
+				fluencyAuto: "Auto mode",
+				charsPerMinute: "Syllables per minute",
+				nextText: "Next text",
+				textEntryLabel: "Enter text (Devanāgarī)",
+				loadBtn: "LOAD",
+				loadSample: "LOAD SAMPLE TEXT",
+				helpTitle: "Help with text entry:",
+				helpIntro: "This app requires a <strong>Devanāgarī Unicode font</strong>. If you have text in another Indian script, transliteration (e.g., IAST), or as an image, please use external tools:",
+				helpConv: "Script conversion:",
+				helpOCR: "Image to Text (OCR):",
+				showTextBtn: "Show text",
+				introTouch: "Paste a <strong>Devanāgarī text</strong> and tap 'Show text'. Tap a <strong>word block</strong> to see its <strong>IAST transliteration</strong>. A second tap on a <strong>syllable (<i>akṣara</i>)</strong> shows only its transliteration.",
+				introMouse: "Paste a <strong>Devanāgarī text</strong> and click 'Show text'. While reading, hover over a <strong>word block</strong> to see its <strong>IAST transliteration</strong>, or click on individual <strong>syllables (<i>akṣara</i>)</strong> to transliterate only those.",
+				edit: "Edit",
+				reviewTitle: "Text review & pacer",
+				pacerEnable: "Enable pacer (reading aid)",
+				target: "Target-",
+				spmFull: "Syllables per minute",
+				readyNote: "Ready? Timer starts on click",
+				calcSpeedBtn: "Determine reading speed",
+				readingTitle: "Reading performance",
+				readingFinishNote: "Finished reading? Press Enter or the button. Or click on the syllable where you want to stop.",
+				readingFinishBtn: "Finished reading",
+				resultTitle: "Your reading speed",
+				syllablesRead: "Syllables read",
+				totalDuration: "Total duration",
+				newTextBtn: "Enter new text",
+				restartBtn: "Read again",
+				sessionAborted: "Session manually ended at syllable {count}",
+				pacerTarget: "Pacer target: {speed} SPM",
+				inputPlaceholder: "E.g. अस्त्युत्तरस्यां दिशि देवतात्मा हिमालयो नाम नगाधिराजः।",
+				importSuccess: "Import successful! New sets have been added to the top.",
+				importError: "Error during import: ",
+				istbUrl: "https://stb.univie.ac.at/en/",
+				ccUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en",
+				expandDesc: "Expand all character collections",
+				collapseDesc: "Collapse all character collections",
+				feedback: {
+					beginner: [
+						"A vital first step! Take your time to truly internalize the shapes of the characters. Speed will come naturally as you become more familiar with them.",
+						"Well done! You are currently building the neural connections to the characters. Keep at it—consistency is the most important factor at the start."
+					],
+					intermediate: [
+						"A solid start! Focus on maintaining a steady reading pace to further increase your SPM.",
+						"Your flow is stabilizing. Try to glance slightly ahead at the next word while finishing the current one."
+					],
+					advanced: [
+						"You're making great progress! Keep up this steady rhythm to gain even more confidence.",
+						"A brisk pace! Your character recognition is now firm enough that you can focus more on correct pronunciation and emphasis."
+					],
+					fluent: [
+						"Very fluent! Even complex ligatures don't seem to slow you down anymore.",
+						"Wonderful flow! You've mastered the transition from deciphering to true reading."
+					],
+					expert: [
+						"Outstanding! This speed demonstrates a deep familiarity with Devanāgarī.",
+						"Excellent! Your visual memory for Devanāgarī characters is highly trained."
+					]
+				},
+			}
+		};
+   
+        // FLUENCY TRAINER
+        
+        // --- ICONS ---
+        const ClockIcon = ({ className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+        );
+       
+        // --- TRANSLITERATIONSLOGIK ---
+
+        const DEVA_TO_IAST = {
+            'अ': 'a', 'आ': 'ā', 'इ': 'i', 'ई': 'ī', 'उ': 'u', 'ऊ': 'ū', 'ऋ': 'ṛ', 'ॠ': 'ṝ', 'ऌ': 'ḷ', 'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au',
+            'क': 'ka', 'ख': 'kha', 'ग': 'ga', 'घ': 'gha', 'ङ': 'ṅa',
+            'च': 'ca', 'छ': 'cha', 'ज': 'ja', 'झ': 'jha', 'ञ': 'ña',
+            'ट': 'ṭa', 'ठ': 'ṭha', 'ड': 'ḍa', 'ढ': 'ḍha', 'ण': 'ṇa',
+            'त': 'ta', 'थ': 'tha', 'द': 'da', 'ध': 'dha', 'न': 'na',
+            'प': 'pa', 'फ': 'pha', 'ब': 'ba', 'भ': 'bha', 'म': 'ma',
+            'य': 'ya', 'र': 'ra', 'ल': 'la', 'व': 'va', 
+            'श': 'śa', 'ष': 'ṣa', 'स': 'sa', 'ह': 'ha',
+            'ज्ञ': 'jña', 'त्र': 'tra', 'क्ष': 'kṣa', 'श्र': 'śra',
+            '।': '.', '॥': '..', 'ऽ': "'", '॰': '.', 
+            '०': '0', '१': '1', '२': '2', '३': '3', '४': '4', '५': '5', '६': '6', '७': '7', '८': '8', '९': '9'
+        };
+
+        const DEVA_MATRAS = {
+            'ा': 'ā', 'ि': 'i', 'ी': 'ī', 'ु': 'u', 'ू': 'ū', 'ृ': 'ṛ', 'ॄ': 'ṝ', 'ॢ': 'ḷ',
+            'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au'
+        };
+        
+        const DEVA_MODIFIERS = {
+            'ं': 'ṃ', 'ः': 'ḥ', 'ँ': 'm̐'
+        };
+
+        const devanagariToIast = (devaText) => {
+            let iast = '';
+            for (let i = 0; i < devaText.length; i++) {
+                const char = devaText[i];
+                if (char === '्') {
+                    if (iast.endsWith('a')) iast = iast.slice(0, -1);
+                    continue;
+                }
+                if (DEVA_MODIFIERS[char]) {
+                    iast += DEVA_MODIFIERS[char];
+                    continue;
+                }
+                if (DEVA_MATRAS[char]) {
+                    if (iast.endsWith('a')) iast = iast.slice(0, -1);
+                    iast += DEVA_MATRAS[char];
+                    continue;
+                }
+                const mapped = DEVA_TO_IAST[char];
+                if (mapped) {
+                    iast += mapped;
+                    continue;
+                }
+                iast += char;
+            }
+            return iast;
+        };
+
+        const countSyllables = (devaText) => {
+            if (!devaText) return 0;
+            const INDEPENDENT_VOWELS = 'अआइईउऊऋॠऌॡएऐओऔॐ'; 
+            const MATRAS = 'ािीुूृॄॢॣेैोौ'; 
+            const VIRAMA = '्';
+            
+            const isConsonant = (char) => {
+                const code = char.charCodeAt(0);
+                return (code >= 0x0915 && code <= 0x0939) || (code >= 0x0958 && code <= 0x095F);
+            };
+
+            const isIndependentVowel = (char) => INDEPENDENT_VOWELS.includes(char);
+            const isMatra = (char) => MATRAS.includes(char);
+            
+            let count = 0;
+            for (let i = 0; i < devaText.length; i++) {
+                const char = devaText[i];
+                const nextChar = devaText[i + 1];
+
+                if (isIndependentVowel(char)) count++;
+                else if (isMatra(char)) count++;
+                else if (isConsonant(char)) {
+                    const nextIsVirama = nextChar === VIRAMA;
+                    const nextIsMatra = nextChar && isMatra(nextChar);
+                    if (!nextIsVirama && !nextIsMatra) count++;
+                }
+            }
+            return count;
+        };
+
+        /**
+         * Zerlegt einen Devanagari-String in visuelle Silbenblöcke (Akṣaras).
+         */
+        const splitIntoAksharas = (text) => {
+            const aksharas = [];
+            let current = '';
+            const chars = Array.from(text);
+
+            for (let i = 0; i < chars.length; i++) {
+                const char = chars[i];
+                const code = char.charCodeAt(0);
+
+                const isVirama = (char === '्');
+                const isModifier = (char === 'ं' || char === 'ः' || char === 'ँ');
+                const isMatra = (code >= 0x093E && code <= 0x094C) || (code >= 0x0962 && code <= 0x0963);
+                const isIndependent = (code >= 0x0904 && code <= 0x0914) || char === 'ॐ';
+                const isConsonant = ((code >= 0x0915 && code <= 0x0939) || (code >= 0x0958 && code <= 0x095F));
+
+                let startNew = false;
+                
+                // Unabhängiger Vokal beginnt immer einen neuen Block
+                if (isIndependent) {
+                    startNew = true;
+                } 
+                // Konsonant
+                else if (isConsonant) {
+                    // Startet neuen Block, es sei denn, das vorherige Zeichen war ein Virāma (dann ist es eine Ligatur)
+                    if (current.length > 0 && current[current.length-1] === '्') {
+                        startNew = false; 
+                    } else {
+                        startNew = true;
+                    }
+                }
+
+                if (startNew && current) {
+                    aksharas.push(current);
+                    current = '';
+                }
+                current += char;
+            }
+            if (current) aksharas.push(current);
+            return aksharas;
+        };
+
+        const IASTInfoPopup = ({ x, y, content, isSyllableMode, onClose }) => {
+            if (!content) return null;
+            const isDark = document.documentElement.classList.contains('dark');
+            
+            // top: y + 4 sorgt für einen kleinen Abstand zum Text, da der Pfeil fehlt
+            let boxStyle = { 
+                top: Math.round(y + 8), 
+                left: Math.round(x),
+                position: 'absolute' 
+            }; 
+            
+            // Definition der Box-Basis
+            let boxClass = `z-50 text-lg px-4 py-2 rounded shadow-xl popup-anim w-max max-w-[85vw] whitespace-nowrap transform `;
+            
+            if (content.length > 40) {
+                boxClass = boxClass.replace('whitespace-nowrap', 'whitespace-normal break-all');
+            }
+         
+            // FARBLOGIK
+            if (isSyllableMode) {
+                boxClass += isDark 
+                    ? "bg-emerald-900 text-emerald-50 border border-emerald-700 glow-emerald" 
+                    : "bg-emerald-50 text-emerald-900 shadow-lg border border-emerald-200";
+            } else {
+                boxClass += isDark 
+                    ? "bg-stone-800 text-amber-450 glow-amber" 
+                    : "bg-amber-100 text-black shadow-lg";
+            }
+
+            // Ausrichtung: Linksbündig ohne Verschiebung
+            boxClass += " -translate-x-0"; 
+
+            return (
+                <div className={boxClass} style={boxStyle} onMouseLeave={onClose}>
+                    <div 
+						className="iast-sharp font-medium text-center" 
+						style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+						dangerouslySetInnerHTML={{ __html: content }}
+					/>
+                </div>
+            );
+        };
+
+        const FluencyTrainer = ({ onExit, darkMode, lang }) => {
+		const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+		const SANSKRIT_SAMPLES = {
+'Beispieltext': {
+                    info: "Kālidāsa, Kumārasaṃbhava 1.1–8; https://gretil.sub.uni-goettingen.de/gretil/1_sanskr/5_poetry/2_kavya/kakumspu.htm (02.01.2026)",
+                    text:`अस्त्युत्तरस्यां दिशि देवतात्मा हिमालयो नाम नगाधिराजः।
+पूर्वापरौ तोयनिधी विगाह्य स्थितः पृथिव्या इव मानदण्डः॥१।१॥
+यं सर्वशैलाः परिकल्प्य वत्सं मेरौ स्थिते दोग्धरि दोहदक्षे।
+भास्वन्ति रत्नानि महौषधीश्च पृथूपदिष्टां दुदुहुर्धरित्रीम्॥१।२॥
+अनन्तरत्नप्रभवस्य यस्य हिमं न सौभाग्यविलोपि जातम्। 
+एको हि दोषो गुणसंनिपाते निमज्जतीन्दोः किरणेष्विवाङ्कः॥१।३॥
+यश्चाप्सरोविभ्रममण्डनानां संपादयित्रीं शिखरैर्बिभर्ति।
+बलाहकच्छेदविभक्तरागामकालसंध्यामिव धातुमत्ताम्॥१।४॥
+आमेखलं संचरतां घनानां छायामधःसानुगतां निषेव्य।
+उद्वेजिता वृष्टिभिराश्रयन्ते शृङ्गाणि यस्यातपवन्ति सिद्धाः॥१।५॥
+पदं तुषारस्रुतिधौतरक्तं यस्मिन्नदृष्ट्वापि हतद्विपानाम्।
+विदन्ति मार्गं नखरन्ध्रमुक्तैर्मुक्ताफलैः केसरिणां किराताः॥१।६॥
+न्यस्ताक्षरा धातुरसेन यत्र भूर्जत्वचः कुञ्जरबिन्दुशोणाः। 
+व्रजन्ति विद्याधरसुन्दरीणामनङ्गलेखक्रिययोपयोगम्॥१।७॥
+यः पूरयन्कीचकरन्ध्रभागान्दरीमुखोत्थेन समीरणेन।
+उद्गास्यतामिच्छति किंनराणां तानप्रदायित्वमिवोपगन्तुम्॥१।८॥`
+				}
+            };
+            const [readingState, setReadingState] = useState('input'); 
+            const [textInput, setTextInput] = useState('');
+            const [devaOutput, setDevaOutput] = useState(''); 
+            const [syllableCount, setSyllableCount] = useState(0);
+            const [startTime, setStartTime] = useState(null);
+            const [endTime, setEndTime] = useState(null);
+            const [finalSyllableCount, setFinalSyllableCount] = useState(0); 
+            
+            // NEUE PACER-STATES
+            const [pacerActive, setPacerActive] = useState(false);
+            const [pacerSpeed, setPacerSpeed] = useState(200); // FIX: Standard auf 200 SPM
+            const [highlightedAksharaIndex, setHighlightedAksharaIndex] = useState(-1);
+            
+            const [popup, setPopup] = useState({ visible: false, x: 0, y: 0, content: '', isSyllable: false });
+
+            useEffect(() => {
+                const text = textInput;
+                setDevaOutput(text);
+                setSyllableCount(countSyllables(text));
+                
+                if (readingState !== 'input') {
+                    setReadingState('input'); 
+                }
+            }, [textInput]);
+
+            const startReading = useCallback(() => {
+                if (!devaOutput.trim()) return;
+                setReadingState('reading');
+                setStartTime(Date.now());
+                setEndTime(null);
+                setFinalSyllableCount(syllableCount);
+                setHighlightedAksharaIndex(pacerActive ? 0 : -1); // Starte Pacer, falls aktiv
+            }, [devaOutput, syllableCount, pacerActive]);
+
+            const finishReading = useCallback(() => {
+                const finalTime = Date.now();
+                setEndTime(finalTime);
+                setReadingState('result');
+                setHighlightedAksharaIndex(-1);
+                setPopup(prev => ({ ...prev, visible: false }));
+                // Fokus auf Neustart-Button für Enter-Taste
+                setTimeout(() => document.getElementById('btn-restart')?.focus(), 100);
+            }, []);
+
+            const finishReadingAtSyllable = useCallback((syllableIndex) => {
+                const finalTime = Date.now();
+                setEndTime(finalTime);
+                setFinalSyllableCount(syllableIndex + 1);
+                setReadingState('result');
+                setHighlightedAksharaIndex(-1);
+                setPopup(prev => ({ ...prev, visible: false }));
+                // Fokus auf Neustart-Button für Enter-Taste
+                setTimeout(() => document.getElementById('btn-restart')?.focus(), 100);
+            }, []);
+            
+            // PACER LOGIC
+            useEffect(() => {
+                if (readingState === 'reading' && pacerActive && highlightedAksharaIndex < syllableCount) {
+                    // Berechnung der Verzögerung pro Silbe in Millisekunden:
+                    // (60 Sekunden / SPM) * 1000 ms/s
+                    const delayMs = (60 / (pacerSpeed || 1)) * 1000;
+                    
+                    const pacerTimer = setTimeout(() => {
+                        const nextIndex = highlightedAksharaIndex + 1;
+                        if (nextIndex < syllableCount) {
+                            setHighlightedAksharaIndex(nextIndex);
+                        } else {
+                            // Pacer am Ende des Textes
+                            finishReading();
+                        }
+                    }, delayMs);
+
+                    return () => clearTimeout(pacerTimer);
+                }
+            }, [readingState, pacerActive, highlightedAksharaIndex, syllableCount, pacerSpeed, finishReading]);
+
+
+            const [liveDuration, setLiveDuration] = useState('0.0');
+            useEffect(() => {
+                let interval;
+                if (readingState === 'reading' && startTime) {
+                    interval = setInterval(() => {
+						setLiveDuration(((Date.now() - startTime) / 1000).toFixed(1).replace('.', ','));
+					}, 100); 
+                } else if (readingState === 'result' && startTime && endTime) {
+					 setLiveDuration(((endTime - startTime) / 1000).toFixed(2).replace('.', ','));
+				} else {
+                    setLiveDuration('0.0');
+                }
+                return () => clearInterval(interval);
+            }, [readingState, startTime, endTime]);
+
+            const currentDuration = readingState === 'result' ? liveDuration : liveDuration;
+
+            const calculateSPM = useMemo(() => {
+                if (startTime && endTime && finalSyllableCount > 0) { 
+                    const durationInMinutes = (endTime - startTime) / 60000;
+                    return Math.round(finalSyllableCount / durationInMinutes);
+                }
+                return 0;
+            }, [startTime, endTime, finalSyllableCount]);
+
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    // ESCAPE oder Pfeil-Links (nur im Input-State): Geht stufenweise zurück
+                    if (e.key === 'Escape' || (e.key === 'ArrowLeft' && readingState === 'input')) {
+                        if (readingState === 'result') setReadingState('review');
+                        else if (readingState === 'reading') setReadingState('review');
+                        else if (readingState === 'review') setReadingState('input');
+                        else if (readingState === 'input') onExit(); // Beendet Modul
+                        return;
+                    }
+
+                    // ENTER: Bestehende Logik
+                    if (e.key === 'Enter') {
+                        if (readingState === 'input' && textInput.trim()) setReadingState('review');
+                        else if (readingState === 'review') startReading();
+                        else if (readingState === 'reading') finishReading();
+                        else if (readingState === 'result') setReadingState('review');
+                    }
+                };
+                window.addEventListener('keydown', handleKeyDown);
+                return () => window.removeEventListener('keydown', handleKeyDown);
+            }, [readingState, textInput, startReading, finishReading, onExit]);
+// Tastatursteuerung für die ErgebnisSeite (Pfeiltasten)
+useEffect(() => {
+    if (readingState !== 'result') return; 
+
+    const handleKeyDown = (e) => {
+        const restartBtn = document.getElementById('btn-restart');
+        const newTextBtn = document.getElementById('btn-new-text');
+
+        if (e.key === 'ArrowLeft') {
+            newTextBtn?.focus();
+        } else if (e.key === 'ArrowRight') {
+            restartBtn?.focus();
+        } else if (e.key === 'Enter') {
+            // Verhindert, dass die globale Enter-Logik (Zeile 335) ausgeführt wird
+            e.stopImmediatePropagation();
+        }
+    };
+
+    // 'capture: true' sorgt dafür, dass dieser Listener VOR dem anderen ausgeführt wird
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
+}, [readingState]);
+
+            // Handler für das Hovern über das ganze Wort
+            const handleWordEnter = useCallback((e) => {
+                // Deaktiviert Popups, wenn Pacer läuft
+                if (readingState === 'reading' && pacerActive) return;
+
+                if (readingState !== 'reading' && readingState !== 'review') return;
+                const target = e.currentTarget; 
+                
+                const devaWord = target.getAttribute('data-deva-word');
+                if (devaWord) {
+                    const iast = devanagariToIast(devaWord);
+                    const rect = target.getBoundingClientRect();
+
+                    const container = target.closest('.overflow-y-auto');
+                    setPopup({ 
+                        visible: true, 
+                        // x/y relativ zum Container berechnen:
+                        x: rect.left - container.getBoundingClientRect().left + container.scrollLeft - 12, 
+                        y: rect.bottom - container.getBoundingClientRect().top + container.scrollTop, 
+                        content: iast,
+                        isSyllable: false
+                    });
+                }
+            }, [readingState, pacerActive]);
+
+            // Handler für den Klick/Tap auf eine Silbe (Mobile-optimiert)
+            const handleSyllableClick = useCallback((e, akshara) => {
+                e.stopPropagation(); 
+                
+                const target = e.target;
+                const syllableIndex = parseInt(target.getAttribute('data-syllable-index'));
+                const wordElement = target.closest('[data-deva-word]');
+                const devaWord = wordElement?.getAttribute('data-deva-word');
+                
+                if (readingState === 'reading') {
+                    if (!isNaN(syllableIndex)) finishReadingAtSyllable(syllableIndex);
+                    return; 
+                }
+
+                const rect = target.getBoundingClientRect();
+                const iastSyllable = devanagariToIast(akshara);
+                const iastWord = devanagariToIast(devaWord || '');
+                const container = target.closest('.overflow-y-auto');
+                const containerRect = container.getBoundingClientRect();
+                const wordRect = wordElement.getBoundingClientRect();
+
+                // DIESE BEDINGUNG PRÜFT DIE ZUGEHÖRIGKEIT:
+                // Ein Popup ist offen UND sein Inhalt (Wort oder Silbe) ist Teil des aktuell geklickten Wortes.
+                const isCurrentWordActive = popup.visible && (
+                    popup.content === iastWord || 
+                    iastWord.includes(popup.content.replace(/[. ]/g, ''))
+                );
+
+                if (pacerActive || isCurrentWordActive) {
+                    // Falls das Wort schon aktiv ist (oder Pacer läuft): Zeige Silbe
+                    setPopup({ 
+                        visible: true, 
+                        x: Math.round(rect.left - containerRect.left + container.scrollLeft - 12),
+                        y: Math.round(wordRect.bottom - containerRect.top + container.scrollTop), 
+                        content: iastSyllable, 
+                        isSyllable: true
+                    });
+                } else {
+                    // NEUES WORT oder gar kein Popup: Zeige immer erst das ganze Wort
+                    setPopup({ 
+                        visible: true, 
+                        x: Math.round(wordRect.left - containerRect.left + container.scrollLeft - 12), 
+                        y: Math.round(wordRect.bottom - containerRect.top + container.scrollTop), 
+                        content: iastWord,
+                        isSyllable: false
+                    });
+                }
+            }, [readingState, finishReadingAtSyllable, pacerActive, popup.visible, popup.content]);
+            
+            // Rendering des Textes: Zerlegt in Wörter, dann Wörter in Silben
+            const renderDevaTextWithHover = (devaText) => {
+                if (!devaText) return null;
+                const parts = devaText.match(/(\S+|\s+|[।॥])/g) || [];
+                
+                let currentSyllableIndex = 0; 
+                
+               const textContainerClass = `relative font-deva text-3xl max-h-[60vh] overflow-y-auto p-4 border border-stone-300 dark:border-stone-600 rounded-lg dark:bg-stone-900/50 text-stone-900 dark:text-stone-100 select-none whitespace-pre-wrap text-left ${popup.visible || (readingState === 'reading' && pacerActive) ? 'text-area-with-popup-visible' : 'cursor-help'}`;
+                
+                return (
+                    <div className={textContainerClass}>
+                        {/* DAS POPUP IST JETZT TEIL DES SCROLL-CONTAINERS */}
+                        {popup.visible && (
+                            <IASTInfoPopup 
+                                x={popup.x} 
+                                y={popup.y} 
+                                content={popup.content} 
+                                isSyllableMode={popup.isSyllable} 
+                                onClose={() => setPopup({ ...popup, visible: false })} 
+                            />
+                        )}
+                        
+                        {parts.map((part, index) => {
+                            if (part.trim() === '' || part === '।' || part === '॥') {
+<span key={index}>{part}</span>;
+                                return <span key={index}>{part}</span>;
+                            }
+
+                            const aksharas = splitIntoAksharas(part);
+
+                            return (
+                                <span
+									key={index}
+									/* : isolate und relative hinzugefügt, pb-2 für das untere Padding */
+									className="inline-block relative isolate rounded px-1 pt-1 pb-2 transition-colors whitespace-pre-wrap hover:bg-amber-500/20 dark:hover:bg-amber-500/30"
+									data-deva-word={part}
+									onMouseEnter={handleWordEnter}
+									onMouseLeave={() => setPopup({ ...popup, visible: false })}
+								>
+									{aksharas.map((ak, idx) => {
+                                        const indexToAssign = currentSyllableIndex;
+                                        const isHighlighted = pacerActive && indexToAssign === highlightedAksharaIndex;
+                                        
+                                        currentSyllableIndex++; 
+                                        
+                                        const pacerClasses = isHighlighted 
+                                            ? (darkMode ? 'pacer-highlight-dark' : 'pacer-highlight-light')
+                                            : '';
+                                        
+                                        return (
+                                            <span 
+                                                key={idx}
+                                                className={`syllable-hover inline-block ${pacerClasses}`}
+                                                onClick={(e) => handleSyllableClick(e, ak)}
+                                                data-syllable-index={indexToAssign} 
+                                            >
+                                                {ak}
+                                            </span>
+                                        );
+                                    })}
+                                </span>
+                            );
+                        })}
+                        <div className="h-4 w-full"></div>
+                    </div>
+                );
+            };
+            
+            // --- RENDERER: INPUT ---
+            const renderSetup = () => (
+                <div className="max-w-2xl mx-auto bg-white dark:bg-stone-800 p-8 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-10">
+                    <div className="flex items-center mb-6">
+                        <button 
+							onClick={onExit} 
+							className="mr-2 text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
+						>
+							<ArrowLeft size={20} />
+						</button>
+                        <h2 className="text-3xl font-bold text-stone-800 dark:text-stone-100 mb-6 font-serif text-center w-full">
+							{TRANSLATIONS[lang].fluencyTitle}
+						</h2>
+                    </div>
+                    
+                    <p 
+						className="text-stone-600 dark:text-stone-400 mb-4"
+						dangerouslySetInnerHTML={{ __html: isTouch ? TRANSLATIONS[lang].introTouch : TRANSLATIONS[lang].introMouse }}
+					/>
+
+                    <div className="space-y-4">
+                        <label className="block text-sm font-bold text-stone-700 dark:text-stone-300">
+							{TRANSLATIONS[lang].textEntryLabel}
+						</label>
+						<div className="flex flex-wrap gap-2 mb-2 mt-1">
+                        {Object.keys(SANSKRIT_SAMPLES).map(name => (
+                            <button 
+								key={name}
+								onClick={() => setTextInput(SANSKRIT_SAMPLES[name].text)}
+								className="text-xs uppercase font-bold px-3 py-1.5 bg-stone-100 dark:bg-stone-700 text-stone-500 hover:bg-rose-100 hover:text-rose-600 rounded-md transition-colors border border-stone-200 dark:border-stone-600 shadow-sm"
+							>
+								{TRANSLATIONS[lang].loadSample}
+							</button>
+                        ))}
+                    </div>
+                        {/* Dynamische Info-Anzeige zur Quelle */}
+                        {Object.values(SANSKRIT_SAMPLES).find(s => s.text === textInput)?.info && (
+							<div className="mb-2 p-2 text-xs italic text-stone-500 dark:text-stone-400 bg-stone-50 dark:bg-stone-850 border-l-2 border-rose-400 rounded break-words">
+								{Object.values(SANSKRIT_SAMPLES).find(s => s.text === textInput).info.split(' ').map((part, i) => {
+									if (part.startsWith('http')) {
+										return (
+											<a key={i} href={part.replace(/[()]/g, '')} target="_blank" className="text-rose-600 hover:underline break-all block mt-1">
+												{part}
+											</a>
+										);
+									}
+									return <span key={i}>{part} </span>;
+								})}
+							</div>
+						)}
+						<textarea
+                            value={textInput}
+                            onChange={(e) => setTextInput(e.target.value)}
+                            placeholder={TRANSLATIONS[lang].inputPlaceholder}
+                            rows="6"
+                            className="w-full p-3 border border-stone-300 dark:border-stone-600 rounded-lg dark:bg-stone-700 dark:text-stone-200 font-deva text-2xl focus:outline-none focus:ring-2 focus:ring-rose-500"
+                            maxLength={10000} 
+                        />
+						<div className="mt-4 p-3 bg-stone-50 dark:bg-stone-900/30 border border-stone-200 dark:border-stone-700 rounded-lg text-[11px] leading-relaxed text-stone-600 dark:text-stone-400 break-words">
+							<p className="font-bold mb-1 uppercase tracking-tight text-rose-600">{TRANSLATIONS[lang].helpTitle}</p>
+							<p className="mb-2" dangerouslySetInnerHTML={{ __html: TRANSLATIONS[lang].helpIntro }} />
+							<ul className="list-disc ml-4 space-y-1">
+								<li>
+									<strong>{TRANSLATIONS[lang].helpConv}</strong> 
+									<a href="https://www.aksharamukha.com/converter" target="_blank" className="text-rose-600 hover:underline ml-1">aksharamukha.com</a>
+								</li>
+								<li>
+									<strong>{TRANSLATIONS[lang].helpOCR}</strong> 
+									<a href="https://ocr.sanskritdictionary.com/" target="_blank" className="text-rose-600 hover:underline ml-1">ocr.sanskritdictionary.com</a>
+								</li>								
+							</ul>
+						</div>
+                       <div className="sticky bottom-0 bg-white dark:bg-stone-800 py-4 mt-6 border-t border-stone-100 dark:border-stone-700 z-10">
+							<button 
+								onClick={() => setReadingState('review')} 
+								disabled={!textInput.trim()}
+								className={`w-full bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-xl font-bold shadow-lg flex justify-center items-center space-x-2 transition-all active:scale-95 ${!textInput.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
+							>
+								<span>{TRANSLATIONS[lang].showTextBtn}</span> <ArrowRight size={18} />
+							</button>
+						</div>
+                </div>
+			</div>
+            );
+
+            // --- RENDERER: REVIEW ---
+            const renderReview = () => (
+                <div className="max-w-4xl mx-auto bg-white dark:bg-stone-800 p-8 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-10">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-6 border-b border-stone-100 dark:border-stone-700 pb-4">
+                        <button 
+                            onClick={() => setReadingState('input')} 
+                            className="flex items-center text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 whitespace-nowrap"
+                        >
+                           <ArrowLeft size={20} className="mr-1" /> {TRANSLATIONS[lang].edit}
+                        </button>
+                        <h2 className="text-3xl font-bold text-stone-800 dark:text-stone-100 mb-6 font-serif text-center w-full">
+							{TRANSLATIONS[lang].reviewTitle}
+						</h2>
+                    </div>
+                    
+                    {/* PACER EINSTELLUNGEN */}
+                    <div className="mb-6 p-4 bg-stone-50 dark:bg-stone-700/50 rounded-lg flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0 md:space-x-4 border border-stone-200 dark:border-stone-700">
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                checked={pacerActive}
+                                onChange={(e) => setPacerActive(e.target.checked)}
+                                className="w-5 h-5 text-rose-600 bg-white border-stone-300 rounded focus:ring-rose-500 dark:bg-stone-600 dark:border-stone-500"
+                            />
+                            <span className="font-semibold text-stone-700 dark:text-stone-300">{TRANSLATIONS[lang].pacerEnable}</span>
+                        </label>
+
+                        <div className="flex items-center space-x-2">
+                            <label htmlFor="pacer-speed" className="text-sm text-stone-600 dark:text-stone-400 whitespace-nowrap">
+    {TRANSLATIONS[lang].target}<span className="relative inline-block">
+        <span 
+            title={TRANSLATIONS[lang].spmFull} 
+            className="cursor-help border-b border-dotted border-stone-400 dark:border-stone-500 select-none"
+			onClick={(e) => {
+							if (isTouch) {
+								e.stopPropagation();
+								setPopup(prev => ({ 
+									visible: !(prev.visible && prev.content === TRANSLATIONS[lang].spmFull), 
+									x: 0, 
+									y: 20, 
+									content: TRANSLATIONS[lang].spmFull, 
+									isSyllable: false 
+                            }));
+                        }
+                    }}
+                >SPM</span>
+                {isTouch && popup.visible && popup.content === TRANSLATIONS[lang].spmFull && (
+                    <IASTInfoPopup 
+                        x={0} 
+                        y={25} 
+                        content={popup.content} 
+                        isSyllableMode={false} 
+                        onClose={() => setPopup({ ...popup, visible: false })} 
+                    />
+                )}
+    </span>:
+</label>
+                            <input
+                                id="pacer-speed"
+                                type="number"
+                                value={pacerSpeed}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val === '') { setPacerSpeed(''); return; }
+                                    const num = parseInt(val, 10);
+                                    if (!isNaN(num)) setPacerSpeed(Math.min(600, num));
+                                }}
+                                onBlur={() => { if (pacerSpeed === '' || pacerSpeed < 1) setPacerSpeed(1); }}
+                                min="1" max="600"
+                                disabled={!pacerActive}
+                                className={`w-20 p-1 border rounded-lg text-center font-mono focus:ring-2 focus:ring-rose-500 ${!pacerActive ? 'bg-stone-200 dark:bg-stone-700/50 text-stone-400' : 'bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-200 border-stone-300 dark:border-stone-600'}`}
+                            />
+                        </div>
+                    </div>
+                    
+                    {renderDevaTextWithHover(devaOutput)}
+
+                    <div className="sticky bottom-0 bg-white dark:bg-stone-800 py-4 mt-6 border-t border-stone-100 dark:border-stone-700 z-10">
+                        <p className="text-[10px] text-center uppercase tracking-wider text-stone-400 mb-2 font-sans">{TRANSLATIONS[lang].readyNote}</p>
+                        <button 
+                            onClick={startReading} 
+                            className="w-full bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-xl font-bold shadow-lg flex justify-center items-center space-x-2 transition-all active:scale-95"
+                        >
+                            <span>{TRANSLATIONS[lang].calcSpeedBtn}</span> <ClockIcon size={18} />
+                        </button>
+                    </div>
+                </div>
+            );
+            
+            // --- RENDERER: READING ---
+            const renderReading = () => (
+                <div className="max-w-4xl mx-auto bg-white dark:bg-stone-800 p-8 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-10">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-3xl font-bold text-stone-800 dark:text-stone-100 mb-6 font-serif flex items-center justify-center gap-3 w-full text-center">
+							<FileText size={32} className="text-rose-600" />
+							{TRANSLATIONS[lang].readingTitle}
+						</h2>
+                        <div className="text-stone-500 dark:text-stone-400 flex items-center">
+                            <ClockIcon className="mr-2 h-5 w-5 text-amber-500" />
+                            <span className="text-lg font-mono text-amber-600 dark:text-amber-450">{currentDuration} s</span>
+                        </div>
+                    </div>
+
+                    {renderDevaTextWithHover(devaOutput)}
+                    
+                    <div className="text-center mt-6">
+                        <p className="text-sm text-stone-500 dark:text-stone-400 mb-2">{TRANSLATIONS[lang].readingFinishNote}</p>
+                        <button 
+                            onClick={finishReading} 
+                            className="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 rounded-lg font-bold shadow-lg flex justify-center items-center space-x-2 mx-auto"
+                        >
+                            <span>{TRANSLATIONS[lang].readingFinishBtn}</span> <CheckIcon size={18} />
+                        </button>
+                    </div>
+                </div>
+            );
+            
+            // --- RENDERER: RESULT ---
+            const renderResult = () => {
+                const totalTime = currentDuration;
+                const spm = calculateSPM;
+                const syllables = finalSyllableCount; 
+                
+                // Dynamische Abbruch-Nachricht mit Sprachvariablen
+                const abortMessage = finalSyllableCount < syllableCount 
+                    ? ` (${TRANSLATIONS[lang].sessionAborted.replace('{count}', finalSyllableCount)})` 
+                    : (pacerActive && finalSyllableCount === syllableCount 
+                        ? ` (${TRANSLATIONS[lang].pacerTarget.replace('{speed}', pacerSpeed)})` 
+                        : '');
+
+                const getFeedback = (val) => {
+                    const pool = val >= 160 ? TRANSLATIONS[lang].feedback.expert :
+                                 val >= 120 ? TRANSLATIONS[lang].feedback.fluent :
+                                 val >= 90  ? TRANSLATIONS[lang].feedback.advanced :
+                                 val >= 40  ? TRANSLATIONS[lang].feedback.intermediate :
+                                              TRANSLATIONS[lang].feedback.beginner;
+
+                    // Wählt basierend auf dem aktuellen Zeitstempel (Sekunde) Index 0 oder 1
+                    const index = Math.floor(Date.now() / 1000) % 2;
+                    return pool[index];
+                };
+
+                return (
+                    <div className="max-w-2xl mx-auto bg-white dark:bg-stone-800 p-8 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-10 text-center">
+                        <h2 className="text-3xl font-bold text-stone-800 dark:text-stone-100 mb-8 font-serif text-center w-full">
+							{TRANSLATIONS[lang].resultTitle}
+						</h2>
+                        
+                        <div className="grid grid-cols-3 gap-2 md:gap-4 border-b border-stone-200 dark:border-stone-700 pb-4 mb-6">
+                            <div className="py-4 px-2 bg-stone-100 dark:bg-stone-700 rounded-lg">
+                                <div className="text-2xl md:text-3xl font-bold text-stone-800 dark:text-stone-200">{syllables}</div>
+                                <div className="text-xs md:text-sm text-stone-500 dark:text-stone-400 leading-tight">
+    {TRANSLATIONS[lang].syllablesRead}{abortMessage}
+</div> 
+                            </div>
+                            <div className="py-4 px-2 bg-stone-100 dark:bg-stone-700 rounded-lg">
+                                <div className="text-2xl md:text-3xl font-bold text-stone-800 dark:text-stone-200 whitespace-nowrap">{totalTime} s</div>
+                                <div className="text-xs md:text-sm text-stone-500 dark:text-stone-400">{TRANSLATIONS[lang].totalDuration}</div>
+                            </div>
+                            <div className="py-4 px-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg shadow-inner">
+                                <div className="text-3xl md:text-4xl font-extrabold text-rose-800 dark:text-rose-200">{spm}</div>
+                                <div className="text-xs md:text-md font-bold text-rose-700 dark:text-rose-300 leading-tight">SPM</div>
+                            </div>
+                        </div>
+
+                        <p className="text-stone-600 dark:text-stone-400 mb-6 italic leading-relaxed px-4">
+                            {getFeedback(spm)}
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row justify-center gap-4">
+                            <button 
+                                id="btn-new-text"
+                                onClick={() => { setTextInput(''); setReadingState('input'); }}
+                                className="bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200 px-6 py-2 rounded-lg font-bold hover:bg-stone-300 dark:hover:bg-stone-600 transition-all outline-none focus:bg-rose-600 dark:focus:bg-rose-600 focus:text-white dark:focus:text-white"
+                            >
+                                {TRANSLATIONS[lang].newTextBtn}
+                            </button>
+                            <button 
+                                id="btn-restart"
+                                onClick={() => setReadingState('review')} 
+                                className="bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200 px-6 py-2 rounded-lg font-bold hover:bg-stone-300 dark:hover:bg-stone-600 transition-all outline-none focus:bg-rose-600 dark:focus:bg-rose-600 focus:text-white dark:focus:text-white"
+                            >
+                                {TRANSLATIONS[lang].restartBtn}
+                            </button>
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="min-h-screen">
+                    {readingState === 'input' && renderSetup()}
+                    {readingState === 'review' && renderReview()}
+                    {readingState === 'reading' && renderReading()}
+                    {readingState === 'result' && renderResult()}
+                </div>
+            );
+        };
+        // ##################################################################################
+        // ########################### START HAUPTKOMPONENTE (REACT) ########################
+        // ##################################################################################
+		const SanskritTrainer = () => {
+        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;  
+          // --- ALLGEMEINER STATE ---
+          const [appState, setAppState] = useState(() => {
+			const saved = localStorage.getItem('sanskrit_trainer_app_state');
+			return (saved && saved !== 'devanagari_session') ? saved : 'home';
+		  });
+
+		  useEffect(() => {
+			localStorage.setItem('sanskrit_trainer_app_state', appState);
+		  }, [appState]);
+		  const longPressTimer = React.useRef(null); // Timer-Referenz für Long-Press
+          const [activeTopic, setActiveTopic] = useState('');
+          const [darkMode, setDarkMode] = useState(false);
+		  const [lang, setLang] = useState(localStorage.getItem('sanskrit_app_lang') || 'de');
+          const [popup, setPopup] = useState({ visible: false, x: 0, y: 0, content: null });
+            useEffect(() => {
+                const closePopup = () => setPopup(p => ({ ...p, visible: false }));
+                if (popup.visible) {
+                    window.addEventListener('click', closePopup);
+                }
+                return () => window.removeEventListener('click', closePopup);
+            }, [popup.visible]);
+		  const [showInfo, setShowInfo] = useState(false);
+		  // Hilfsfunktion zum Skalieren von Bildern auf max. 400px (spart Platz in der JSON)
+          const processImage = (file, callback) => {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                  const img = new Image();
+                  img.onload = () => {
+                      const canvas = document.createElement('canvas');
+                      let width = img.width;
+                      let height = img.height;
+                      const maxSide = 400; // Maximale Größe einer Seite
+
+                      if (width > height) {
+                          if (width > maxSide) {
+                              height *= maxSide / width;
+                              width = maxSide;
+                          }
+                      } else {
+                          if (height > maxSide) {
+                              width *= maxSide / height;
+                              height = maxSide;
+                          }
+                      }
+                      canvas.width = width;
+                      canvas.height = height;
+                      const ctx = canvas.getContext('2d');
+                      ctx.drawImage(img, 0, 0, width, height);
+                      // Konvertierung in WebP mit 0.8 Qualität für optimale Kompression
+                      callback(canvas.toDataURL('image/webp', 0.8));
+                  };
+                  img.src = e.target.result;
+              };
+              reader.readAsDataURL(file);
+          };
+
+          // --- DEVANAGARI STATE ---
+          // PERSISTENCE_LOGIC_V20
+          const [devaSet, setDevaSet] = useState(() => {
+              const saved = localStorage.getItem('deva_active_sets');
+              return saved ? JSON.parse(saved) : ['basic'];
+          });
+
+          {/* DEVA_SETTINGS_DEFAULTS */}
+          const [devaMode, setDevaMode] = useState('quiz'); 
+          const [devaOrder, setDevaOrder] = useState('random');
+
+          {/* FONT_STATES */}
+          const [customFontName, setCustomFontName] = useState('Sanskrit2003 - 30.07.2019.otf');
+          const [showFontSettings, setShowFontSettings] = useState(false);
+
+          {/* CUSTOM_DATA_STATES */}
+          const [isSortMode, setIsSortMode] = useState(false);
+
+          // Kategorien verschieben
+          const moveCategory = (id, direction) => {
+              const index = customCategories.findIndex(c => c.id === id);
+              if ((direction === -1 && index === 0) || (direction === 1 && index === customCategories.length - 1)) return;
+              const newCats = [...customCategories];
+              [newCats[index], newCats[index + direction]] = [newCats[index + direction], newCats[index]];
+              setCustomCategories(newCats);
+          };
+
+          // Zeichen innerhalb einer Kategorie verschieben
+          const moveItem = (catId, itemId, direction) => {
+              setCustomCategories(prev => prev.map(cat => {
+                  if (cat.id !== catId) return cat;
+                  const index = cat.items.findIndex(it => it.id === itemId);
+                  if ((direction === -1 && index === 0) || (direction === 1 && index === cat.items.length - 1)) return cat;
+                  const newItems = [...cat.items];
+                  [newItems[index], newItems[index + direction]] = [newItems[index + direction], newItems[index]];
+                  return { ...cat, items: newItems };
+              }));
+          };
+
+          // Alle ein-/ausklappen
+          const toggleAllCats = (expand) => {
+              if (expand) setExpandedCats(customCategories.map(c => c.id));
+              else setExpandedCats([]);
+          };
+		  const [expandedCats, setExpandedCats] = useState([]);
+
+          const toggleCatExpanded = (id) => {
+              setExpandedCats(prev => 
+                  prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+              );
+          };
+          const [customCategories, setCustomCategories] = useState(() => {
+              const saved = localStorage.getItem('deva_custom_categories');
+              return saved ? JSON.parse(saved) : [{ id: 'c1', name: 'Eigene Zeichen 1', active: true, items: [] }];
+          });
+
+          // PERSISTENCE_CLEANUP_V12
+          useEffect(() => {
+              localStorage.setItem('deva_active_sets', JSON.stringify(devaSet));
+          }, [devaSet]);
+
+          useEffect(() => {
+              localStorage.setItem('deva_custom_categories', JSON.stringify(customCategories));
+          }, [customCategories]);
+
+          const [showCustomEditor, setShowCustomEditor] = useState(false);
+		  const [studyModeContent, setStudyModeContent] = useState(null);
+		  const [studySearch, setStudySearch] = useState("");
+
+          const exportData = () => {
+              try {
+                  const activeCategories = customCategories.filter(c => c.active);
+                  // Exportlogik: Falls einige (aber nicht alle) gewählt sind, nur diese exportieren.
+                  // Falls nichts gewählt wurde oder alles gewählt wurde, exportiere den kompletten Satz.
+                  const dataToExport = (activeCategories.length > 0 && activeCategories.length < customCategories.length)
+                      ? activeCategories
+                      : customCategories;
+
+                  const dataStr = JSON.stringify(dataToExport, null, 2);
+                  const blob = new Blob([dataStr], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = 'sanskrit_deva_custom.json';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  URL.revokeObjectURL(url);
+              } catch (err) {
+                  alert("Export fehlgeschlagen.");
+              }
+          };
+
+          const importData = (event) => {
+              const file = event.target.files[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                  try {
+                      const imported = JSON.parse(e.target.result);
+                      
+                      // Sicherheitscheck: Ist es ein Array und enthält es Kategorien?
+                      if (!Array.isArray(imported)) {
+                          throw new Error("Die Datei muss eine Liste von Kategorien sein.");
+                      }
+
+                      // Validierung: Hat jedes Element zumindest einen Namen?
+                      const validData = imported.every(cat => cat.name && Array.isArray(cat.items || []));
+                      
+                      if (!validData) {
+                          throw new Error("Das Dateiformat ist ungültig (Kategorien oder Zeichen fehlen).");
+                      }
+
+                      // Erfolg: Oben hinzufügen (Prepend)
+                      setCustomCategories(prev => [...imported, ...prev]);
+                      alert(TRANSLATIONS[lang].importSuccess);
+                  } catch (err) {
+                      alert(TRANSLATIONS[lang].importError + err.message);
+                  }
+                  // Input zurücksetzen, damit dieselbe Datei erneut gewählt werden kann
+                  event.target.value = '';
+              };
+              reader.readAsText(file);
+          };
+
+const addCategory = () => {
+        const newCat = {
+            id: 'cat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+            name: (TRANSLATIONS[lang] && TRANSLATIONS[lang].newCatDefault) || 'Neue Sammlung',
+            active: true,
+            items: [],
+            font: ''
+        };
+        // Wir setzen newCat an den Anfang des Arrays [newCat, ...prev]
+        setCustomCategories(prev => [newCat, ...prev]);
+        setExpandedCats(prev => [...prev, newCat.id]);
+    };
+
+    const updateCategory = (id, field, value) => {
+        setCustomCategories(prev => prev.map(c => c.id === id ? { ...c, [field]: value } : c));
+    };
+
+    const deleteCategory = (id) => {
+        const confirmMsg = lang === 'de' ? 'Sammlung wirklich löschen?' : 'Delete collection?';
+        if (window.confirm(confirmMsg)) {
+            setCustomCategories(prev => {
+                const newState = prev.filter(c => c.id !== id);
+                // Wir speichern zur Sicherheit sofort im LocalStorage
+                localStorage.setItem('sanskrit_custom_cats', JSON.stringify(newState));
+                return newState;
+            });
+        }
+    };
+
+          // ITEM_HELPERS_V1
+          const addItemToCategory = (catId) => {
+              setCustomCategories(customCategories.map(cat => {
+                  if (cat.id === catId) {
+                      const newItem = { 
+                          id: 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9), 
+                          char: '', 
+                          iast: '', 
+                          image: null, 
+                          font: '' 
+                      };
+                      return { ...cat, items: [...(cat.items || []), newItem] };
+                  }
+                  return cat;
+              }));
+          };
+
+          const deleteItemFromCategory = (catId, itemId) => {
+              setCustomCategories(customCategories.map(cat => {
+                  if (cat.id === catId) {
+                      return { ...cat, items: cat.items.filter(item => item.id !== itemId) };
+                  }
+                  return cat;
+              }));
+          };
+
+          const [devaDirection, setDevaDirection] = useState('devaToIast'); // 'devaToIast' oder 'iastToDeva'
+          const [devaIndex, setDevaIndex] = useState(0);
+          const [devaItems, setDevaItems] = useState([]); 
+          const [showCardBack, setShowCardBack] = useState(false);
+          const [isAnimating, setIsAnimating] = useState(true);
+
+          // --- QUIZ STATE ---
+          const [quizOptions, setQuizOptions] = useState([]);
+          const [quizSelection, setQuizSelection] = useState(null);
+          const [quizScore, setQuizScore] = useState(0);
+          const [quizAnswered, setQuizAnswered] = useState(false);
+
+          // --- ÄHNLICHE ZEICHEN / DISTRAKTOREN-MAP ---
+          const SMART_DISTRACTORS = useMemo(() => ({
+              "ṅa": ["ḍa"], "ḍa": ["ṅa"],
+              "i": ["jha"], "jha": ["i"],
+              "gha": ["dha"], "dha": ["gha"],
+              "ya": ["pa", "ṣa", "pha", "tha"], 
+              "pa": ["ya", "ṣa", "pha"],
+              "ṣa": ["pa", "pha", "ya"],
+              "pha": ["pa", "ṣa", "ya"],
+              "tha": ["ya"],
+              "va": ["ba", "kha", "ra"], 
+              "ba": ["va"],
+              "ma": ["bha"], "bha": ["ma"],
+              "ḍha": ["da"], "da": ["ḍha"],
+              "kha": ["ra", "va"], "ra": ["kha", "va"],
+              "u": ["ū"], "ū": ["u"],
+              "ṭa": ["ṭha"], "ṭha": ["ṭa"],
+              "ta": ["na"], "na": ["ta"],
+              "0": ["1", "9", "8"], 
+              "1": ["9", "2", "0"], 
+              "2": ["1", "3", "7"], 
+              "3": ["6", "2", "4"], 
+              "4": ["8", "3", "5"], 
+              "5": ["4", "6", "0"], 
+              "6": ["3", "5", "7"], 
+              "7": ["6", "8", "2"], 
+              "8": ["6", "7", "9"], 
+              "9": ["1", "8", "0"],
+          }), []);
+
+		// --- HANDLERS ---
+
+          const handleDevaNext = useCallback(() => {
+              if (devaMode === 'quiz' && !quizAnswered) return; 
+              
+              if (devaIndex < devaItems.length - 1) {
+                  setIsAnimating(false);
+                  setShowCardBack(false);
+                  
+                  const nextIdx = devaIndex + 1;
+                  setDevaIndex(nextIdx);
+
+                  if (devaMode === 'quiz') {
+                      setQuizAnswered(false);
+                      setQuizSelection(null);
+                      const nextOptions = generateQuizOptions(devaItems[nextIdx], devaItems);
+                      setQuizOptions(nextOptions);
+                  }
+
+                  setTimeout(() => { setIsAnimating(true); }, 50);
+              } else {
+                  setAppState('setup_devanagari');
+              }
+
+              // Fokus lösen für Tastaturbedienung
+              if (document.activeElement) document.activeElement.blur();
+          }, [devaIndex, devaItems, devaMode, quizAnswered]);
+
+          const handleDevaPrev = useCallback(() => {
+              if (devaIndex > 0) {
+                  setIsAnimating(false);
+                  setShowCardBack(false);
+                  
+                  const prevIdx = devaIndex - 1;
+                  setDevaIndex(prevIdx);
+
+                  if (devaMode === 'quiz') {
+                      setQuizAnswered(false);
+                      setQuizSelection(null);
+                      const prevOptions = generateQuizOptions(devaItems[prevIdx], devaItems);
+                      setQuizOptions(prevOptions);
+                  }
+
+                  setTimeout(() => { setIsAnimating(true); }, 50);
+              }
+          }, [devaIndex, devaItems, devaMode]);
+
+          // --- EFFECTS ---
+          useEffect(() => {
+              if (darkMode) {
+                  document.documentElement.classList.add('dark');
+              } else {
+                  document.documentElement.classList.remove('dark');
+              }
+          }, [darkMode]);
+
+          useEffect(() => {
+              localStorage.setItem('sanskrit_app_lang', lang);
+          }, [lang]);
+
+          useEffect(() => {
+              const handleKeyDown = (e) => {
+                  // Liste der Tasten, auf die wir reagieren
+                  const navKeys = ['Escape', 'Enter', 'ArrowRight', 'ArrowLeft'];
+                  if (!navKeys.includes(e.key)) return;
+
+                  // Falls wir in der Session sind, verhindern wir Standard-Browser-Aktionen (z.B. Scrollen bei Pfeiltasten)
+                  // Aber NUR, wenn kein Modal offen ist, damit man im Editor noch tippen kann.
+                  if (appState === 'devanagari_session' && !studyModeContent && !showCustomEditor && !showInfo && !showFontSettings) {
+                      if (e.key !== 'Escape') e.preventDefault(); 
+                  }
+
+                  // 1. PRIORITÄT: OVERLAYS (MODALE) SCHLIESSEN
+                  if (e.key === 'Escape') {
+                      if (studyModeContent) { setStudyModeContent(null); return; }
+                      if (showCustomEditor) { setShowCustomEditor(false); return; }
+                      if (showInfo) { setShowInfo(false); return; }
+                      if (showFontSettings) { setShowFontSettings(false); return; }
+                  }
+
+                  // 2. PRIORITÄT: NAVIGATION INNERHALB DER APP-STATES
+                  // A) In der Devanagari-Übung (Karten/Quiz)
+                  if (appState === 'devanagari_session') {
+                      if (e.key === 'Escape') {
+                          setAppState('setup_devanagari');
+                          return;
+                      }
+
+                      if (devaMode === 'cards') {
+                          if (e.key === 'Enter') setShowCardBack(prev => !prev);
+                          else if (e.key === 'ArrowRight') handleDevaNext();
+                          else if (e.key === 'ArrowLeft') handleDevaPrev();
+                      } else if (devaMode === 'quiz') {
+                          if (quizAnswered && e.key === 'Enter') handleDevaNext();
+                          else if (!quizAnswered && e.key === 'Enter') {
+                              const focused = document.activeElement;
+                              if (focused && focused.tagName === 'BUTTON') focused.click();
+                          }
+                      }
+                      return;
+                  } 
+                  
+                  // B) Im Devanagari-Setup
+                  if (appState === 'setup_devanagari') {
+                      if (e.key === 'Escape' || e.key === 'ArrowLeft') {
+                          setAppState('home');
+                      } else if (e.key === 'Enter') {
+                          e.preventDefault();
+                          startDevanagari();
+                      }
+                  }
+              };
+
+              window.addEventListener('keydown', handleKeyDown);
+              return () => window.removeEventListener('keydown', handleKeyDown);
+          }, [appState, devaMode, quizAnswered, handleDevaNext, handleDevaPrev, studyModeContent, showCustomEditor, showInfo, showFontSettings]);
+
+          // Popup-Click-Handler (separat für Maus-Events)
+          useEffect(() => {
+              const closePopup = () => setPopup(p => ({ ...p, visible: false }));
+              if (popup.visible) window.addEventListener('click', closePopup);
+              return () => window.removeEventListener('click', closePopup);
+          }, [popup.visible]);
+
+          // Berechnet die Gesamtzahl aller aktiven Pakete (Standard + Eigene)
+          const totalActiveSets = useMemo(() => {
+              const standardCount = devaSet.filter(s => s !== 'custom').length;
+              const customCount = devaSet.includes('custom') 
+                  ? customCategories.filter(c => c.active).length 
+                  : 0;
+              return standardCount + customCount;
+          }, [devaSet, customCategories]);
+
+          {/* ORDER_LOGIC_SYNC */}
+          const showHelp = (e, title, description) => {
+              // Verhindert Hover-Effekte auf Mobile-Browsern
+              if (e.type === 'mouseenter' && window.matchMedia("(pointer: coarse)").matches) return;
+              
+              const rect = e.currentTarget.getBoundingClientRect();
+              setPopup({
+                  visible: true,
+                  x: rect.right + 10,
+                  y: rect.top + (rect.height / 2),
+                  content: { word: title, def: description }
+              });
+          };
+
+          const cancelHelp = () => {
+              if (longPressTimer.current) clearTimeout(longPressTimer.current);
+              setPopup(prev => ({ ...prev, visible: false }));
+          };
+		  useEffect(() => {
+              if (totalActiveSets > 1 && devaOrder === 'sequential') {
+                  setDevaOrder('random');
+              }
+          }, [totalActiveSets, devaOrder]);
+
+          const [activeAnimation, setActiveAnimation] = useState(null);
+		  {/* DYNAMIC_FONT_LOADER */}
+        useEffect(() => {
+            const uniqueFonts = new Set();
+            
+            // Fallback-Logik. Wenn customFontName leer ist, nutze Standardnamen.
+            const defaultFontFile = 'Sanskrit2003 - 30.07.2019.otf';
+            const baseFont = customFontName.trim() || defaultFontFile;
+            
+            uniqueFonts.add(baseFont);
+            if (baseFont !== defaultFontFile) uniqueFonts.add(defaultFontFile);
+            
+            customCategories.forEach(cat => {
+                if (cat.font) uniqueFonts.add(cat.font);
+                if (cat.items) {
+                    cat.items.forEach(item => {
+                        if (item.font) uniqueFonts.add(item.font);
+                    });
+                }
+            });
+
+            let fontStyles = '';
+            uniqueFonts.forEach(fontFile => {
+                const trimmed = fontFile.trim();
+                if (trimmed !== "") {
+                    fontStyles += `
+                        @font-face {
+                            font-family: "${trimmed}";
+                            src: url("${encodeURI(trimmed)}") format("opentype"), 
+                                 url("${encodeURI(trimmed)}") format("truetype");
+                            font-display: swap;
+                        }
+                    `;
+                }
+            });
+
+            fontStyles += `
+                .font-deva { 
+                    font-family: "${baseFont}", "Sanskrit2003", serif; 
+                }
+            `;
+            
+            const oldStyle = document.getElementById('dynamic-font-style');
+            if (oldStyle) oldStyle.remove();
+            
+const styleEl = document.createElement('style');
+            styleEl.id = 'dynamic-font-style';
+            styleEl.innerHTML = fontStyles;
+            document.head.appendChild(styleEl);
+        }, [customFontName, customCategories]);
+          
+        // Popup-Click-Handler (separat für Maus-Events)
+        useEffect(() => {
+            const closePopup = () => setPopup(p => ({ ...p, visible: false }));
+            if (popup.visible) window.addEventListener('click', closePopup);
+            return () => window.removeEventListener('click', closePopup);
+        }, [popup.visible]);
+
+        // --- DEVANAGARI LOGIC ---
+
+          const generateQuizOptions = (correctItem, allItems) => {
+              // Set-Isolation: Nur Zeichen aus derselben Quelle
+              const categoryPool = allItems.filter(it => it.catSource === correctItem.catSource);
+              const otherItems = categoryPool.filter(it => it.t !== correctItem.t);
+              
+              let distractors = [];
+
+              // 1. "Smarte" Distraktoren suchen
+              if (SMART_DISTRACTORS[correctItem.t]) {
+                  const similarKeys = SMART_DISTRACTORS[correctItem.t];
+                  distractors = otherItems.filter(it => similarKeys.includes(it.t));
+              }
+
+              // Falls wir hier schon mehr als 3 haben (wie bei "ya"), 
+              // kürzen wir sie hier direkt auf 3 zufällige aus der Auswahl.
+              if (distractors.length > 3) {
+                  distractors = shuffleArray(distractors).slice(0, 3);
+              }
+
+              // 2. Auffüllen, falls wir noch weniger als 3 haben
+              const needed = 3 - distractors.length;
+              if (needed > 0) {
+                  const remaining = otherItems.filter(it => !distractors.some(d => d.t === it.t));
+                  const randomFillers = shuffleArray(remaining).slice(0, Math.min(needed, remaining.length));
+                  distractors = [...distractors, ...randomFillers];
+              }
+
+              // Jetzt sind es garantiert 1 korrektes + maximal 3 falsche = max 4 Buttons
+              return shuffleArray([correctItem, ...distractors]);
+          };
+
+          const toggleDevaSet = (set) => {
+              setDevaSet(prev => {
+                  if (prev.includes(set)) {
+                      if (prev.length === 1) return prev;
+                      return prev.filter(s => s !== set);
+                  }
+                  return [...prev, set];
+              });
+          };
+
+          const startDevanagari = () => {
+              let combinedItems = [];
+              
+              // Standard-Sets hinzufügen
+              devaSet.forEach(set => {
+                  if (DEVANAGARI_DATA[set]) {
+                      DEVANAGARI_DATA[set].forEach(item => {
+                          combinedItems.push({ 
+                              d: item.d, 
+                              t: item.t, 
+                              font: '', 
+                              image: null,
+                              note: null,
+                              catSource: set // Herkunft speichern
+                          });
+                      });
+                  }
+              });
+
+              // Eigene Zeichen hinzufügen
+              if (devaSet.includes('custom')) {
+                  customCategories.filter(c => c.active).forEach(cat => {
+                      const effectiveFont = cat.font || '';
+                      cat.items.forEach(item => {
+                          combinedItems.push({ 
+                              d: item.char || '', 
+                              t: item.iast || '', 
+                              font: item.font || effectiveFont,
+                              image: item.image || null,
+                              note: item.note || null,
+                              catSource: cat.id // Eindeutige Category-ID als Herkunft
+                          });
+                      });
+                  });
+              }
+
+              if (combinedItems.length === 0) return;
+
+              const finalItems = devaOrder === 'random' ? shuffleArray(combinedItems) : combinedItems;
+              setDevaItems(finalItems);
+              setDevaIndex(0);
+              setQuizScore(0);
+              setQuizAnswered(false);
+              setQuizSelection(null);
+              
+              if (devaMode === 'quiz') {
+                  setQuizOptions(generateQuizOptions(finalItems[0], finalItems));
+              }
+              
+              setAppState('devanagari_session');
+          };
+
+          // --- RENDERERS ---
+          const renderHeader = () => (
+              /* Geändert: Nicht mehr absolute, sondern flex-center für horizontale Zentrierung */
+              <div className="w-full flex justify-center items-center gap-3 mb-8">
+                  {/* Sprach-Umschalter */}
+                  <div className="relative inline-block text-left">
+                      <select 
+                          value={lang}
+                          onChange={(e) => setLang(e.target.value)}
+                          className="appearance-none h-12 px-4 rounded-full bg-white dark:bg-stone-800 shadow-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors border border-stone-200 dark:border-stone-700 font-bold text-sm cursor-pointer outline-none"
+                      >
+                          <option value="de">DE</option>
+                          <option value="en">EN</option>
+                      </select>
+                  </div>
+
+                  {/* Info Button - Nur auf Home anzeigen */}
+                  {appState === 'home' && (
+                      <button 
+                        onClick={() => setShowInfo(true)}
+                        className="w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-stone-800 shadow-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors font-serif italic font-bold text-xl border border-stone-200 dark:border-stone-700"
+                        title={TRANSLATIONS[lang].info + " & Credits"}
+                      >
+                        i
+                      </button>
+                  )}
+
+                  {/* Fullscreen Button */}
+                  <button 
+                    onClick={() => {
+                        if (!document.fullscreenElement) {
+                            document.documentElement.requestFullscreen();
+                        } else {
+                            if (document.exitFullscreen) document.exitFullscreen();
+                        }
+                    }}
+                    className="w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-stone-800 shadow-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors border border-stone-200 dark:border-stone-700"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                  </button>
+
+                  {/* Dark Mode Button */}
+                  <button 
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-stone-800 shadow-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors border border-stone-200 dark:border-stone-700"
+                  >
+                      {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                  </button>
+              </div>
+          );
+
+          const renderHome = () => (
+            <div className="space-y-6 text-center p-4 pt-24 max-w-5xl mx-auto min-h-[80vh] flex flex-col items-center">
+              {renderHeader()}
+              <div className="mb-8 text-center w-full">
+				  <h1 className="text-4xl font-bold text-stone-800 dark:text-stone-100 mb-2 font-serif">
+					  {TRANSLATIONS[lang].appTitle}
+				  </h1>
+				  <p className="text-stone-600 dark:text-stone-400">
+					  {TRANSLATIONS[lang].appSubtitle}
+				  </p>
+			  </div>
+              <div className="flex justify-center">
+                <button 
+                  onClick={() => { setActiveTopic('devanagari'); setAppState('setup_devanagari'); }}
+                  className="group p-8 bg-white dark:bg-stone-800 rounded-xl border-2 border-stone-200 dark:border-stone-700 hover:border-rose-500 dark:hover:border-rose-500 hover:bg-rose-50 dark:hover:bg-stone-750 transition-all shadow-lg flex flex-col items-center w-64"
+                >
+                  <div className="mb-6 text-rose-600 group-hover:scale-110 transition-transform flex items-center justify-center h-16">
+                    <OmIcon size={48} />
+                  </div>
+                  <h2 className="text-2xl font-bold text-stone-800 dark:text-stone-200 mb-2">Devanāgarī</h2>
+                  <p className="text-stone-500 dark:text-stone-400">
+                    {TRANSLATIONS[lang].startPractice}
+                  </p>
+                </button>
+              </div>
+            </div>
+          );
+          const renderPlaceholder = () => (
+            <div className="max-w-lg mx-auto bg-white dark:bg-stone-800 p-8 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-10 text-center">
+                <h2 className="text-2xl font-bold mb-4">
+                  {TRANSLATIONS[lang].readTexts}
+                </h2>
+                <p className="text-stone-500 mb-6">
+                    {lang === 'de' 
+                      ? "Hier wird das Modul zum Lesen von Texten integriert." 
+                      : "The module for reading texts will be integrated here."}
+                </p>
+                <button 
+                  onClick={() => setAppState('setup_devanagari')} 
+                  className="bg-rose-600 text-white px-6 py-2 rounded-lg font-bold"
+                >
+                  {TRANSLATIONS[lang].back}
+                </button>
+            </div>
+          );
+const renderDevanagariSetup = () => (
+            <div className="max-w-lg mx-auto bg-white dark:bg-stone-800 p-5 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-10">
+                <div className="flex items-center justify-center mb-6 relative min-h-[40px]">
+					<button 
+						onClick={() => setAppState('home')} 
+						className="absolute left-0 text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
+					>
+						<ArrowLeft size={20} />
+					</button>
+					<h2 className="text-2xl font-bold text-stone-800 dark:text-stone-200 text-center">
+						{TRANSLATIONS[lang].setupTitle}
+					</h2>
+					<button 
+						onClick={() => setShowFontSettings(true)}
+						className="absolute right-0 p-2 hover:bg-stone-100 dark:hover:bg-stone-700 rounded-full text-stone-400 hover:text-rose-600 transition-colors"
+					>
+						<SettingsIcon size={18} />
+					</button>
+				</div>
+
+                <div className="space-y-3">
+                    <div>
+                        <div className="flex gap-2 mb-6">
+                            <button className="flex-1 py-2 bg-rose-600 text-white font-bold rounded-lg border-2 border-rose-600 shadow-sm">{TRANSLATIONS[lang].learnChars}</button>
+                            <button onClick={() => setAppState('texte_lesen')} className="flex-1 py-2 bg-stone-100 dark:bg-stone-700 text-stone-500 dark:text-stone-400 font-bold rounded-lg border-2 border-stone-200 dark:border-stone-600 hover:bg-stone-200 transition-colors">{TRANSLATIONS[lang].readTexts}</button>
+                        </div>
+                       <div className="grid grid-cols-1 gap-2">
+                            {/* Grundzeichen */}
+                            <button onClick={() => toggleDevaSet('basic')} className={`p-2 px-4 text-left border rounded-lg flex justify-between items-center transition-all ${devaSet.includes('basic') ? 'border-rose-500 bg-rose-50 dark:bg-rose-900/20 text-rose-900 dark:text-rose-300' : 'border-stone-200 dark:border-stone-600 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700'}`}>
+                                <span className="font-bold py-1 select-none cursor-help" onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].catBasic, TRANSLATIONS[lang].catBasicDesc)} onMouseLeave={cancelHelp} onClick={(e) => { e.stopPropagation(); showHelp(e, TRANSLATIONS[lang].catBasic, TRANSLATIONS[lang].catBasicDesc); }}>{TRANSLATIONS[lang].catBasic}</span>
+                                <div className="flex-1 h-8"></div>
+                                <span onClick={(e) => { e.stopPropagation(); setStudyModeContent('basic'); }} className="text-2xl font-deva opacity-80 select-none ml-4 w-10 text-center hover:text-rose-600 hover:scale-125 transition-all cursor-zoom-in" title={TRANSLATIONS[lang].viewMode}>व</span>
+                            </button>
+
+                            {/* Vokaldiakritika */}
+                            <button onClick={() => toggleDevaSet('diacritics')} className={`p-2 px-4 text-left border rounded-lg flex justify-between items-center transition-all ${devaSet.includes('diacritics') ? 'border-rose-500 bg-rose-50 dark:bg-rose-900/20 text-rose-900 dark:text-rose-300' : 'border-stone-200 dark:border-stone-600 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700'}`}>
+                                <span className="font-bold py-1 select-none cursor-help" onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].catDiacritics, TRANSLATIONS[lang].catDiacriticsDesc)} onMouseLeave={cancelHelp} onClick={(e) => { e.stopPropagation(); showHelp(e, TRANSLATIONS[lang].catDiacritics, TRANSLATIONS[lang].catDiacriticsDesc); }}>{TRANSLATIONS[lang].catDiacritics}</span>
+                                <div className="flex-1 h-8"></div>
+                                <span onClick={(e) => { e.stopPropagation(); setStudyModeContent('diacritics'); }} className="text-xl font-deva opacity-80 select-none ml-4 w-10 text-center hover:text-rose-600 hover:scale-125 transition-all cursor-zoom-in" title={TRANSLATIONS[lang].viewMode}>सि</span>
+                            </button>
+
+                            {/* Ligaturen */}
+                            <button onClick={() => toggleDevaSet('ligatures')} className={`p-2 px-4 text-left border rounded-lg flex justify-between items-center transition-all ${devaSet.includes('ligatures') ? 'border-rose-500 bg-rose-50 dark:bg-rose-900/20 text-rose-900 dark:text-rose-300' : 'border-stone-200 dark:border-stone-600 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700'}`}>
+                                <span className="font-bold py-1 select-none cursor-help" onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].catLigatures, TRANSLATIONS[lang].catLigaturesDesc)} onMouseLeave={cancelHelp} onClick={(e) => { e.stopPropagation(); showHelp(e, TRANSLATIONS[lang].catLigatures, TRANSLATIONS[lang].catLigaturesDesc); }}>{TRANSLATIONS[lang].catLigatures}</span>
+                                <div className="flex-1 h-8"></div>
+                                <span onClick={(e) => { e.stopPropagation(); setStudyModeContent('ligatures'); }} className="text-2xl font-deva opacity-80 select-none ml-4 w-10 text-center hover:text-rose-600 hover:scale-125 transition-all cursor-zoom-in" title={TRANSLATIONS[lang].viewMode}>ष्ठ</span>
+                            </button>
+
+                            {/* Ziffernzeichen */}
+                            <button onClick={() => toggleDevaSet('digits')} className={`p-2 px-4 text-left border rounded-lg flex justify-between items-center transition-all ${devaSet.includes('digits') ? 'border-rose-500 bg-rose-50 dark:bg-rose-900/20 text-rose-900 dark:text-rose-300' : 'border-stone-200 dark:border-stone-600 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700'}`}>
+                                <span className="font-bold py-1 select-none cursor-help" onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].catDigits, TRANSLATIONS[lang].catDigitsDesc)} onMouseLeave={cancelHelp} onClick={(e) => { e.stopPropagation(); showHelp(e, TRANSLATIONS[lang].catDigits, TRANSLATIONS[lang].catDigitsDesc); }}>{TRANSLATIONS[lang].catDigits}</span>
+                                <div className="flex-1 h-8"></div>
+                                <span onClick={(e) => { e.stopPropagation(); setStudyModeContent('digits'); }} className="text-2xl font-deva opacity-80 select-none ml-4 w-10 text-center hover:text-rose-600 hover:scale-125 transition-all cursor-zoom-in" title={TRANSLATIONS[lang].viewMode}>७</span>
+                            </button>
+
+                            {/* Eigene Zeichen */}
+                            <button onClick={() => toggleDevaSet('custom')} className={`p-2 px-4 text-left border-2 border-dashed rounded-lg flex justify-between items-center transition-all group ${devaSet.includes('custom') ? 'border-rose-500 bg-rose-50 dark:bg-rose-900/20 text-rose-900 dark:text-rose-300' : 'border-rose-200 dark:border-rose-900/40 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700'}`}>
+                                <div 
+                                    className="py-1 select-none cursor-help" 
+                                    onMouseEnter={(e) => {
+                                        const activeNames = customCategories.filter(c => c.active).map(c => c.name).join("; ");
+                                        showHelp(e, lang === 'de' ? "Eigene Zeichen" : "Custom characters", activeNames ? TRANSLATIONS[lang].catCustomActive + activeNames : TRANSLATIONS[lang].catCustomNone);
+                                    }} 
+                                    onMouseLeave={cancelHelp} 
+                                    onClick={(e) => { 
+                                        e.stopPropagation(); 
+                                        const activeNames = customCategories.filter(c => c.active).map(c => c.name).join("; ");
+                                        showHelp(e, lang === 'de' ? "Eigene Zeichen" : "Custom characters", activeNames ? TRANSLATIONS[lang].catCustomActive + activeNames : TRANSLATIONS[lang].catCustomNone);
+                                    }}
+                                >
+                                    <span className={`font-bold ${devaSet.includes('custom') ? 'text-rose-700 dark:text-rose-400' : 'text-stone-700 dark:text-stone-300'}`}>
+                                        {TRANSLATIONS[lang].catCustom}
+                                    </span> 
+                                </div>
+                                <div className="flex-1 h-8"></div>
+                                <div className="w-10 ml-4 flex justify-center">
+                                    <div onClick={(e) => { e.stopPropagation(); cancelHelp(); setShowCustomEditor(true); }} className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-white dark:hover:bg-stone-800 rounded-full transition-all border border-transparent hover:border-rose-200 shadow-sm cursor-pointer">
+                                        <SettingsIcon size={16} />
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="flex space-x-4">
+                        <div className="flex-1">
+                            <label className="block text-sm font-bold text-stone-700 dark:text-stone-300 mb-2">{TRANSLATIONS[lang].mode}</label>
+                            <div className="flex bg-stone-100 dark:bg-stone-900 p-1 rounded-lg">
+                                <button onClick={() => setDevaMode('quiz')} className={`flex-1 py-2 text-sm rounded-md ${devaMode === 'quiz' ? 'bg-white dark:bg-stone-800 shadow text-rose-700 dark:text-rose-400' : 'text-stone-500 dark:text-stone-400'}`}>{TRANSLATIONS[lang].quiz}</button>
+                                <button onClick={() => setDevaMode('cards')} className={`flex-1 py-2 text-sm rounded-md ${devaMode === 'cards' ? 'bg-white dark:bg-stone-800 shadow text-rose-700 dark:text-rose-400' : 'text-stone-500 dark:text-stone-400'}`}>{TRANSLATIONS[lang].flashcards}</button>
+                            </div>
+                        </div>
+                        <div className="flex-1">
+                            <label className="block text-sm font-bold text-stone-700 dark:text-stone-300 mb-2">{TRANSLATIONS[lang].order}</label>
+                            <div className="flex bg-stone-100 dark:bg-stone-900 p-1 rounded-lg">
+                                <button 
+                                    onClick={() => setDevaOrder('sequential')} 
+                                    disabled={totalActiveSets > 1}
+                                    title={totalActiveSets > 1 ? TRANSLATIONS[lang].seqNote : ""}
+                                    className={`flex-1 py-2 text-sm rounded-md transition-all ${
+                                        devaOrder === 'sequential' 
+                                        ? 'bg-white dark:bg-stone-800 shadow text-rose-700 dark:text-rose-400 font-bold' 
+                                        : 'text-stone-500 dark:text-stone-400'
+                                    } ${totalActiveSets > 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                >
+                                    {TRANSLATIONS[lang].sequential}
+                                </button>
+                                <button onClick={() => setDevaOrder('random')} className={`flex-1 py-2 text-sm rounded-md ${devaOrder === 'random' ? 'bg-white dark:bg-stone-800 shadow text-rose-700 dark:text-rose-400 font-bold' : 'text-stone-500 dark:text-stone-400'}`}>{TRANSLATIONS[lang].random}</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-bold text-stone-700 dark:text-stone-300 mb-2">{TRANSLATIONS[lang].direction}</label>
+                        <div className="flex bg-stone-100 dark:bg-stone-900 p-1 rounded-lg">
+                            <button onClick={() => setDevaDirection('devaToIast')} className={`flex-1 py-2 text-sm rounded-md transition-all ${devaDirection === 'devaToIast' ? 'bg-white dark:bg-stone-800 shadow text-rose-700 dark:text-rose-400 font-bold' : 'text-stone-500 dark:text-stone-400'}`}>अ → a</button>
+                            <button onClick={() => setDevaDirection('iastToDeva')} className={`flex-1 py-2 text-sm rounded-md transition-all ${devaDirection === 'iastToDeva' ? 'bg-white dark:bg-stone-800 shadow text-rose-700 dark:text-rose-400 font-bold' : 'text-stone-500 dark:text-stone-400'}`}>a → अ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onClick={startDevanagari} className="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-lg font-bold shadow-md mt-6 flex justify-center items-center space-x-2">
+                    <span>{TRANSLATIONS[lang].start}</span> <ArrowRight size={18} />
+                </button>
+            </div>
+          );
+
+const renderDevanagariSession = () => {
+            const getCategoryLabel = (source) => {
+                const standardNames = {
+                    basic: TRANSLATIONS[lang].catBasic,
+                    diacritics: TRANSLATIONS[lang].catDiacritics,
+                    ligatures: TRANSLATIONS[lang].catLigatures,
+                    digits: TRANSLATIONS[lang].catDigits
+                };
+                if (standardNames[source]) return standardNames[source];
+                // Suche in den eigenen Kategorien
+                const customCat = customCategories.find(c => c.id === source);
+                return customCat ? customCat.name : '';
+            };
+
+            const currentItem = devaItems[devaIndex];
+            const categoryLabel = getCategoryLabel(currentItem?.catSource);
+            const isLastCard = devaIndex === devaItems.length - 1;
+            const isForward = devaDirection === 'devaToIast';
+
+            const displayQuestion = isForward ? currentItem?.d : currentItem?.t;
+            const displayAnswer = isForward ? currentItem?.t : currentItem?.d;
+
+            const handleQuizAnswer = (option) => {
+                if (quizAnswered) return;
+                const isCorrect = isForward ? option.t === currentItem.t : option.d === currentItem.d;
+                setQuizSelection(option.t);
+                setQuizAnswered(true);
+                if (isCorrect) setQuizScore(prev => prev + 1);
+            };
+
+            if (devaMode === 'cards') {
+                return (
+                    <div className="max-w-md mx-auto">
+                        <div className="flex justify-between items-center mb-2">
+                            <button 
+                                onClick={() => setAppState('setup_devanagari')} 
+                                className="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
+                            >
+                                <ArrowLeft size={24} />
+                            </button>
+                            <div className="text-sm font-medium text-stone-500">{devaIndex + 1} / {devaItems.length}</div>
+                            <div className="w-10"></div>
+                        </div>
+                        
+                        {/* Kategorie-Label */}
+                        <div className="text-center mb-4">
+							<span className="text-xs uppercase tracking-widest text-stone-400 font-semibold text-center block w-full">
+								{categoryLabel}
+							</span>
+						</div>
+
+                        <TrainerCard 
+                            lang={lang}
+                            front={displayQuestion} 
+                            back={displayAnswer} 
+                            showBack={showCardBack} 
+                            setShowBack={setShowCardBack} 
+                            isAnimating={isAnimating}
+                            frontLang={isForward ? 'deva' : 'iast'}
+                            backLang={isForward ? 'iast' : 'deva'}
+                            themeColor="rose"
+                            isTouch={isTouch}
+                            customFont={currentItem?.font}
+                            frontImage={isForward ? currentItem?.image : null}
+                            backImage={!isForward ? currentItem?.image : null}
+                            note={currentItem?.note}
+                            onInfoClick={showHelp}
+                        />
+
+                        <div className="flex gap-4 mt-12">
+                            <button onClick={handleDevaPrev} disabled={devaIndex === 0} className="flex-1 py-4 bg-white dark:bg-stone-850 rounded-2xl shadow-md disabled:opacity-50 flex items-center justify-center gap-2 text-stone-600 dark:text-stone-400">
+                                <ArrowLeft size={20} /> {TRANSLATIONS[lang].back}
+                            </button>
+                            <button onClick={handleDevaNext} className="flex-1 py-4 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl shadow-md flex items-center justify-center gap-2 font-bold">
+                                {isLastCard ? TRANSLATIONS[lang].finish : TRANSLATIONS[lang].next} <ArrowRight size={20} />
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="max-w-md mx-auto">
+                    <div className="flex justify-between items-center mb-8">
+                        <button 
+                            onClick={() => setAppState('setup_devanagari')} 
+                            className="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
+                        >
+                            <ArrowLeft size={24} />
+                        </button>
+                        <div className="h-2 flex-1 mx-4 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden">
+                            <div className="h-full bg-rose-500 transition-all duration-300" style={{ width: `${((devaIndex + 1) / devaItems.length) * 100}%` }}></div>
+                        </div>
+                        <div className="text-sm font-bold text-stone-500">{devaIndex + 1}/{devaItems.length}</div>
+                    </div>
+
+                    {/* Kategorie-Label im Quiz */}
+                    <div className="text-center mb-4 -mt-4">
+						<span className="text-xs uppercase tracking-widest text-stone-400 font-semibold text-center block w-full">
+							{categoryLabel}
+						</span>
+					</div>
+
+                    {/* Quiz-Frage-Bereich mit Info-Icon */}
+                    <div className="relative bg-white dark:bg-stone-850 rounded-3xl shadow-xl p-10 mb-8 text-center flex flex-col justify-center items-center min-h-[200px]">
+                        
+                        {/* Info-Icon (erscheint nur nach Antwort & wenn Notiz da ist) */}
+                        {quizAnswered && currentItem?.note && (
+                            <button 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    showHelp(e, TRANSLATIONS[lang].info, currentItem.note);
+                                }}
+                                className="absolute top-4 right-4 p-2 text-stone-300 dark:text-stone-600 hover:text-rose-400 transition-colors z-30 cursor-pointer"
+                                title={lang === 'de' ? "Hinweis anzeigen" : "Show note"}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            </button>
+                        )}
+
+                        {isForward && currentItem?.image ? (
+                            <img 
+                                src={currentItem.image} 
+                                alt={lang === 'de' ? "Frage" : "Question"} 
+                                className="max-h-[4.1rem] w-auto object-contain bg-transparent dark:invert dark:opacity-90 dark:mix-blend-screen" 
+                            />
+                        ) : (
+                            <div 
+                                className={isForward ? "text-8xl font-deva leading-none" : "text-6xl iast-sharp font-bold text-rose-700 leading-none"}
+                                style={isForward && currentItem?.font ? { fontFamily: `"${currentItem.font}", Sanskrit2003, "Noto Serif Devanagari", serif` } : {}}
+                            >
+                                {displayQuestion}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Quiz-Antwort-Optionen */}
+                    <div className="grid grid-cols-2 gap-4">
+                        {quizOptions.map((option, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => handleQuizAnswer(option)}
+                                className={`p-4 bg-white dark:bg-stone-850 rounded-2xl shadow-md border-2 transition-all flex flex-col items-center justify-center min-h-[100px] outline-none ${
+                                    quizAnswered && (isForward ? option.t === currentItem.t : option.d === currentItem.d)
+                                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20' 
+                                        : quizSelection === option.t && (isForward ? option.t !== currentItem.t : option.d !== currentItem.d)
+                                            ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                                            : 'border-transparent hover:border-rose-500 focus:border-rose-500'
+                                }`}
+                            >
+                                {!isForward && option?.image ? (
+                                    <img 
+                                        src={option.image} 
+                                        alt={lang === 'de' ? "Antwort" : "Answer"} 
+                                        className="max-h-[1.6rem] w-auto object-contain bg-transparent dark:invert dark:opacity-90 dark:mix-blend-screen" 
+                                    />
+                                ) : (
+                             
+                                    <span 
+                                        className={isForward ? "text-2xl iast-sharp font-bold" : "text-4xl font-deva"}
+                                        style={!isForward && option?.font ? { fontFamily: `"${option.font}", Sanskrit2003, "Noto Serif Devanagari", serif` } : {}}
+                                    >
+                                        {isForward ? option.t : option.d}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+
+                    <button onClick={handleDevaNext} disabled={!quizAnswered} className="w-full mt-8 py-4 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl shadow-md disabled:opacity-50 font-bold flex items-center justify-center gap-2">
+                        {isLastCard ? TRANSLATIONS[lang].finish : TRANSLATIONS[lang].nextQuestion} <ArrowRight size={18} />
+                    </button>
+                </div>
+            );
+        };
+
+        return (
+            /* Wir nutzen flex-col und py-12 für gleichmäßigen Abstand oben/unten */
+            <div className="min-h-screen bg-stone-100 dark:bg-stone-900 py-12 px-4 font-sans text-stone-800 dark:text-stone-200 transition-colors duration-300 flex flex-col">
+                
+                {/* Info-Popup bleibt absolut/fixiert */}
+                {popup.visible && <InfoPopup x={popup.x} y={popup.y} content={popup.content} onClose={() => setPopup({ ...popup, visible: false })} />}
+                
+                {/* Dieser Container füllt den Raum und zentriert seinen Inhalt vertikal */}
+                <div className="flex-1 flex flex-col justify-center">
+                    <div className="w-full">
+                        {appState === 'home' && renderHome()}
+                        {appState === 'setup_devanagari' && renderDevanagariSetup()}
+                        {appState === 'devanagari_session' && renderDevanagariSession()}
+                        {appState === 'texte_lesen' && <FluencyTrainer onExit={() => setAppState('setup_devanagari')} darkMode={darkMode} lang={lang} />}
+                    </div>
+                </div>
+
+                {/* MODALE (Info, Font-Settings, Editor) – Logik bleibt unverändert */}
+                {showInfo && (
+                    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
+                        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowInfo(false)}></div>
+                        <div className="relative bg-white dark:bg-stone-800 w-full max-w-lg max-h-[90vh] overflow-y-auto p-8 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-700 popup-anim text-left">
+                            <button onClick={() => setShowInfo(false)} className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            </button>
+                            <h2 className="text-2xl font-bold text-rose-800 dark:text-rose-400 mb-4 border-b pb-2 border-stone-100 dark:border-stone-700 flex items-center pr-10">
+                                <span className="w-8 h-8 rounded-full border-2 border-rose-800 dark:border-rose-400 flex items-center justify-center mr-3 text-base font-serif italic">i</span>
+                                {TRANSLATIONS[lang].projectInfo}
+                            </h2>
+                            <div className="space-y-2 text-stone-700 dark:text-stone-300 leading-relaxed text-sm">
+                                <p><strong>{TRANSLATIONS[lang].version}:</strong> Devanāgarī-Trainer 1.0</p>
+                                <p><strong>{TRANSLATIONS[lang].conception}:</strong> Thomas Kintaert (<a href={TRANSLATIONS[lang].istbUrl} target="_blank" className="text-rose-600 hover:underline">{lang === 'de' ? "Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB]" : "Department of South Asian, Tibetan and Buddhist Studies"}</a>, {lang === 'de' ? "Universität Wien" : "University of Vienna"})</p>
+                                <p><strong>{TRANSLATIONS[lang].period}:</strong> {lang === 'de' ? "November 2025 – Mai 2026" : "November 2025 – May 2026"}</p>
+                                <p><strong>{TRANSLATIONS[lang].techImp}:</strong><br/>{TRANSLATIONS[lang].techImpDesc}</p>
+                                <p><strong>{TRANSLATIONS[lang].sources}:</strong></p>
+                                <ul className="space-y-1 ml-1">
+                                    <li>• <b>{lang === 'de' ? "360 häufigste Devanāgarī-Ligaturen" : "360 most common Devanāgarī ligatures"}:</b> Stiehl, Ulrich. „2. Die häufigsten Ligaturen im klassischen Sanskrit“. Devanagari, Sanskrit Web, S. 7–25.</li>
+                                    <li>• <b>{lang === 'de' ? "Devanāgarī-Schriftart" : "Devanāgarī font"}:</b> <i>Sanskrit 2003</i>. Version 1.20, Omkarananda Ashram, 30. Juli 2019.</li>
+                                </ul>
+                                <p className="text-xs text-stone-500 dark:text-stone-400 pt-1 pl-4 border-l-2 border-stone-200 dark:border-stone-700">
+                                    {lang === 'de' ? "Für eine optimale Anzeige wird die Schriftart Sanskrit2003 empfohlen." : "For optimal display, the font Sanskrit2003 is recommended."}
+                                </p>
+                                <p><strong>{TRANSLATIONS[lang].privacy}:</strong> {TRANSLATIONS[lang].privacyDesc}</p>
+                                <p className="pt-2"><strong>{TRANSLATIONS[lang].license}:</strong> <a href={TRANSLATIONS[lang].ccUrl} target="_blank" className="text-rose-600 hover:underline">CC BY-NC-SA 4.0</a>.</p>
+                            </div>
+                            <button onClick={() => setShowInfo(false)} className="w-full mt-6 bg-rose-700 hover:bg-rose-800 text-white font-bold py-3 rounded-xl transition-colors shadow-lg">{TRANSLATIONS[lang].close}</button>
+                        </div>
+                    </div>
+                )}
+
+        {/* FONT_SETTINGS_MODAL */}
+        {showFontSettings && (
+            <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowFontSettings(false)}></div>
+                <div className="relative bg-white dark:bg-stone-800 w-full max-w-md p-8 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-700 popup-anim">
+                    <h2 className="text-xl font-bold text-stone-800 dark:text-stone-100 mb-4 flex items-center">
+                        <SettingsIcon className="mr-2 text-rose-600" size={20} />
+                        {TRANSLATIONS[lang].fontSettings}
+                    </h2>
+                    
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-bold text-stone-700 dark:text-stone-300 mb-2">
+                                {lang === 'de' ? "Lokaler Dateiname der Devanāgarī-Unicode-Schriftart:" : "Local filename of the Devanāgarī Unicode font:"}
+                            </label>
+                            <input 
+                                type="text"
+                                value={customFontName}
+                                onChange={(e) => setCustomFontName(e.target.value)}
+                                placeholder={lang === 'de' ? "z. B. Sanskrit2003 - 30.07.2019.otf" : "e.g. Sanskrit2003 - 30.07.2019.otf"}
+                                className="w-full p-3 border border-stone-300 dark:border-stone-600 rounded-lg dark:bg-stone-700 dark:text-stone-200 focus:ring-2 focus:ring-rose-500 outline-none font-mono text-sm"
+                            />
+                            <p className="mt-2 text-[11px] text-stone-500 leading-relaxed italic">
+                                {lang === 'de' 
+                                    ? "Hinweis: Die Datei muss sich im selben Ordner wie diese HTML-Datei befinden." 
+                                    : "Note: The file must be located in the same folder as this HTML file."}
+                                <br/>
+                                Standard: <span className="font-mono">Sanskrit2003 - 30.07.2019.otf</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <button 
+                        onClick={() => setShowFontSettings(false)}
+                        className="w-full mt-6 bg-rose-700 hover:bg-rose-800 text-white font-bold py-3 rounded-xl transition-colors"
+                    >
+                        {TRANSLATIONS[lang].saveClose}
+                    </button>
+                </div>
+            </div>
+        )}
+
+{/* CUSTOM_EDITOR_MODAL_SHELL */}
+        {showCustomEditor && (
+            <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
+                {/* Hintergrund-Overlay */}
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowCustomEditor(false)}></div>
+                
+                {/* Editor-Container */}
+                <div className="relative bg-white dark:bg-stone-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-700 popup-anim flex flex-col">
+                    
+                    {/* STICKY HEADER: Bleibt beim Scrollen oben stehen */}
+                    <div className="sticky top-0 bg-white dark:bg-stone-800 z-30 px-6 md:px-8 pt-6 md:pt-8">
+                        {/* Titel & Schließen */}
+                        <div className="flex justify-between items-center mb-6 border-b border-stone-100 dark:border-stone-700 pb-4">
+                            <h2 className="text-2xl font-bold text-rose-800 dark:text-rose-400 flex items-center">
+                                <SettingsIcon size={22} className="mr-3 shrink-0" />
+                                {TRANSLATIONS[lang].editTitle}
+                            </h2>
+                            <button onClick={() => setShowCustomEditor(false)} className="p-2 transition-colors shrink-0 text-stone-400 hover:text-rose-600 outline-none">
+                                <XIcon size={24} className="text-stone-400" />
+                            </button>
+                        </div>
+
+                        {/* Button-Leiste: Gruppiert in zwei Blöcke */}
+                        <div className="flex flex-wrap justify-start md:justify-between items-center gap-2 mb-4 p-3 bg-stone-50 dark:bg-stone-900/30 rounded-xl border border-stone-100 dark:border-stone-700">
+                            {/* Block 1: Aktionen */}
+                            <div className="contents md:flex md:gap-2 md:items-center md:flex-wrap">
+                                <button 
+                                    onClick={() => setIsSortMode(!isSortMode)} 
+                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].sortMode, TRANSLATIONS[lang].sortModeDesc)} 
+                                    onMouseLeave={cancelHelp}
+                                    className={`w-10 h-10 flex items-center justify-center rounded-lg border transition-all shadow-sm ${isSortMode ? 'bg-rose-600 text-white border-rose-600' : 'bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 border-stone-200 dark:border-stone-700'}`}
+                                >
+                                    <ArrowUpDown size={18} />
+                                </button>
+                                <label 
+                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].all, TRANSLATIONS[lang].allDesc)} 
+                                    onMouseLeave={cancelHelp}
+                                    className="h-10 flex items-center gap-1.5 px-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-750 transition-colors shadow-sm text-stone-500 hover:text-rose-600"
+                                >
+                                    <input type="checkbox" checked={customCategories.length > 0 && customCategories.every(c => c.active)} onChange={(e) => { const isChecked = e.target.checked; setCustomCategories(prev => prev.map(c => ({ ...c, active: isChecked }))); }} className="w-4 h-4 accent-rose-600 cursor-pointer" />
+                                    <span className="text-[10px] font-bold uppercase select-none">{TRANSLATIONS[lang].all}</span>
+                                </label>
+                                <button 
+                                    onClick={() => toggleAllCats(true)} 
+                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].expand, TRANSLATIONS[lang].expandDesc)} 
+                                    onMouseLeave={cancelHelp}
+                                    className="h-10 px-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 hover:text-rose-600 rounded-lg text-[10px] font-bold uppercase shadow-sm transition-colors"
+                                >
+                                    {TRANSLATIONS[lang].expand}
+                                </button>
+                                <button 
+                                    onClick={() => toggleAllCats(false)} 
+                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].collapse, TRANSLATIONS[lang].collapseDesc)} 
+                                    onMouseLeave={cancelHelp}
+                                    className="h-10 px-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 hover:text-rose-600 rounded-lg text-[10px] font-bold uppercase shadow-sm transition-colors"
+                                >
+                                    {TRANSLATIONS[lang].collapse}
+                                </button>
+                                <button 
+                                    onClick={() => { setStudyModeContent('custom'); setStudySearch(""); }} 
+                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].viewMode, TRANSLATIONS[lang].viewModeDesc)} 
+                                    onMouseLeave={cancelHelp}
+                                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 transition-colors"
+                                >
+                                    <EyeIcon size={18} />
+                                </button>
+                            </div>
+                            {/* Block 2: Tools */}
+                            <div className="contents md:flex md:gap-2 md:ml-auto">
+                                <button 
+                                    onClick={exportData} 
+                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].export, TRANSLATIONS[lang].exportDesc)} 
+                                    onMouseLeave={cancelHelp}
+                                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 transition-colors"
+                                >
+                                    <ExportIcon size={18} />
+                                </button>
+                                <label 
+                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].import, TRANSLATIONS[lang].importDesc)} 
+                                    onMouseLeave={cancelHelp}
+                                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 transition-colors cursor-pointer"
+                                >
+                                    <ImportIcon size={18} /><input type="file" accept=".json" onChange={importData} className="hidden" />
+                                </label>
+                            </div>
+                        </div>
+
+                        {/* Kategorien-Header */}
+                        <div className="flex justify-between items-center pb-4 bg-white dark:bg-stone-800">
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">{TRANSLATIONS[lang].myCollections}</h3>
+                            <button onClick={addCategory} className="text-xs bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 px-4 py-2 rounded-lg font-bold hover:bg-rose-200 transition-colors">
+                                {TRANSLATIONS[lang].addCat}
+                            </button>
+                        </div>
+                        <div className="h-px bg-stone-100 dark:border-stone-700 mb-4"></div>
+                    </div>
+
+            {/* Der Inhaltsbereich (scrollbar) */}
+<div className="px-6 md:px-8 pt-0">
+                <div className="space-y-2">
+                        {/* CATEGORY_LOOP_FIXED */}
+                            {customCategories.map(cat => {
+                                const isExpanded = expandedCats.includes(cat.id);
+                                return (
+                                    <div key={cat.id} className="p-3 bg-stone-50 dark:bg-stone-850 rounded-xl border border-stone-100 dark:border-stone-700 mb-4">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <button onClick={() => toggleCatExpanded(cat.id)} className="p-1 hover:bg-stone-200 dark:hover:bg-stone-700 rounded text-stone-400">
+                                                {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+                                            </button>
+                                            {/* Sortierpfeile für Kategorien */}
+                                            {isSortMode && (
+                                                <div className="flex flex-col -space-y-1">
+                                                    <button onClick={() => moveCategory(cat.id, -1)} className="text-stone-400 hover:text-rose-600"><ChevronUp size={14} /></button>
+                                                    <button onClick={() => moveCategory(cat.id, 1)} className="text-stone-400 hover:text-rose-600"><ChevronDown size={14} /></button>
+                                                </div>
+                                            )}
+                                            <input type="checkbox" checked={cat.active} onChange={(e) => updateCategory(cat.id, 'active', e.target.checked)} className="w-5 h-5 accent-rose-600" />
+                                            <input type="text" value={cat.name} onChange={(e) => updateCategory(cat.id, 'name', e.target.value)} className="flex-1 bg-transparent border-b border-transparent focus:border-rose-500 outline-none font-bold text-stone-800 dark:text-stone-200" />
+                                            <button onClick={() => deleteCategory(cat.id)} className="p-2 text-stone-300 hover:text-red-500"><XIcon size={18} /></button>
+                                        </div>
+
+                                        {isExpanded && (
+                                            <div className="mt-4 space-y-4 pl-2 sm:pl-4 border-l-2 border-stone-200 dark:border-stone-700">
+                                                
+                                                {/* Massenimportbereich */}
+                                                <div className="bg-rose-50/50 dark:bg-rose-900/10 p-3 rounded-lg border border-rose-100 dark:border-rose-900/20">
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <p className="text-[10px] font-bold text-rose-400 uppercase tracking-wider">{TRANSLATIONS[lang].bulkImport}</p>
+                                                        <input 
+                                                            id={`bulk-font-${cat.id}`}
+                                                            type="text" 
+                                                            placeholder={TRANSLATIONS[lang].bulkFontPlaceholder} 
+                                                            className="text-[9px] px-2 py-1 rounded border border-rose-200 dark:border-rose-800 bg-white dark:bg-stone-900 outline-none w-56 dark:text-stone-300" 
+                                                        />
+                                                    </div>
+                                                    <textarea 
+                                                        placeholder={TRANSLATIONS[lang].bulkTextPlaceholder}
+                                                        className="w-full h-20 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded p-2 text-xs font-mono outline-none focus:border-rose-500 dark:text-stone-300"
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter' && e.ctrlKey) {
+                                                                const bulkFont = document.getElementById(`bulk-font-${cat.id}`).value.trim();
+                                                                const lines = e.target.value.split('\n');
+                                                                const newItems = lines.map(l => {
+                                                                    const [d, i] = l.split(';');
+                                                                    return d ? { id: 'item_' + Date.now() + Math.random(), char: d.trim(), iast: i?.trim() || '', note: '', font: bulkFont } : null;
+                                                                }).filter(Boolean);
+                                                                setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: [...(c.items || []), ...newItems] } : c));
+                                                                e.target.value = '';
+                                                            }
+                                                        }}
+                                                    />
+                                                    <p className="text-[9px] text-stone-400 mt-1 italic text-right">{TRANSLATIONS[lang].ctrlEnter}</p>
+                                                </div>
+
+                                                {/* Einzelne Zeichenliste */}
+                                                <div className="space-y-2">
+                                                    {(cat.items || []).map((item, idx) => (
+                                                        <div key={item.id || idx} className="bg-white dark:bg-stone-800 p-3 rounded-lg shadow-sm border border-stone-100 dark:border-stone-700/50 space-y-2">
+                                                            
+                                                            <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                                                                {isSortMode && (
+                                                                    <div className="flex flex-col -space-y-1 mr-1">
+                                                                        <button onClick={() => moveItem(cat.id, item.id, -1)} className="text-stone-300 hover:text-rose-600"><ChevronUp size={16} /></button>
+                                                                        <button onClick={() => moveItem(cat.id, item.id, 1)} className="text-stone-300 hover:text-rose-600"><ChevronDown size={16} /></button>
+                                                                    </div>
+                                                                )}
+                                                                
+                                                                <label className="w-11 h-11 min-w-[44px] flex items-center justify-center bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg cursor-pointer hover:bg-stone-100 relative overflow-hidden transition-colors">
+                                                                    {item.image ? <img src={item.image} className="w-full h-full object-contain p-1" /> : <ImageIcon size={20} className="text-stone-300 dark:text-stone-600" />}
+                                                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                                                        if (e.target.files[0]) processImage(e.target.files[0], (base64) => {
+                                                                            setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: c.items.map(it => it.id === item.id ? { ...it, image: base64, char: '' } : it) } : c));
+                                                                        });
+                                                                    }} />
+                                                                </label>
+
+                                                                <input type="text" placeholder={lang === 'de' ? "Schriftzeichen" : "Character"} value={item.char || ''} disabled={!!item.image} onChange={(e) => setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: c.items.map(it => it.id === item.id ? { ...it, char: e.target.value } : it) } : c))} className="w-16 md:w-32 p-1 text-base font-deva border-b border-stone-200 dark:border-stone-700 bg-transparent outline-none focus:border-rose-500 dark:text-stone-200" />
+                                                                <input type="text" placeholder={lang === 'de' ? "+ Fontname (optional)" : "+ Font name (optional)"} value={item.font || ''} onChange={(e) => setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: c.items.map(it => it.id === item.id ? { ...it, font: e.target.value } : it) } : c))} className="flex-1 min-w-[80px] md:w-40 md:flex-none text-[9px] bg-stone-100 dark:bg-stone-900 rounded px-1 py-1 text-stone-500 outline-none" />
+                                                                <input type="text" placeholder="Transliteration" value={item.iast || ''} onChange={(e) => setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: c.items.map(it => it.id === item.id ? { ...it, iast: e.target.value } : it) } : c))} className="flex-1 min-w-[60px] p-1 text-sm border-b border-stone-200 dark:border-stone-700 bg-transparent outline-none focus:border-rose-500 dark:text-stone-200" />
+                                                                <button onClick={() => setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: c.items.filter(it => it.id !== item.id) } : c))} className="text-stone-300 hover:text-red-500 ml-auto p-1"><XIcon size={16} /></button>
+                                                            </div>
+
+                                                            <div className="flex items-center gap-2 pl-0 md:pl-12">
+                                                                <span className="text-[9px] font-bold text-stone-400 uppercase shrink-0">Info:</span>
+                                                                <input type="text" placeholder={lang === 'de' ? "... (Anmerkung, Merkhilfe etc.)" : "... (note, mnemonic etc.)"} value={item.note || ''} onChange={(e) => setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: c.items.map(it => it.id === item.id ? { ...it, note: e.target.value } : it) } : c))} className="flex-1 text-[11px] italic text-stone-500 bg-transparent outline-none focus:text-stone-700 dark:focus:text-stone-300" />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    <button
+                                                        onClick={() => {
+                                                            const newItem = { id: 'item_' + Date.now(), char: '', iast: '', note: '', font: '' };
+                                                            setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: [...(c.items || []), newItem] } : c));
+                                                        }}
+                                                        className="w-full py-2 border-2 border-dashed border-stone-200 dark:border-stone-700 rounded-lg text-xs flex items-center justify-center text-stone-500 hover:text-rose-600 hover:border-rose-300 transition-all mt-2 font-bold"
+                                                    >
+                                                        + {TRANSLATIONS[lang].singleChar}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}    
+                        </div>
+                    </div>
+
+                    {/* Footer-Button */}
+                    <div className="sticky bottom-0 bg-white dark:bg-stone-800 px-6 md:px-8 pt-4 pb-6 md:pb-8 mt-auto border-t border-stone-100 dark:border-stone-700 z-10">
+                        <button 
+                            onClick={() => setShowCustomEditor(false)}
+                            className="w-full bg-rose-700 hover:bg-rose-800 text-white font-bold py-4 rounded-xl transition-colors shadow-lg active:scale-[0.98]"
+                        >
+                            {TRANSLATIONS[lang].saveClose}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+{/* UNIVERSAL_STUDY_OVERLAY_V15 */}
+		{studyModeContent && (
+			<div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
+				<div className="absolute inset-0 bg-stone-900/80 backdrop-blur-md" onClick={() => setStudyModeContent(null)}></div>
+				
+				<div className="relative bg-white dark:bg-stone-850 w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden rounded-3xl shadow-2xl p-6 md:p-12 popup-anim border border-stone-200 dark:border-stone-700">
+					
+					{/* Schließen-Button */}
+					<button 
+						onClick={() => setStudyModeContent(null)} 
+						className="absolute top-6 right-10 md:top-8 md:right-14 p-2 transition-colors z-50 text-stone-400 hover:text-rose-600 outline-none"
+						title={TRANSLATIONS[lang].close}
+					>
+						<XIcon size={28} />
+					</button>
+					<div className="overflow-y-auto p-6 md:p-12 h-full">
+
+					{/* Header-Layout */}
+					<div className="flex flex-col md:flex-row items-start md:items-end mb-8 border-b dark:border-stone-700 pb-6 gap-10 pr-20 relative">
+						
+						<div className="shrink-0">
+							<h2 className="text-3xl font-bold text-stone-800 dark:text-stone-100 flex items-center gap-3">
+								<EyeIcon size={28} className="text-rose-600" />
+								{studyModeContent === 'custom' 
+									? (lang === 'de' ? 'Eigene Zeichen' : 'Custom characters') 
+									: (studyModeContent === 'basic' ? TRANSLATIONS[lang].catBasic : 
+									   studyModeContent === 'diacritics' ? TRANSLATIONS[lang].catDiacritics : 
+									   studyModeContent === 'ligatures' ? TRANSLATIONS[lang].catLigatures : TRANSLATIONS[lang].catDigits)
+								}
+							</h2>
+							<p className="text-stone-500 mt-1 text-sm flex items-center gap-2">
+								{studySearch ? TRANSLATIONS[lang].searchActive : TRANSLATIONS[lang].libraryTitle}
+								<span className="inline-block px-2 py-0.5 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded text-[10px] font-bold text-rose-600 uppercase tracking-wider">
+									{studyModeContent === 'custom' 
+										? customCategories.filter(c => c.active).reduce((acc, cat) => acc + (cat.items?.length || 0), 0)
+										: DEVANAGARI_DATA[studyModeContent]?.length || 0} {TRANSLATIONS[lang].chars}
+								</span>
+							</p>
+						</div>
+
+						{/* Suchfeld */}
+						<div className="relative w-full md:w-72 mb-0.5">
+							<input 
+								type="text"
+								placeholder={TRANSLATIONS[lang].search}
+								value={studySearch}
+								onChange={(e) => setStudySearch(e.target.value)}
+								className="w-full pl-4 pr-10 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl outline-none focus:border-rose-500 transition-all text-sm"
+							/>
+							{studySearch && (
+								<button onClick={() => setStudySearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-rose-500">
+									<XIcon size={16} />
+								</button>
+							)}
+						</div>
+
+					</div>
+
+					<div className="space-y-16">
+						{/* Standardkategorien */}
+						{['basic', 'diacritics', 'ligatures', 'digits'].includes(studyModeContent) && (
+							<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+								{DEVANAGARI_DATA[studyModeContent]
+									.filter(item => 
+										item.d.includes(studySearch) || 
+										item.t.toLowerCase().includes(studySearch.toLowerCase())
+									)
+									.map((item, idx) => (
+										<div key={idx} className="relative flex flex-col items-center p-6 bg-stone-50 dark:bg-stone-800/50 rounded-2xl border border-stone-100 dark:border-stone-700 transition-all">
+											<div 
+												className="text-6xl mb-4 font-deva text-stone-800 dark:text-stone-100 h-20 flex items-center justify-center"
+												style={item.font ? { fontFamily: `"${item.font}", Sanskrit2003, serif` } : {}}
+											>
+												{item.d}
+											</div>
+											<div className="text-xl font-bold text-rose-600 dark:text-rose-500 iast-sharp">{item.t}</div>
+										</div>
+									))}
+							</div>
+						)}
+
+						{/* Eigene Zeichen */}
+						{studyModeContent === 'custom' && customCategories.filter(c => c.active).map(cat => {
+							const filteredItems = (cat.items || []).filter(item => 
+								(item.char || "").includes(studySearch) || 
+								(item.iast || "").toLowerCase().includes(studySearch.toLowerCase())
+							);
+
+							if (studySearch && filteredItems.length === 0) return null;
+
+							return (
+								<div key={cat.id} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+									<h3 className="text-xl font-bold text-rose-700 dark:text-rose-400 mb-6 flex items-center gap-2">
+										<div className="w-2 h-8 bg-rose-500 rounded-full"></div>
+										{cat.name}
+										<span className="text-sm font-normal text-stone-400 ml-2">
+											({filteredItems.length} {TRANSLATIONS[lang].chars})
+										</span>
+									</h3>
+									<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+										{filteredItems.map((item, idx) => (
+											<div key={idx} className="group flex flex-col items-center p-6 bg-stone-50 dark:bg-stone-800/50 rounded-2xl border border-stone-100 dark:border-stone-700 hover:border-rose-300 dark:hover:border-rose-900 transition-all">
+												<div 
+													className="text-6xl mb-4 font-deva text-stone-800 dark:text-stone-100 h-20 flex items-center justify-center group-hover:scale-110 transition-transform"
+													style={(item.font || cat.font) ? { fontFamily: `"${item.font || cat.font}", Sanskrit2003, serif` } : {}}
+												>
+													{item.image ? <img src={item.image} className="h-full w-auto object-contain dark:invert opacity-90" /> : item.char}
+												</div>
+												<div className="text-xl font-bold text-rose-600 dark:text-rose-500 iast-sharp">{item.iast}</div>
+												{item.note && <div className="mt-3 text-[11px] italic text-stone-400 dark:text-stone-500 text-center leading-tight border-t border-stone-200 dark:border-stone-700 pt-2 w-full">{item.note}</div>}
+											</div>
+										))}
+									</div>
+								</div>
+							);
+						})}
+						
+						{/* Leermeldung */}
+						{studySearch && studyModeContent === 'custom' && customCategories.filter(c => c.active).every(c => (c.items || []).filter(item => (item.char || "").includes(studySearch) || (item.iast || "").toLowerCase().includes(studySearch.toLowerCase())).length === 0) && (
+							<div className="text-center py-20 text-stone-400 italic">
+								{TRANSLATIONS[lang].noResults} "{studySearch}".
+							</div>
+						)}
+					</div>
+				</div>
+			</div>
+		  </div>
+		)}
+    </div>
+    );
+};
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<SanskritTrainer />);
+</script>
+</body>
+</html>
