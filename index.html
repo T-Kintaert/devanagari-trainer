@@ -76,12 +76,13 @@ Details: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de
         }
 
         html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #f3f4f6; /* Standard Hell */
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            /* Erlaubt vertikales Scrollen, verhindert horizontales Wackeln */
+            overflow-x: hidden;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Darkmode-Hintergrund für das gesamte Dokument */
@@ -1339,7 +1340,7 @@ useEffect(() => {
             
             // --- RENDERER: INPUT ---
             const renderSetup = () => (
-                <div className="max-w-2xl mx-auto bg-white dark:bg-stone-800 p-8 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-10">
+                <div className="max-w-2xl mx-auto bg-white dark:bg-stone-800 pt-3 px-5 pb-5 md:p-8 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-0 md:mt-10">
                     <div className="flex items-center mb-6">
                         <button onClick={onExit} className="mr-2 text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors">
                             <ArrowLeft size={20} />
@@ -1368,13 +1369,13 @@ useEffect(() => {
                             ))}
                         </div>
 
-                        {/* Dynamische Quellenangabe */}
+                        {/* Dynamische Quellenangabe: Jetzt flüssig im Text */}
                         {Object.values(SANSKRIT_SAMPLES).find(s => s.text === textInput)?.info && (
-                            <div className="mb-2 p-2 text-xs italic text-stone-500 dark:text-stone-400 bg-stone-50 dark:bg-stone-850 border-l-2 border-rose-400 rounded break-words font-sans">
+                            <div className="mb-2 p-2 text-xs italic text-stone-500 dark:text-stone-400 bg-stone-50 dark:bg-stone-850 border-l-2 border-rose-400 rounded break-words font-sans leading-normal">
                                 {Object.values(SANSKRIT_SAMPLES).find(s => s.text === textInput).info.split(' ').map((part, i) => {
                                     if (part.startsWith('http')) {
                                         return (
-                                            <a key={i} href={part.replace(/[()]/g, '')} target="_blank" className="text-rose-600 hover:underline break-all block mt-1">
+                                            <a key={i} href={part.replace(/[()]/g, '')} target="_blank" className="text-rose-600 hover:underline inline-block mx-1">
                                                 {part}
                                             </a>
                                         );
@@ -1393,23 +1394,27 @@ useEffect(() => {
                             maxLength={10000} 
                         />
 
-                        {/* Hilfe-Bereich */}
-                        <div className="mt-4 p-3 bg-stone-50 dark:bg-stone-900/30 border border-stone-200 dark:border-stone-700 rounded-lg text-[11px] leading-relaxed text-stone-600 dark:text-stone-400 break-words font-sans">
-                            <p className="font-bold mb-1 uppercase tracking-tight text-rose-600">{TRANSLATIONS[lang].helpTitle}</p>
-                            <p className="mb-2" dangerouslySetInnerHTML={{ __html: TRANSLATIONS[lang].helpIntro }} />
-                            <ul className="list-disc ml-4 space-y-1">
+                        {/* Hilfe-Bereich: Fließt normal im Text mit */}
+                        <div className="mt-4 p-4 bg-stone-50 dark:bg-stone-900/30 border border-stone-200 dark:border-stone-700 rounded-lg text-sm leading-relaxed text-stone-600 dark:text-stone-400 break-words font-sans">
+                            <p className="font-bold mb-2 uppercase tracking-wide text-rose-600">{TRANSLATIONS[lang].helpTitle}</p>
+                            <p className="mb-3" dangerouslySetInnerHTML={{ __html: TRANSLATIONS[lang].helpIntro }} />
+                            <ul className="list-disc ml-5 space-y-2">
                                 <li>
-                                    <strong>{TRANSLATIONS[lang].helpConv}</strong> 
+                                    <strong className="text-stone-700 dark:text-stone-200">{TRANSLATIONS[lang].helpConv}</strong> 
                                     <a href="https://www.aksharamukha.com/converter" target="_blank" className="text-rose-600 hover:underline ml-1">aksharamukha.com</a>
                                 </li>
                                 <li>
-                                    <strong>{TRANSLATIONS[lang].helpOCR}</strong> 
+                                    <strong className="text-stone-700 dark:text-stone-200">{TRANSLATIONS[lang].helpOCR}</strong> 
                                     <a href="https://ocr.sanskritdictionary.com/" target="_blank" className="text-rose-600 hover:underline ml-1">ocr.sanskritdictionary.com</a>
                                 </li>                               
                             </ul>
                         </div>
 
-                        <div className="sticky bottom-0 bg-white dark:bg-stone-800 py-4 mt-6 border-t border-stone-100 dark:border-stone-700 z-10">
+                        {/* Platzhalter: Schafft Raum, damit der Text hinter dem Button hervorrollen kann */}
+                        <div className="h-32"></div>
+
+                        {/* Der Button: Klebt am unteren Rand (Sticky Footer) */}
+                        <div className="sticky bottom-0 left-0 right-0 bg-white/90 dark:bg-stone-800/90 backdrop-blur-md py-4 border-t border-stone-100 dark:border-stone-700 z-30 -mx-5 -mb-5 px-5 rounded-b-xl">
                             <button onClick={() => setReadingState('review')} 
                                 disabled={!textInput.trim()}
                                 className={`w-full bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-xl font-bold shadow-lg flex justify-center items-center space-x-2 transition-all active:scale-95 ${!textInput.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -1423,45 +1428,52 @@ useEffect(() => {
 
             // --- RENDERER: REVIEW ---
             const renderReview = () => (
-                <div className="max-w-4xl mx-auto bg-white dark:bg-stone-800 p-8 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-10">
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-6 border-b border-stone-100 dark:border-stone-700 pb-4">
+                /* h-[82vh] sorgt dafür, dass der Container am Handy fast den ganzen Schirm füllt und dort "stehen bleibt" */
+                <div className="max-w-4xl mx-auto bg-white dark:bg-stone-800 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-0 md:mt-10 flex flex-col h-[82vh] md:h-auto overflow-hidden">
+                    
+                    {/* Header: Fest oben */}
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 p-5 border-b border-stone-100 dark:border-stone-700">
                         <button onClick={() => setReadingState('input')} className="flex items-center text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 whitespace-nowrap font-sans">
                            <ArrowLeft size={20} className="mr-1" /> {TRANSLATIONS[lang].edit}
                         </button>
-                        <h2 className="text-xl md:text-2xl font-bold text-stone-800 dark:text-stone-200 leading-tight font-sans">
+                        <h2 className="text-xl font-bold text-stone-800 dark:text-stone-200 leading-tight font-sans">
                             {TRANSLATIONS[lang].reviewTitle}
                         </h2>
                     </div>
                     
-                    <div className="mb-6 p-4 bg-stone-50 dark:bg-stone-700/50 rounded-lg flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0 md:space-x-4 border border-stone-200 dark:border-stone-700 font-sans">
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                            <input type="checkbox" checked={pacerActive} onChange={(e) => setPacerActive(e.target.checked)}
-                                className="w-5 h-5 text-rose-600 bg-white border-stone-300 rounded focus:ring-rose-500 dark:bg-stone-600 dark:border-stone-500"
-                            />
-                            <span className="font-semibold text-stone-700 dark:text-stone-300">{TRANSLATIONS[lang].pacerEnable}</span>
-                        </label>
-
-                        <div className="flex items-center space-x-2">
-                            <label htmlFor="pacer-speed" className="text-sm text-stone-600 dark:text-stone-400 whitespace-nowrap">
-                                {TRANSLATIONS[lang].target} SPM:
+                    {/* Mittlerer Bereich: Nur dieser Teil scrollt am Handy */}
+                    <div className="flex-1 overflow-y-auto p-5 md:p-8">
+                        <div className="mb-6 p-4 bg-stone-50 dark:bg-stone-700/50 rounded-lg flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0 md:space-x-4 border border-stone-200 dark:border-stone-700 font-sans">
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" checked={pacerActive} onChange={(e) => setPacerActive(e.target.checked)}
+                                    className="w-5 h-5 text-rose-600 bg-white border-stone-300 rounded focus:ring-rose-500 dark:bg-stone-600 dark:border-stone-500"
+                                />
+                                <span className="font-semibold text-stone-700 dark:text-stone-300">{TRANSLATIONS[lang].pacerEnable}</span>
                             </label>
-                            <input id="pacer-speed" type="number" value={pacerSpeed}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    if (val === '') { setPacerSpeed(''); return; }
-                                    const num = parseInt(val, 10);
-                                    if (!isNaN(num)) setPacerSpeed(Math.min(600, num));
-                                }}
-                                onBlur={() => { if (pacerSpeed === '' || pacerSpeed < 1) setPacerSpeed(1); }}
-                                min="1" max="600" disabled={!pacerActive}
-                                className={`w-20 p-1 border rounded-lg text-center font-mono focus:ring-2 focus:ring-rose-500 ${!pacerActive ? 'bg-stone-200 dark:bg-stone-700/50 text-stone-400' : 'bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-200 border-stone-300 dark:border-stone-600'}`}
-                            />
-                        </div>
-                    </div>
-                    
-                    {renderDevaTextWithHover(devaOutput)}
 
-                    <div className="sticky bottom-0 bg-white dark:bg-stone-800 py-4 mt-6 border-t border-stone-100 dark:border-stone-700 z-10">
+                            <div className="flex items-center space-x-2">
+                                <label htmlFor="pacer-speed" className="text-sm text-stone-600 dark:text-stone-400 whitespace-nowrap">
+                                    {TRANSLATIONS[lang].target} SPM:
+                                </label>
+                                <input id="pacer-speed" type="number" value={pacerSpeed}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (val === '') { setPacerSpeed(''); return; }
+                                        const num = parseInt(val, 10);
+                                        if (!isNaN(num)) setPacerSpeed(Math.min(600, num));
+                                    }}
+                                    onBlur={() => { if (pacerSpeed === '' || pacerSpeed < 1) setPacerSpeed(1); }}
+                                    min="1" max="600" disabled={!pacerActive}
+                                    className={`w-20 p-1 border rounded-lg text-center font-mono focus:ring-2 focus:ring-rose-500 ${!pacerActive ? 'bg-stone-200 dark:bg-stone-700/50 text-stone-400' : 'bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-200 border-stone-300 dark:border-stone-600'}`}
+                                />
+                            </div>
+                        </div>
+                        
+                        {renderDevaTextWithHover(devaOutput)}
+                    </div>
+
+                    {/* Footer: Fest unten (Der Button ist jetzt "befreit" und immer sichtbar) */}
+                    <div className="p-4 bg-white dark:bg-stone-800 border-t border-stone-100 dark:border-stone-700 z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                         <p className="text-[10px] text-center uppercase tracking-wider text-stone-400 mb-2 font-sans">{TRANSLATIONS[lang].readyNote}</p>
                         <button onClick={startReading} className="w-full bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-xl font-bold shadow-lg flex justify-center items-center space-x-2 transition-all active:scale-95">
                             <span>{TRANSLATIONS[lang].calcSpeedBtn}</span> <ClockIcon size={18} />
@@ -1493,13 +1505,12 @@ useEffect(() => {
             );
             
             // --- RENDERER: RESULT ---
-            // --- RENDERER: RESULT ---
             const renderResult = () => {
                 const totalTime = currentDuration;
-                const spm = calculateSPM;
+                // Korrektur: Kein Funktionsaufruf (), da calculateSPM bereits die Zahl ist
+                const spm = calculateSPM; 
                 const syllables = finalSyllableCount; 
                 
-                // Dynamische Abbruch-Nachricht mit Sprachvariablen
                 const abortMessage = finalSyllableCount < syllableCount 
                     ? ` (${TRANSLATIONS[lang].sessionAborted.replace('{count}', finalSyllableCount)})` 
                     : (pacerActive && finalSyllableCount === syllableCount 
@@ -1513,52 +1524,54 @@ useEffect(() => {
                                  val >= 40  ? TRANSLATIONS[lang].feedback.intermediate :
                                               TRANSLATIONS[lang].feedback.beginner;
 
-                    // Wählt basierend auf dem aktuellen Zeitstempel (Sekunde) Index 0 oder 1
                     const index = Math.floor(Date.now() / 1000) % 2;
                     return pool[index];
                 };
 
                 return (
-                    /* Der umschließende Container mit weißem Rahmen und Schatten */
-                    <div className="max-w-2xl mx-auto bg-white dark:bg-stone-800 p-8 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-10 text-center">
-                        <h2 className="text-3xl font-bold text-rose-600 dark:text-rose-400 mb-4">{TRANSLATIONS[lang].resultTitle}</h2>
+                    <div className="max-w-2xl mx-auto bg-white dark:bg-stone-800 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 flex flex-col h-[82vh] md:h-auto overflow-hidden mt-0 md:mt-10 text-center">
+                        <div className="p-6 border-b border-stone-100 dark:border-stone-700">
+                            <h2 className="text-2xl font-bold text-rose-600 dark:text-rose-400">{TRANSLATIONS[lang].resultTitle}</h2>
+                        </div>
                         
-                        <div className="grid grid-cols-3 gap-2 md:gap-4 border-b border-stone-200 dark:border-stone-700 pb-4 mb-6">
-                            <div className="py-4 px-2 bg-stone-100 dark:bg-stone-700 rounded-lg">
-                                <div className="text-2xl md:text-3xl font-bold text-stone-800 dark:text-stone-200">{syllables}</div>
-                                <div className="text-xs md:text-sm text-stone-500 dark:text-stone-400 leading-tight font-sans">
-                                    {TRANSLATIONS[lang].syllablesRead}{abortMessage}
-                                </div> 
+                        {/* Scrollbarer Bereich für Stats */}
+                        <div className="flex-1 overflow-y-auto p-6">
+                            <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">
+                                <div className="py-4 px-2 bg-stone-100 dark:bg-stone-700 rounded-lg">
+                                    <div className="text-2xl font-bold text-stone-800 dark:text-stone-200">{syllables}</div>
+                                    <div className="text-[10px] md:text-xs text-stone-500 font-sans">{TRANSLATIONS[lang].syllablesRead}{abortMessage}</div> 
+                                </div>
+                                <div className="py-4 px-2 bg-stone-100 dark:bg-stone-700 rounded-lg">
+                                    <div className="text-2xl font-bold text-stone-800 dark:text-stone-200 whitespace-nowrap">{totalTime} s</div>
+                                    <div className="text-[10px] md:text-xs text-stone-500 font-sans">{TRANSLATIONS[lang].totalDuration}</div>
+                                </div>
+                                <div className="py-4 px-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg">
+                                    <div className="text-3xl font-extrabold text-rose-800 dark:text-rose-200">{spm}</div>
+                                    <div className="text-xs font-bold text-rose-700">SPM</div>
+                                </div>
                             </div>
-                            <div className="py-4 px-2 bg-stone-100 dark:bg-stone-700 rounded-lg">
-                                <div className="text-2xl md:text-3xl font-bold text-stone-800 dark:text-stone-200 whitespace-nowrap">{totalTime} s</div>
-                                <div className="text-xs md:text-sm text-stone-500 dark:text-stone-400 font-sans">{TRANSLATIONS[lang].totalDuration}</div>
-                            </div>
-                            <div className="py-4 px-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg shadow-inner">
-                                <div className="text-3xl md:text-4xl font-extrabold text-rose-800 dark:text-rose-200">{spm}</div>
-                                <div className="text-xs md:text-md font-bold text-rose-700 dark:text-rose-300 leading-tight">SPM</div>
-                            </div>
+
+                            <p className="text-stone-600 dark:text-stone-400 italic leading-relaxed px-2 font-sans text-sm">
+                                {getFeedback(spm)}
+                            </p>
                         </div>
 
-                        <p className="text-stone-600 dark:text-stone-400 mb-6 italic leading-relaxed px-4 font-sans">
-                            {getFeedback(spm)}
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row justify-center gap-4 font-sans">
-                            <button 
-                                id="btn-new-text"
-                                onClick={() => { setTextInput(''); setReadingState('input'); }}
-                                className="bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200 px-6 py-2 rounded-lg font-bold hover:bg-stone-300 dark:hover:bg-stone-600 transition-all outline-none focus:bg-rose-600 dark:focus:bg-rose-600 focus:text-white dark:focus:text-white"
-                            >
-                                {TRANSLATIONS[lang].newTextBtn}
-                            </button>
-                            <button 
-                                id="btn-restart"
-                                onClick={() => setReadingState('review')} 
-                                className="bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200 px-6 py-2 rounded-lg font-bold hover:bg-stone-300 dark:hover:bg-stone-600 transition-all outline-none focus:bg-rose-600 dark:focus:bg-rose-600 focus:text-white dark:focus:text-white"
-                            >
-                                {TRANSLATIONS[lang].restartBtn}
-                            </button>
+                        {/* Fester Footer für Buttons */}
+                        <div className="p-5 border-t border-stone-100 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-900/20">
+                            <div className="flex flex-col sm:flex-row justify-center gap-3 font-sans">
+                                <button 
+                                    onClick={() => { setTextInput(''); setReadingState('input'); }}
+                                    className="flex-1 bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200 px-6 py-3 rounded-xl font-bold hover:bg-stone-300 transition-all"
+                                >
+                                    {TRANSLATIONS[lang].newTextBtn}
+                                </button>
+                                <button 
+                                    onClick={() => setReadingState('review')} 
+                                    className="flex-1 bg-rose-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-rose-700 shadow-md transition-all"
+                                >
+                                    {TRANSLATIONS[lang].restartBtn}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 );
@@ -2264,7 +2277,7 @@ const styleEl = document.createElement('style');
             </div>
           );
 const renderDevanagariSetup = () => (
-            <div className="max-w-lg mx-auto bg-white dark:bg-stone-800 p-5 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-2 md:mt-10">
+            <div className="max-w-lg mx-auto bg-white dark:bg-stone-800 pt-3 px-5 pb-5 md:p-8 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 mt-0 md:mt-10">
                 <div className="flex items-center justify-center mb-6 relative min-h-[40px]">
 					<button 
 						onClick={() => setAppState('home')} 
@@ -2573,8 +2586,8 @@ const renderDevanagariSession = () => {
                 {/* Info-Popup bleibt absolut/fixiert */}
                 {popup.visible && <InfoPopup x={popup.x} y={popup.y} content={popup.content} onClose={() => setPopup({ ...popup, visible: false })} />}
                 
-                {/* Dieser Container füllt den Raum und zentriert seinen Inhalt vertikal */}
-				<div className="flex-1 flex flex-col">
+                {/* Haupt-Container: Startet oben und erlaubt der Seite zu wachsen */}
+                <div className="w-full pt-4 md:pt-12 pb-24">
                     <div className="w-full">
                         {appState === 'home' && renderHome()}
                         {appState === 'setup_devanagari' && renderDevanagariSetup()}
