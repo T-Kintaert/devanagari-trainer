@@ -1063,6 +1063,7 @@ const EXCLUDED_COMBINATIONS = new Set([]);
             const [highlightedAksharaIndex, setHighlightedAksharaIndex] = useState(-1);
             
             const [popup, setPopup] = useState({ visible: false, x: 0, y: 0, content: '', isSyllable: false });
+			const [helpExpanded, setHelpExpanded] = useState(false);
 
             useEffect(() => {
                 const text = textInput;
@@ -1394,20 +1395,35 @@ useEffect(() => {
                             maxLength={10000} 
                         />
 
-                        {/* Hilfe-Bereich: Fließt normal im Text mit */}
-                        <div className="mt-4 p-4 bg-stone-50 dark:bg-stone-900/30 border border-stone-200 dark:border-stone-700 rounded-lg text-sm leading-relaxed text-stone-600 dark:text-stone-400 break-words font-sans">
-                            <p className="font-bold mb-2 uppercase tracking-wide text-rose-600">{TRANSLATIONS[lang].helpTitle}</p>
-                            <p className="mb-3" dangerouslySetInnerHTML={{ __html: TRANSLATIONS[lang].helpIntro }} />
-                            <ul className="list-disc ml-5 space-y-2">
-                                <li>
-                                    <strong className="text-stone-700 dark:text-stone-200">{TRANSLATIONS[lang].helpConv}</strong> 
-                                    <a href="https://www.aksharamukha.com/converter" target="_blank" className="text-rose-600 hover:underline ml-1">aksharamukha.com</a>
-                                </li>
-                                <li>
-                                    <strong className="text-stone-700 dark:text-stone-200">{TRANSLATIONS[lang].helpOCR}</strong> 
-                                    <a href="https://ocr.sanskritdictionary.com/" target="_blank" className="text-rose-600 hover:underline ml-1">ocr.sanskritdictionary.com</a>
-                                </li>                               
-                            </ul>
+                        {/* Ausklappbare Hilfe zur Texteingabe */}
+                        <div className="mt-4 border border-stone-200 dark:border-stone-700 rounded-lg overflow-hidden font-sans">
+                            <button 
+                                onClick={() => setHelpExpanded(!helpExpanded)}
+                                className="w-full p-4 flex justify-between items-center bg-stone-50 dark:bg-stone-900/30 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors outline-none"
+                            >
+                                <span className="font-bold uppercase tracking-wide text-rose-600 text-sm">
+                                    {TRANSLATIONS[lang].helpTitle}
+                                </span>
+                                <div className={`transform transition-transform duration-200 ${helpExpanded ? 'rotate-180' : ''}`}>
+                                    <ChevronDown size={18} className="text-stone-400" />
+                                </div>
+                            </button>
+                            
+                            {helpExpanded && (
+                                <div className="p-4 bg-white dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 text-sm leading-relaxed text-stone-600 dark:text-stone-400 animate-in fade-in slide-in-from-top-2">
+                                    <p className="mb-3" dangerouslySetInnerHTML={{ __html: TRANSLATIONS[lang].helpIntro }} />
+                                    <ul className="list-disc ml-5 space-y-2">
+                                        <li>
+                                            <strong className="text-stone-700 dark:text-stone-200">{TRANSLATIONS[lang].helpConv}</strong> 
+                                            <a href="https://www.aksharamukha.com/converter" target="_blank" className="text-rose-600 hover:underline ml-1">aksharamukha.com</a>
+                                        </li>
+                                        <li>
+                                            <strong className="text-stone-700 dark:text-stone-200">{TRANSLATIONS[lang].helpOCR}</strong> 
+                                            <a href="https://ocr.sanskritdictionary.com/" target="_blank" className="text-rose-600 hover:underline ml-1">ocr.sanskritdictionary.com</a>
+                                        </li>                               
+                                    </ul>
+                                </div>
+                            )}
                         </div>
 
                         {/* Platzhalter: Schafft Raum, damit der Text hinter dem Button hervorrollen kann */}
