@@ -1,5 +1,5 @@
 <!--
-DEVANĀGARĪ TRAINER 2.0
+DEVANĀGARĪ TRAINER 2.1
 Konzeption: Thomas Kintaert (Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB], Universität Wien) Erstellungszeitraum: November 2025 – Mai 2026
 
 TECHNISCHE UMSETZUNG: Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini- Modelle 2.5 und 3 (Flash und Pro, inkl. der Gemini-Funktion Canvas) ermöglicht.
@@ -1880,6 +1880,7 @@ const addCategory = () => {
           const [quizSelection, setQuizSelection] = useState(null);
           const [quizScore, setQuizScore] = useState(0);
           const [quizAnswered, setQuizAnswered] = useState(false);
+		  const [quizFocusIndex, setQuizFocusIndex] = useState(-1);
 
           // --- ÄHNLICHE ZEICHEN / DISTRAKTOREN-MAP ---
           const SMART_DISTRACTORS = useMemo(() => ({
@@ -1924,11 +1925,12 @@ const addCategory = () => {
                   setDevaIndex(nextIdx);
 
                   if (devaMode === 'quiz') {
-                      setQuizAnswered(false);
-                      setQuizSelection(null);
-                      const nextOptions = generateQuizOptions(devaItems[nextIdx], devaItems);
-                      setQuizOptions(nextOptions);
-                  }
+					  setQuizAnswered(false);
+					  setQuizSelection(null);
+					  setQuizFocusIndex(-1);
+					  const nextOptions = generateQuizOptions(devaItems[nextIdx], devaItems);
+					  setQuizOptions(nextOptions);
+				  }
 
                   setTimeout(() => { setIsAnimating(true); }, 50);
               } else {
@@ -1948,11 +1950,12 @@ const addCategory = () => {
                   setDevaIndex(prevIdx);
 
                   if (devaMode === 'quiz') {
-                      setQuizAnswered(false);
-                      setQuizSelection(null);
-                      const prevOptions = generateQuizOptions(devaItems[prevIdx], devaItems);
-                      setQuizOptions(prevOptions);
-                  }
+					  setQuizAnswered(false);
+					  setQuizSelection(null);
+					  setQuizFocusIndex(-1); // <-- DIESE ZEILE HINZUFÜGEN
+					  const prevOptions = generateQuizOptions(devaItems[prevIdx], devaItems);
+					  setQuizOptions(prevOptions);
+				  }
 
                   setTimeout(() => { setIsAnimating(true); }, 50);
               }
@@ -1971,10 +1974,21 @@ const addCategory = () => {
               localStorage.setItem('sanskrit_app_lang', lang);
           }, [lang]);
 
+		  const handleQuizAnswer = useCallback((option) => {
+			  if (quizAnswered) return;
+			  const currentItem = devaItems[devaIndex];
+			  if (!currentItem) return;
+			  const isForward = devaDirection === 'devaToIast';
+			  const isCorrect = isForward ? option.t === currentItem.t : option.d === currentItem.d;
+			  setQuizSelection(option.t);
+			  setQuizAnswered(true);
+			  if (isCorrect) setQuizScore(prev => prev + 1);
+		  }, [quizAnswered, devaItems, devaIndex, devaDirection]);
+
           useEffect(() => {
               const handleKeyDown = (e) => {
-                  // Liste der Tasten, auf die wir reagieren
-                  const navKeys = ['Escape', 'Enter', 'ArrowRight', 'ArrowLeft'];
+                  // Erweitert um ArrowUp und ArrowDown für die vertikale Gittersteuerung
+				  const navKeys = ['Escape', 'Enter', 'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'];
                   if (!navKeys.includes(e.key)) return;
 
                   // Falls wir in der Session sind, verhindern wir Standard-Browser-Aktionen (z.B. Scrollen bei Pfeiltasten)
@@ -2003,13 +2017,44 @@ const addCategory = () => {
                           if (e.key === 'Enter') setShowCardBack(prev => !prev);
                           else if (e.key === 'ArrowRight') handleDevaNext();
                           else if (e.key === 'ArrowLeft') handleDevaPrev();
-                      } else if (devaMode === 'quiz') {
-                          if (quizAnswered && e.key === 'Enter') handleDevaNext();
-                          else if (!quizAnswered && e.key === 'Enter') {
-                              const focused = document.activeElement;
-                              if (focused && focused.tagName === 'BUTTON') focused.click();
-                          }
-                      }
+					  } else if (devaMode === 'quiz') {
+						  if (quizAnswered) {
+							  if (e.key === 'Enter') handleDevaNext();
+						  } else {
+							  // 1. Logik für neutrale Ausgangslage (-1)
+							  if (quizFocusIndex === -1) {
+								  if (e.key === 'ArrowDown') {
+									  if (quizOptions.length > 2) setQuizFocusIndex(2); // links unten
+									  else setQuizFocusIndex(0);
+								  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+									  setQuizFocusIndex(0); // links oben
+								  } else if (e.key === 'ArrowRight') {
+									  if (quizOptions.length > 1) setQuizFocusIndex(1); // rechts oben
+									  else setQuizFocusIndex(0);
+								  }
+							  } 
+							  // 2. Reguläre Gitter-Navigation, wenn bereits ein Feld aktiv ist
+							  else {
+								  if (e.key === 'ArrowRight') {
+									  if (quizFocusIndex === 0 && quizOptions.length > 1) setQuizFocusIndex(1);
+									  else if (quizFocusIndex === 2 && quizOptions.length > 3) setQuizFocusIndex(3);
+								  } else if (e.key === 'ArrowLeft') {
+									  if (quizFocusIndex === 1) setQuizFocusIndex(0);
+									  else if (quizFocusIndex === 3) setQuizFocusIndex(2);
+								  } else if (e.key === 'ArrowDown') {
+									  if (quizFocusIndex === 0 && quizOptions.length > 2) setQuizFocusIndex(2);
+									  else if (quizFocusIndex === 1 && quizOptions.length > 3) setQuizFocusIndex(3);
+								  } else if (e.key === 'ArrowUp') {
+									  if (quizFocusIndex === 2) setQuizFocusIndex(0);
+									  else if (quizFocusIndex === 3) setQuizFocusIndex(1);
+								  } else if (e.key === 'Enter') {
+									  if (quizOptions[quizFocusIndex]) {
+										  handleQuizAnswer(quizOptions[quizFocusIndex]);
+									  }
+								  }
+							  }
+						  }
+					  }
                       return;
                   } 
                   
@@ -2026,7 +2071,7 @@ const addCategory = () => {
 
               window.addEventListener('keydown', handleKeyDown);
               return () => window.removeEventListener('keydown', handleKeyDown);
-          }, [appState, devaMode, quizAnswered, handleDevaNext, handleDevaPrev, studyModeContent, showCustomEditor, showInfo, showFontSettings]);
+          }, [appState, devaMode, quizAnswered, quizFocusIndex, quizOptions, handleDevaNext, handleDevaPrev, handleQuizAnswer, studyModeContent, showCustomEditor, showInfo, showFontSettings]);
 
           // Popup-Click-Handler (separat für Maus-Events)
           useEffect(() => {
@@ -2487,14 +2532,6 @@ const renderDevanagariSession = () => {
             const displayQuestion = isForward ? currentItem?.d : currentItem?.t;
             const displayAnswer = isForward ? currentItem?.t : currentItem?.d;
 
-            const handleQuizAnswer = (option) => {
-                if (quizAnswered) return;
-                const isCorrect = isForward ? option.t === currentItem.t : option.d === currentItem.d;
-                setQuizSelection(option.t);
-                setQuizAnswered(true);
-                if (isCorrect) setQuizScore(prev => prev + 1);
-            };
-
             if (devaMode === 'cards') {
 				return (
 					<div className="max-w-md mx-auto mt-0 md:mt-32">
@@ -2612,7 +2649,9 @@ const renderDevanagariSession = () => {
                                         ? 'border-green-500 bg-green-50 dark:bg-green-900/20' 
                                         : quizSelection === option.t && (isForward ? option.t !== currentItem.t : option.d !== currentItem.d)
                                             ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
-                                            : 'border-transparent hover:border-rose-500 focus:border-rose-500'
+                                            : (!quizAnswered && idx === quizFocusIndex)
+                                                ? 'border-rose-500 dark:border-rose-400 bg-rose-50/40 dark:bg-rose-950/20'
+                                                : 'border-transparent hover:border-rose-500'
                                 }`}
                             >
                                 {!isForward && option?.image ? (
@@ -2675,7 +2714,7 @@ const renderDevanagariSession = () => {
                                 {TRANSLATIONS[lang].projectInfo}
                             </h2>
                             <div className="space-y-2 text-stone-700 dark:text-stone-300 leading-relaxed text-sm">
-                                <p><strong>{TRANSLATIONS[lang].version}:</strong> Devanāgarī Trainer 2.0</p>
+                                <p><strong>{TRANSLATIONS[lang].version}:</strong> Devanāgarī Trainer 2.1</p>
                                 <p><strong>{TRANSLATIONS[lang].conception}:</strong> Thomas Kintaert (<a href={TRANSLATIONS[lang].istbUrl} target="_blank" className="text-rose-600 hover:underline">{lang === 'de' ? "Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB]" : "Department of South Asian, Tibetan and Buddhist Studies"}</a>, {lang === 'de' ? "Universität Wien" : "University of Vienna"})</p>
                                 <p><strong>{TRANSLATIONS[lang].period}:</strong> {lang === 'de' ? "November 2025 – Mai 2026" : "November 2025 – May 2026"}</p>
                                 <p><strong>{TRANSLATIONS[lang].techImp}:</strong><br/>{TRANSLATIONS[lang].techImpDesc}</p>
