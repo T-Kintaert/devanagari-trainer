@@ -1300,10 +1300,10 @@ useEffect(() => {
                         {/* Der Button außerhalb des Containers */}
                         <button
                             onClick={(e) => { e.stopPropagation(); setIsTheaterMode(!isTheaterMode); }}
-                            className={`fixed top-6 right-6 z-[9999] p-2 text-stone-400 hover:text-rose-600 dark:text-stone-500 dark:hover:text-rose-400 transition-colors bg-white/80 dark:bg-stone-800/80 rounded-full shadow-lg backdrop-blur-sm`}
+                            className="fixed right-6 z-[9999] w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-stone-850 shadow-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors border border-stone-200 dark:border-stone-700 cursor-pointer outline-none top-3 md:top-9"
                             title={isTheaterMode ? "Normalansicht" : "Vollbild"}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 {isTheaterMode ? (
                                     <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/>
                                 ) : (
@@ -1504,9 +1504,10 @@ useEffect(() => {
                                 <span className="font-semibold text-stone-700 dark:text-stone-300">{TRANSLATIONS[lang].pacerEnable}</span>
                             </label>
 
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center space-x-2" title={TRANSLATIONS[lang].spmFull}>
                                 <label htmlFor="pacer-speed" className="text-sm text-stone-600 dark:text-stone-400 whitespace-nowrap">
-                                    {TRANSLATIONS[lang].target}SPM:
+                                    {TRANSLATIONS[lang].target}
+                                    <span className="cursor-help border-b border-dashed border-stone-400 dark:border-stone-500">SPM</span>:
                                 </label>
                                 <input id="pacer-speed" type="number" value={pacerSpeed}
                                     onChange={(e) => {
@@ -1607,7 +1608,7 @@ useEffect(() => {
                                     <div className="text-2xl font-bold text-stone-800 dark:text-stone-200 whitespace-nowrap">{totalTime} s</div>
                                     <div className="text-[10px] md:text-xs text-stone-500 font-sans">{TRANSLATIONS[lang].totalDuration}</div>
                                 </div>
-                                <div className="py-4 px-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg">
+                                <div className="py-4 px-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg cursor-help" title={TRANSLATIONS[lang].spmFull}>
                                     <div className="text-3xl font-extrabold text-rose-800 dark:text-rose-200">{spm}</div>
                                     <div className="text-xs font-bold text-rose-700">SPM</div>
                                 </div>
@@ -2335,7 +2336,7 @@ const styleEl = document.createElement('style');
                           <select 
                               value={lang}
                               onChange={(e) => { setLang(e.target.value); if (!isHome) handleHeaderTap(); }}
-                              className="appearance-none h-12 px-4 rounded-full bg-white dark:bg-stone-800 shadow-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors border border-stone-200 dark:border-stone-700 font-bold text-sm cursor-pointer outline-none"
+                              className="appearance-none w-12 h-12 text-center rounded-full bg-white dark:bg-stone-800 shadow-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors border border-stone-200 dark:border-stone-700 font-bold text-sm cursor-pointer outline-none p-0"
                               style={{ pointerEvents: isShown ? 'auto' : 'none' }}
                           >
                               <option value="de">DE</option>
