@@ -15,12 +15,12 @@
     "desc_en": "Based on: Stiehl, Ulrich. \"C. List of the 807 actually attested Sanskrit ligatures.\" Sanskritweb, 27 May 2026, p. 4, www.sanskritweb.net/sansdocs/mathe.pdf. See also: Stiehl, Ulrich. \"Conjunct Consonants in Sanskrit.\" BoD – Books on Demand, 2017.",
     "author": "T. Kintaert"
   },
-  "sanskrit_in_anderen_Brahmi-Schriften: {
+  "sanskrit_in_anderen_Brahmi-Schriften": {
     "filename": "The-Sanskrit-alphasyllabary-in-other-Brahmi-scripts.json",
     "name_de": "Das Alphasyllabar des Sanskrit in anderen Brāhmī-Schriften",
     "name_en": "The Sanskrit alphasyllabary in Bengali, Brāhmī, Gujarati, Kannada, Malayalam, Odiya, Punjabi, Telugu, and Tibetan (dbu can).",
     "desc_de": "Das Alphasyllabar des Sanskrit in Bengali, Brāhmī, Gujarati, Kannada, Malayalam, Odiya, Panjabi, Telugu und Tibetisch (dbu can). Erzeugt mit Hilfe von Aksharamukha (https://www.aksharamukha.com/converter).",
     "desc_en": "Collection of variant script styles and historical forms such as the northern style. Generated using Aksharamukha (https://www.aksharamukha.com/converter).",
     "author": "T. Kintaert"
-  },
+  }
 }
