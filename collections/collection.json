@@ -1,0 +1,26 @@
+{
+  "alternative_zeichen": {
+    "filename": "Some-alternative-Devanagari-characters.json",
+    "name_de": "Einige alternative Devanāgarī-Zeichen",
+    "name_en": "Some alternative Devanāgarī characters",
+    "desc_de": "Sammlung von abweichenden Schriftstilen und historischen Formen wie dem nördlichen Stil.",
+    "desc_en": "Collection of variant script styles and historical forms such as the northern style.",
+    "author": "T. Kintaert"
+  },
+  "807_belegte_ligaturen": {
+    "filename": "807-attested-Sanskrit-ligatures.json",
+    "name_de": "807 belegte Devanāgarī-Ligaturen",
+    "name_en": "807 attested Sanskrit ligatures",
+    "desc_de": "Basierend auf: Stiehl, Ulrich. \"C. List of the 807 actually attested Sanskrit ligatures.\" *Sanskritweb*, 27. Mai 2026, S. 4, www.sanskritweb.net/sansdocs/mathe.pdf. Siehe auch: Stiehl, Ulrich. *Conjunct Consonants in Sanskrit*. BoD – Books on Demand, 2017.",
+    "desc_en": "Based on: Stiehl, Ulrich. \"C. List of the 807 actually attested Sanskrit ligatures.\" Sanskritweb, 27 May 2026, p. 4, www.sanskritweb.net/sansdocs/mathe.pdf. See also: Stiehl, Ulrich. \"Conjunct Consonants in Sanskrit.\" BoD – Books on Demand, 2017.",
+    "author": "T. Kintaert"
+  },
+  "sanskrit_in_anderen_Brahmi-Schriften: {
+    "filename": "The-Sanskrit-alphasyllabary-in-other-Brahmi-scripts.json",
+    "name_de": "Das Alphasyllabar des Sanskrit in anderen Brāhmī-Schriften",
+    "name_en": "The Sanskrit alphasyllabary in Bengali, Brāhmī, Gujarati, Kannada, Malayalam, Odiya, Punjabi, Telugu, and Tibetan (dbu can).",
+    "desc_de": "Das Alphasyllabar des Sanskrit in Bengali, Brāhmī, Gujarati, Kannada, Malayalam, Odiya, Panjabi, Telugu und Tibetisch (dbu can). Erzeugt mit Hilfe von Aksharamukha (https://www.aksharamukha.com/converter).",
+    "desc_en": "Collection of variant script styles and historical forms such as the northern style. Generated using Aksharamukha (https://www.aksharamukha.com/converter).",
+    "author": "T. Kintaert"
+  },
+}
