@@ -3484,12 +3484,47 @@ const renderDevanagariSession = () => {
                                         {/* Unter-Sammlungen im Ordner anzeigen */}
                                         {isFolder && isExpanded && (
                                             <div className="mt-2 mb-2 pl-4 md:pl-6 border-l-2 border-rose-700/30 dark:border-rose-500/30 space-y-2">
-                                                {(cat.collections || []).map(subCat => {
+                                                {(cat.collections || []).map((subCat, subIdx) => {
                                                     const subInfoVisible = !!window._showInfoFields[subCat.id];
+                                                    const subExpanded = expandedCats.includes(subCat.id);
                                                     return (
                                                         <div key={subCat.id} className="p-2 bg-white dark:bg-stone-800 border border-stone-200/60 dark:border-stone-700 rounded-lg shadow-sm">
                                                             <div className="flex items-center justify-between flex-nowrap gap-2 w-full min-w-0">
                                                                 <div className="flex items-center flex-nowrap gap-2 min-w-0 flex-1">
+                                                                    <button onClick={() => toggleCatExpanded(subCat.id)} className="p-1 hover:bg-stone-200 dark:hover:bg-stone-700 rounded text-stone-400 text-xs shrink-0">
+                                                                        {subExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                                                                    </button>
+                                                                    
+                                                                    {/* Sortierpfeile für Sammlungen innerhalb des Ordners */}
+                                                                    {isSortMode && (
+                                                                        <div className="flex flex-col -space-y-1 shrink-0">
+                                                                            <button 
+                                                                                onClick={() => {
+                                                                                    if (subIdx === 0) return;
+                                                                                    setCustomCategories(prev => prev.map(c => {
+                                                                                        if (c.id !== cat.id) return c;
+                                                                                        const nextSubs = [...(c.collections || [])];
+                                                                                        [nextSubs[subIdx], nextSubs[subIdx - 1]] = [nextSubs[subIdx - 1], nextSubs[subIdx]];
+                                                                                        return { ...c, collections: nextSubs };
+                                                                                    }));
+                                                                                }} 
+                                                                                className="text-stone-300 hover:text-rose-600"
+                                                                            ><ChevronUp size={14} /></button>
+                                                                            <button 
+                                                                                onClick={() => {
+                                                                                    if (subIdx === cat.collections.length - 1) return;
+                                                                                    setCustomCategories(prev => prev.map(c => {
+                                                                                        if (c.id !== cat.id) return c;
+                                                                                        const nextSubs = [...(c.collections || [])];
+                                                                                        [nextSubs[subIdx], nextSubs[subIdx + 1]] = [nextSubs[subIdx + 1], nextSubs[subIdx]];
+                                                                                        return { ...c, collections: nextSubs };
+                                                                                    }));
+                                                                                }} 
+                                                                                className="text-stone-300 hover:text-rose-600"
+                                                                            ><ChevronDown size={14} /></button>
+                                                                        </div>
+                                                                    )}
+
                                                                     <input 
                                                                         type="checkbox" 
                                                                         checked={subCat.active} 
@@ -3533,37 +3568,20 @@ const renderDevanagariSession = () => {
                                                                         <span className="w-3 h-3 flex items-center justify-center font-serif italic text-[10px] font-bold">i</span>
                                                                     </button>
 
+                                                                    {/* Dropdown unterstützt jetzt Kopieren und Verschieben ins Hauptverzeichnis */}
                                                                     <select
                                                                         onChange={(e) => {
-                                                                            const targetId = e.target.value;
-                                                                            setCustomCategories(prev => {
-                                                                                let targetCat = null;
-                                                                                // Suche die verschobene Unterkategorie
-                                                                                const currentFolder = prev.find(c => c.id === cat.id);
-                                                                                if (currentFolder && currentFolder.collections) {
-                                                                                    targetCat = currentFolder.collections.find(sub => sub.id === subCat.id);
-                                                                                }
-                                                                                if (!targetCat) return prev;
-
-                                                                                // Aus aktuellem Ordner löschen
-                                                                                let cleaned = prev.map(c => c.id === cat.id ? { ...c, collections: (c.collections || []).filter(sub => sub.id !== subCat.id) } : c);
-
-                                                                                if (targetId === "root") {
-                                                                                    return [targetCat, ...cleaned];
-                                                                                } else {
-                                                                                    return cleaned.map(c => c.id === targetId ? { ...c, collections: [...(c.collections || []), targetCat] } : c);
-                                                                                }
-                                                                            });
+                                                                            const act = e.target.value;
+                                                                            if (!act) return;
+                                                                            window.executeCatAction(act, subCat, "root");
                                                                             e.target.value = "";
                                                                         }}
                                                                         defaultValue=""
-                                                                        className="text-[9px] bg-stone-100 dark:bg-stone-900 border border-stone-200 rounded px-1 py-0.5 text-stone-500 outline-none w-[60px] md:w-[100px] cursor-pointer shrink-0"
+                                                                        className="text-[9px] bg-stone-100 dark:bg-stone-900 border border-stone-200 rounded px-1 py-0.5 text-stone-500 outline-none w-[65px] md:w-[100px] cursor-pointer shrink-0"
                                                                     >
-                                                                        <option value="" disabled>{lang === 'de' ? "Verschieben..." : "Move..."}</option>
-                                                                        <option value="root">{(TRANSLATIONS[lang] && TRANSLATIONS[lang].folderRoot) || "❌ Hauptverzeichnis"}</option>
-                                                                        {customCategories.filter(c => c.isFolder && c.id !== cat.id).map(f => (
-                                                                            <option key={f.id} value={f.id}>📁 {f.name}</option>
-                                                                        ))}
+                                                                        <option value="" disabled>{lang === 'de' ? "Aktion..." : "Action..."}</option>
+                                                                        <option value="move">📦 {lang === 'de' ? "Verschieben" : "Move"}</option>
+                                                                        <option value="copy">📄 {lang === 'de' ? "Kopieren" : "Copy"}</option>
                                                                     </select>
 
                                                                     <button 
@@ -3598,11 +3616,131 @@ const renderDevanagariSession = () => {
                                                                     />
                                                                 </div>
                                                             )}
+
+                                                            {/* Einzelne Zeichenliste aufklappbar innerhalb des Ordners */}
+                                                            {subExpanded && (
+                                                                <div className="mt-3 pt-3 border-t border-stone-100 dark:border-stone-700 space-y-2">
+                                                                    {(subCat.items || []).map((item, itemIdx) => (
+                                                                        <div key={item.id || itemIdx} className="bg-white dark:bg-stone-850 p-3 rounded-lg shadow-sm border border-stone-100 dark:border-stone-700/50 space-y-2">
+                                                                            <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                                                                                {isSortMode && (
+                                                                                    <div className="flex flex-col -space-y-1 shrink-0">
+                                                                                        <button 
+                                                                                            onClick={() => {
+                                                                                                if (itemIdx === 0) return;
+                                                                                                setCustomCategories(prev => prev.map(c => {
+                                                                                                    if (c.id !== cat.id) return c;
+                                                                                                    return {
+                                                                                                        ...c,
+                                                                                                        collections: (c.collections || []).map(s => {
+                                                                                                            if (s.id !== subCat.id) return s;
+                                                                                                            const nextItems = [...(s.items || [])];
+                                                                                                            [nextItems[itemIdx], nextItems[itemIdx - 1]] = [nextItems[itemIdx - 1], nextItems[itemIdx]];
+                                                                                                            return { ...s, items: nextItems };
+                                                                                                        })
+                                                                                                    };
+                                                                                                }));
+                                                                                            }} 
+                                                                                            className="text-stone-300 hover:text-rose-600"
+                                                                                        ><ChevronUp size={14} /></button>
+                                                                                        <button 
+                                                                                            onClick={() => {
+                                                                                                if (itemIdx === subCat.items.length - 1) return;
+                                                                                                setCustomCategories(prev => prev.map(c => {
+                                                                                                    if (c.id !== cat.id) return c;
+                                                                                                    return {
+                                                                                                        ...c,
+                                                                                                        collections: (c.collections || []).map(s => {
+                                                                                                            if (s.id !== subCat.id) return s;
+                                                                                                            const nextItems = [...(s.items || [])];
+                                                                                                            [nextItems[itemIdx], nextItems[itemIdx + 1]] = [nextItems[itemIdx + 1], nextItems[itemIdx]];
+                                                                                                            return { ...s, items: nextItems };
+                                                                                                        })
+                                                                                                    };
+                                                                                                }));
+                                                                                            }} 
+                                                                                            className="text-stone-300 hover:text-rose-600"
+                                                                                        ><ChevronDown size={14} /></button>
+                                                                                    </div>
+                                                                                )}
+                                                                                
+                                                                                <label className="w-11 h-11 min-w-[44px] flex items-center justify-center bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg cursor-pointer hover:bg-stone-100 relative overflow-hidden transition-colors">
+                                                                                    {item.image ? <img src={item.image} className="w-full h-full object-contain p-1" /> : <ImageIcon size={20} className="text-stone-300 dark:text-stone-600" />}
+                                                                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                                                                        if (e.target.files[0]) processImage(e.target.files[0], (base64) => {
+                                                                                            setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, collections: c.collections.map(s => s.id === subCat.id ? { ...s, items: s.items.map(it => it.id === item.id ? { ...it, image: base64, char: '' } : it) } : s) } : c));
+                                                                                        });
+                                                                                    }} />
+                                                                                </label>
+
+                                                                                <input type="text" placeholder={lang === 'de' ? "Schriftzeichen" : "Character"} value={item.char || ''} disabled={!!item.image} onChange={(e) => {
+                                                                                    const val = e.target.value;
+                                                                                    setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, collections: c.collections.map(s => s.id === subCat.id ? { ...s, items: s.items.map(it => it.id === item.id ? { ...it, char: val } : it) } : s) } : c));
+                                                                                }} className="w-16 md:w-32 p-1 text-base font-deva border-b border-stone-200 dark:border-stone-700 bg-transparent outline-none focus:border-rose-500 dark:text-stone-200" />
+                                                                                
+                                                                                <input type="text" placeholder={lang === 'de' ? "+ Fontname (optional)" : "+ Font name (optional)"} value={item.font || ''} onChange={(e) => {
+                                                                                    const val = e.target.value;
+                                                                                    setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, collections: c.collections.map(s => s.id === subCat.id ? { ...s, items: s.items.map(it => it.id === item.id ? { ...it, font: val } : it) } : s) } : c));
+                                                                                }} className="flex-1 min-w-[80px] md:w-40 md:flex-none text-[9px] bg-stone-100 dark:bg-stone-900 rounded px-1 py-1 text-stone-500 outline-none" />
+                                                                                
+                                                                                <input type="text" placeholder="Transliteration" value={item.iast || ''} onChange={(e) => {
+                                                                                    const val = e.target.value;
+                                                                                    setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, collections: c.collections.map(s => s.id === subCat.id ? { ...s, items: s.items.map(it => it.id === item.id ? { ...it, iast: val } : it) } : s) } : c));
+                                                                                }} className="flex-1 min-w-[60px] p-1 text-sm border-b border-stone-200 dark:border-stone-700 bg-transparent outline-none focus:border-rose-500 dark:text-stone-200" />
+
+                                                                                <select 
+                                                                                    onChange={(e) => {
+                                                                                        const val = e.target.value;
+                                                                                        if (val) window.executeItemAction(val, subCat.id, item);
+                                                                                        e.target.value = "";
+                                                                                    }}
+                                                                                    defaultValue=""
+                                                                                    className="text-[10px] bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded px-1 py-1 text-stone-500 outline-none w-[80px] cursor-pointer shrink-0 font-bold"
+                                                                                >
+                                                                                    <option value="" disabled>{lang === 'de' ? "Aktion..." : "Action..."}</option>
+                                                                                    <option value="move">📦 {lang === 'de' ? "Verschieben" : "Move"}</option>
+                                                                                    <option value="copy">📄 {lang === 'de' ? "Kopieren" : "Copy"}</option>
+                                                                                </select>
+
+                                                                                <button onClick={() => {
+                                                                                    setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, collections: c.collections.map(s => s.id === subCat.id ? { ...s, items: s.items.filter(it => it.id !== item.id) } : s) } : c));
+                                                                                }} className="text-stone-300 hover:text-red-500 p-1 ml-auto"><XIcon size={16} /></button>
+                                                                            </div>
+
+                                                                            <div className="flex items-center gap-2 pl-0 md:pl-12">
+                                                                                <span className="text-[9px] font-bold text-stone-400 uppercase shrink-0">Info:</span>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    placeholder={lang === 'de' ? "... (Anmerkung, Merkhilfe etc.)" : "... (note, mnemonic etc.)"} 
+                                                                                    value={item.note || ''} 
+                                                                                    onChange={(e) => {
+                                                                                        const val = e.target.value;
+                                                                                        setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, collections: c.collections.map(s => s.id === subCat.id ? { ...s, items: s.items.map(it => it.id === item.id ? { ...it, note: val } : it) } : s) } : c));
+                                                                                    }} 
+                                                                                    className="flex-1 text-[11px] italic text-stone-500 bg-transparent outline-none focus:text-stone-700 dark:focus:text-stone-300" 
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    ))}
+                                                                    
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            const newItem = { id: 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), char: '', iast: '', note: '', font: '' };
+                                                                            setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, collections: c.collections.map(s => s.id === subCat.id ? { ...s, items: [...(s.items || []), newItem] } : s) } : c));
+                                                                        }}
+                                                                        className="w-full py-2 border-2 border-dashed border-stone-200 dark:border-stone-700 rounded-lg text-xs flex items-center justify-center text-stone-500 hover:text-rose-600 hover:border-rose-300 transition-all mt-2 font-bold"
+                                                                    >
+                                                                        + {TRANSLATIONS[lang].singleChar}
+                                                                    </button>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     );
                                                 })}
                                             </div>
                                         )}
+
+                                        {/* Reguläre flache Sammlungen */}
 
                                         {!isFolder && isExpanded && (
                                             <div className="mt-4 space-y-4 pl-2 sm:pl-4 border-l-2 border-stone-200 dark:border-stone-700">
@@ -3610,6 +3748,41 @@ const renderDevanagariSession = () => {
                                                 {/* Funktion zum Verschieben eines Zeichens in eine andere Sammlung */}
                                                 {(() => {
                                                     // suche nach diesem exakten kommentar: {/* Funktion zum Verschieben eines Zeichens in eine andere Sammlung */}
+												// Globale Aktion für das Verschieben/Kopieren von ganzen Sammlungen
+												window.executeCatAction = (action, subCatObj, targetId) => {
+													setCustomCategories(prev => {
+														let catToProcess = { ...subCatObj };
+														
+														// 1. Aus dem alten Ordner entfernen, falls verschoben wird
+														let cleaned = prev.map(c => {
+															if (c.isFolder && c.collections) {
+																return { ...c, collections: c.collections.filter(sub => sub.id !== subCatObj.id) };
+															}
+															return c;
+														});
+														
+														// 2. Bei einer Kopie vergeben wir neue, eindeutige IDs für die Sammlung und alle enthaltenen Zeichen
+														if (action === 'copy') {
+															const freshCatId = 'cat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+															const freshItems = (catToProcess.items || []).map((it, idx) => ({
+																...it,
+																id: 'item_' + Date.now() + '_' + idx + '_' + Math.random().toString(36).substr(2, 4)
+															}));
+															catToProcess = {
+																...catToProcess,
+																id: freshCatId,
+																name: catToProcess.name + " (" + (lang === 'de' ? "Kopie" : "Copy") + ")",
+																items: freshItems
+															};
+														}
+														
+														// 3. Im Hauptverzeichnis (root) ganz oben platzieren
+														if (targetId === "root") {
+															return [catToProcess, ...cleaned];
+														}
+														return cleaned;
+													});
+												};
 												window.executeItemAction = (action, fromCatId, item, toCatId) => {
 													if (!toCatId) return;
 													
