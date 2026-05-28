@@ -703,6 +703,33 @@ const EXCLUDED_COMBINATIONS = new Set([]);
 				localStatusActive: "Sie führen die App lokal aus. Schriftarten und Sammlungen werden aus Ihrem lokalen Verzeichnis bezogen.",
 				downloadPrompt: "Möchten Sie den Trainer lokal auf Ihrem Computer starten?",
 				downloadBtnText: "App für lokalen Start herunterladen (.zip)",
+				collectionInfoPlaceholder: "Beschreibung, Herkunft oder Copyright-Informationen dieser Sammlung...",
+				collectionInfoLabel: "Sammlungs-Info:",
+				moveToCollection: "Verschieben nach...",
+				addFolder: "+ Ordner hinzufügen",
+				folderNamePlaceholder: "z. B. Andere Schriften",
+				confirmDeleteCat: "Möchtest du diese Sammlung wirklich löschen?",
+				folderRoot: "❌ Hauptverzeichnis",
+				moveItemTitle: "📦 Zeichen verschieben",
+				copyItemTitle: "📄 Zeichen kopieren",
+				searchPlaceholder: "Sammlung suchen...",
+				cancel: "Abbrechen",
+				onlinePoolBtn: "Online-Pool",
+				onlinePoolDesc: "Öffne Sammlungen von GitHub, die geteilt und bereitgestellt wurden.",
+				onlineLibraryTitle: "Sanskrit Online-Bibliothek",
+				collectionIdPlaceholder: "Sammlungs-ID eingeben (z. B. 101)...",
+				loadBtn: "Laden",
+				searchIndexPlaceholder: "Verzeichnis durchsuchen...",
+				loadingIndex: "Lade Index von GitHub...",
+				noEntriesFound: "Keine Einträge gefunden.",
+				addBtn: "Hinzufügen",
+				onlineImportSuccess: "Online-Sammlung erfolgreich importiert:\n",
+				importErrorPool: "Die eingegebene ID ist leider nicht aktiv oder ungültig. Bitte prüfe den Pool auf GitHub.",
+				importErrorFetch: "Fehler beim Laden der Online-Daten. Bitte Internetverbindung prüfen.",
+				onlineImportSuccess: "Erfolgreich importiert: ",
+				importErrorPool: "Sammlung im Online-Verzeichnis nicht gefunden.",
+				importErrorFetch: "Fehler beim Laden der Sammlungsdatei von GitHub.",
+				loadingIndexError: "Das Inhaltsverzeichnis des Online-Pools konnte nicht geladen werden.",
 			},
 			en: {
 				// General
@@ -852,6 +879,33 @@ const EXCLUDED_COMBINATIONS = new Set([]);
 				localStatusActive: "You are running the app locally. Fonts and collections are obtained from your local directory.",
 				downloadPrompt: "Would you like to run the trainer locally on your computer?",
 				downloadBtnText: "Download app for local start (.zip)",
+				collectionInfoPlaceholder: "Description, origin, or copyright information of this collection...",
+				collectionInfoLabel: "Collection Info:",
+				moveToCollection: "Move to...",
+				addFolder: "+ Add folder",
+				folderNamePlaceholder: "e.g., Other scripts",
+				confirmDeleteCat: "Do you really want to delete this collection?",
+				folderRoot: "❌ Root Directory",
+				moveItemTitle: "📦 Move Character",
+				copyItemTitle: "📄 Copy Character",
+				searchPlaceholder: "Search collection...",
+				cancel: "Cancel",
+				onlinePoolBtn: "Online Pool",
+				onlinePoolDesc: "Open collections shared and hosted on GitHub.",
+				onlineLibraryTitle: "Sanskrit Online Library",
+				collectionIdPlaceholder: "Enter collection ID (e.g. 101)...",
+				loadBtn: "Load",
+				searchIndexPlaceholder: "Search index...",
+				loadingIndex: "Loading GitHub index...",
+				noEntriesFound: "No entries found.",
+				addBtn: "Add",
+				onlineImportSuccess: "Online collection successfully imported:\n",
+				importErrorPool: "The entered ID is currently inactive or invalid. Please check the pool on GitHub.",
+				importErrorFetch: "Error loading online data. Please check your internet connection.",
+				onlineImportSuccess: "Successfully imported: ",
+				importErrorPool: "Collection not found in the online directory.",
+				importErrorFetch: "Error loading the collection file from GitHub.",
+				loadingIndexError: "The online pool directory could not be loaded.",
 			}
 		};
    
@@ -1308,7 +1362,11 @@ useEffect(() => {
                         {/* Der Button außerhalb des Containers */}
                         <button
                             onClick={(e) => { e.stopPropagation(); setIsTheaterMode(!isTheaterMode); }}
-                            className="fixed right-6 z-[9999] w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-stone-850 shadow-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors border border-stone-200 dark:border-stone-700 cursor-pointer outline-none top-3 md:top-9"
+                            className={`fixed z-[9999] w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-stone-850 shadow-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors border border-stone-200 dark:border-stone-700 cursor-pointer outline-none top-3 ${
+                                isTheaterMode 
+                                    ? 'right-6 md:top-6' 
+                                    : 'right-6 md:top-[4.5%] md:right-[calc(50%-26rem)]'
+                            }`}
                             title={isTheaterMode ? "Normalansicht" : "Vollbild"}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -1747,7 +1805,14 @@ useEffect(() => {
           {/* CUSTOM_DATA_STATES */}
           const [isSortMode, setIsSortMode] = useState(false);
 
-          // Kategorien verschieben
+          const [activeItemAction, setActiveItemAction] = useState(null); // Speichert { action: 'copy'|'move', fromCatId, item }
+		  const [activeCatAction, setActiveCatAction] = useState(null); // Speichert { action: 'copy'|'move', cat }
+		  const [showOnlineLibrary, setShowOnlineLibrary] = useState(false);
+		  const [onlinePool, setOnlinePool] = useState(null); // Speichert den Inhalt der sammlungen.json
+		  const [onlineLoading, setOnlineLoading] = useState(false);
+		  const [onlineSearch, setOnlineSearch] = useState("");
+		  
+		  // Kategorien verschieben
           const moveCategory = (id, direction) => {
               const index = customCategories.findIndex(c => c.id === id);
               if ((direction === -1 && index === 0) || (direction === 1 && index === customCategories.length - 1)) return;
@@ -1842,8 +1907,22 @@ useEffect(() => {
                           throw new Error("Das Dateiformat ist ungültig (Kategorien oder Zeichen fehlen).");
                       }
 
-                      // Erfolg: Oben hinzufügen (Prepend)
-                      setCustomCategories(prev => [...imported, ...prev]);
+                      // Erfolg: Oben hinzufügen (Prepend) und IDs frisch generieren, um Doppelgänger zu vermeiden
+                      const sanitizedImported = imported.map((cat, catIdx) => {
+                          // Absolut eindeutige ID durch Kombination aus Zeitstempel, Index und Zufallsstring
+                          const uniqueCatId = 'cat_' + Date.now() + '_' + catIdx + '_' + Math.random().toString(36).substr(2, 7);
+                          const sanitizedItems = (cat.items || []).map((item, itemIdx) => ({
+                              ...item,
+                              id: 'item_' + Date.now() + '_' + catIdx + '_' + itemIdx + '_' + Math.random().toString(36).substr(2, 9)
+                          }));
+                          return {
+                              ...cat,
+                              id: uniqueCatId, // Jede importierte Sammlung erhält zwingend eine eigene, frische ID
+                              items: sanitizedItems
+                          };
+                      });
+
+                      setCustomCategories(prev => [...sanitizedImported, ...prev]);
                       alert(TRANSLATIONS[lang].importSuccess);
                   } catch (err) {
                       alert(TRANSLATIONS[lang].importError + err.message);
@@ -1862,7 +1941,7 @@ const addCategory = () => {
             items: [],
             font: ''
         };
-        // Wir setzen newCat an den Anfang des Arrays [newCat, ...prev]
+        // Wir setzen newCat an den Anfang des Arrays
         setCustomCategories(prev => [newCat, ...prev]);
         setExpandedCats(prev => [...prev, newCat.id]);
     };
@@ -1872,42 +1951,193 @@ const addCategory = () => {
     };
 
     const deleteCategory = (id) => {
-        const confirmMsg = lang === 'de' ? 'Sammlung wirklich löschen?' : 'Delete collection?';
+        const confirmMsg = (TRANSLATIONS[lang] && TRANSLATIONS[lang].confirmDeleteCat) || 
+                           (lang === 'de' ? 'Sammlung wirklich löschen?' : 'Delete collection?');
+                           
         if (window.confirm(confirmMsg)) {
             setCustomCategories(prev => {
-                const newState = prev.filter(c => c.id !== id);
-                // Wir speichern zur Sicherheit sofort im LocalStorage
+                // 1. Prüfen, ob das Element direkt auf der Hauptebene liegt
+                const existsOnRoot = prev.some(c => c.id === id);
+                let newState;
+                
+                if (existsOnRoot) {
+                    newState = prev.filter(c => c.id !== id);
+                } else {
+                    // 2. Wenn nicht, durchkämme die Ordner und lösche es aus den Unter-Sammlungen
+                    newState = prev.map(c => {
+                        if (c.isFolder && c.collections) {
+                            return {
+                                ...c,
+                                collections: c.collections.filter(sub => sub.id !== id)
+                            };
+                        }
+                        return c;
+                    });
+                }
+                
+                // Wir speichern das präzise bereinigte Array sofort im LocalStorage
                 localStorage.setItem('sanskrit_custom_cats', JSON.stringify(newState));
                 return newState;
             });
         }
     };
+	
+	// --- LIGATUREN/SAMMLUNGEN AKTIONEN (MOVE & COPY) ---
+    window.executeCatAction = (action, cat, targetFolderId) => {
+        setCustomCategories(prev => {
+            const cloneCatWithNewIds = (originalCat) => {
+                const newCatId = 'cat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+                const clonedItems = (originalCat.items || []).map(item => ({
+                    ...item,
+                    id: 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5)
+                }));
+                return { ...originalCat, id: newCatId, items: clonedItems, active: true };
+            };
 
-          // ITEM_HELPERS_V1
-          const addItemToCategory = (catId) => {
-              setCustomCategories(customCategories.map(cat => {
-                  if (cat.id === catId) {
-                      const newItem = { 
-                          id: 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9), 
-                          char: '', 
-                          iast: '', 
-                          image: null, 
-                          font: '' 
-                      };
-                      return { ...cat, items: [...(cat.items || []), newItem] };
-                  }
-                  return cat;
-              }));
-          };
+            let preparedCat = action === 'copy' ? cloneCatWithNewIds(cat) : { ...cat };
+            let cleaned = prev;
+            if (action === 'move') {
+                cleaned = prev.filter(c => c.id !== cat.id).map(c => {
+                    if (c.isFolder && c.collections) {
+                        return { ...c, collections: c.collections.filter(sub => sub.id !== cat.id) };
+                    }
+                    return c;
+                });
+            }
 
-          const deleteItemFromCategory = (catId, itemId) => {
-              setCustomCategories(customCategories.map(cat => {
-                  if (cat.id === catId) {
-                      return { ...cat, items: cat.items.filter(item => item.id !== itemId) };
-                  }
-                  return cat;
-              }));
-          };
+            if (targetFolderId === "root") {
+                return [preparedCat, ...cleaned];
+            } else {
+                return cleaned.map(c => {
+                    if (c.id === targetFolderId) {
+                        const currentSubs = c.collections || [];
+                        if (!currentSubs.some(sub => sub.id === preparedCat.id)) {
+                            return { ...c, collections: [preparedCat, ...currentSubs] };
+                        }
+                    }
+                    return c;
+                });
+            }
+        });
+        setActiveCatAction(null);
+    };
+
+    // --- GITHUB ONLINE BIBLIOTHEK LOGIK ---
+    window.importCollectionWithId = async (id, poolData = null) => {
+        try {
+            let currentPool = poolData || onlinePool;
+            const baseUrl = "https://t-kintaert.github.io/devanagari-trainer/collections";
+            
+            if (!currentPool) {
+                const poolRes = await fetch(`${baseUrl}/collections.json`);
+                currentPool = await poolRes.json();
+                setOnlinePool(currentPool);
+            }
+            
+            if (!currentPool || !currentPool[id]) {
+                alert(TRANSLATIONS[lang].importErrorPool);
+                return false;
+            }
+            
+            const targetFileInfo = currentPool[id];
+            const fileRes = await fetch(`${baseUrl}/${targetFileInfo.filename}`);
+            const rawData = await fileRes.json();
+            const incomingCats = Array.isArray(rawData) ? rawData : [rawData];
+            
+            setCustomCategories(prev => {
+                let updated = [...prev];
+                
+                // Helferfunktion, um IDs innerhalb einer Sammlung (rekursiv) frisch zu generieren
+                const sanitizeCollection = (cat, catIdx, prefix = 'cat_') => {
+                    const uniqueCatId = prefix + Date.now() + '_' + catIdx + '_' + Math.random().toString(36).substr(2, 7);
+                    const sanitizedItems = (cat.items || []).map((item, itemIdx) => ({
+                        ...item,
+                        id: 'item_' + Date.now() + '_' + catIdx + '_' + itemIdx + '_' + Math.random().toString(36).substr(2, 9)
+                    }));
+                    
+                    return {
+                        ...cat,
+                        id: uniqueCatId,
+                        active: cat.active !== undefined ? cat.active : true,
+                        isFolder: false,
+                        name: cat[`name_${lang}`] || cat.name || targetFileInfo[`name_${lang}`],
+                        description: cat[`desc_${lang}`] || cat.description || targetFileInfo[`desc_${lang}`] || '',
+                        items: sanitizedItems
+                    };
+                };
+
+                incomingCats.forEach((incoming, catIdx) => {
+                    if (incoming.isFolder) {
+                        // Wenn es sich um einen importierten Ordner handelt
+                        const uniqueFolderId = 'folder_' + Date.now() + '_' + catIdx + '_' + Math.random().toString(36).substr(2, 7);
+                        const subCollections = (incoming.collections || []).map((subCat, subIdx) => 
+                            sanitizeCollection(subCat, subIdx, 'subcat_')
+                        );
+                        
+                        const preparedFolder = {
+                            ...incoming,
+                            id: uniqueFolderId,
+                            name: incoming[`name_${lang}`] || incoming.name || targetFileInfo[`name_${lang}`],
+                            active: incoming.active !== undefined ? incoming.active : true,
+                            isFolder: true,
+                            collections: subCollections
+                        };
+                        
+                        updated = [preparedFolder, ...updated];
+                    } else {
+                        // Normale flache Sammlung
+                        const preparedCat = sanitizeCollection(incoming, catIdx);
+                        updated = [preparedCat, ...updated];
+                    }
+                });
+                
+                return updated;
+            });
+            return targetFileInfo;
+        } catch (err) {
+            console.error("Fehler beim GitHub-Import:", err);
+            alert(TRANSLATIONS[lang].importErrorFetch);
+            return false;
+        }
+    };
+
+    window.loadOnlinePoolIndex = async () => {
+        setOnlineLoading(true);
+        try {
+            const baseUrl = "https://t-kintaert.github.io/devanagari-trainer/collections";
+            const res = await fetch(`${baseUrl}/collections.json`);
+            if (!res.ok) {
+                throw new Error(`HTTP error! Status: ${res.status}`);
+            }
+            const data = await res.json();
+            console.log("Erfolgreich geladene Pool-Daten:", data);
+            setOnlinePool(data);
+        } catch (err) {
+            console.error("Inhaltsverzeichnis konnte nicht geladen werden:", err);
+            alert(TRANSLATIONS[lang].loadingIndexError);
+            setOnlinePool(null);
+        } finally {
+            setOnlineLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const codeToLoad = urlParams.get('load');
+        
+        if (codeToLoad) {
+            setTimeout(async () => {
+                const success = await window.importCollectionWithId(codeToLoad);
+                if (success) {
+                    const newUrl = window.location.pathname;
+                    window.history.replaceState({}, document.title, newUrl);
+                    
+                    const displayTitle = success[`name_${lang}`] || success.filename;
+                    alert(`${TRANSLATIONS[lang].onlineImportSuccess}"${displayTitle}"`);
+                }
+            }, 800);
+        }
+    }, [lang]);
 
           const [devaDirection, setDevaDirection] = useState('devaToIast'); // 'devaToIast' oder 'iastToDeva'
           const [devaIndex, setDevaIndex] = useState(0);
@@ -2014,6 +2244,26 @@ const addCategory = () => {
           useEffect(() => {
               localStorage.setItem('sanskrit_app_lang', lang);
           }, [lang]);
+		  
+		  useEffect(() => {
+              const urlParams = new URLSearchParams(window.location.search);
+              const codeToLoad = urlParams.get('load');
+              
+              if (codeToLoad) {
+                  setTimeout(async () => {
+                      const success = await window.importCollectionWithId(codeToLoad);
+                      if (success) {
+                          const newUrl = window.location.pathname;
+                          window.history.replaceState({}, document.title, newUrl);
+                          
+                          alert(lang === 'de'
+                              ? `🎉 Online-Sammlung erfolgreich importiert:\n"${success.name_de || success.filename}"`
+                              : `🎉 Online collection successfully imported:\n"${success.name_en || success.filename}"`
+                          );
+                      }
+                  }, 800);
+              }
+          }, []);
 
 		  const handleQuizAnswer = useCallback((option) => {
 			  if (quizAnswered) return;
@@ -2279,20 +2529,37 @@ const styleEl = document.createElement('style');
                   }
               });
 
-              // Eigene Zeichen hinzufügen
+              // Eigene Zeichen hinzufügen (erweitert um rekursive Ordner-Suche)
               if (devaSet.includes('custom')) {
-                  customCategories.filter(c => c.active).forEach(cat => {
+                  const processCollection = (cat) => {
+                      if (!cat.active) return;
                       const effectiveFont = cat.font || '';
-                      cat.items.forEach(item => {
-                          combinedItems.push({ 
-                              d: item.char || '', 
-                              t: item.iast || '', 
-                              font: item.font || effectiveFont,
-                              image: item.image || null,
-                              note: item.note || null,
-                              catSource: cat.id // Eindeutige Category-ID als Herkunft
+                      if (cat.items) {
+                          cat.items.forEach(item => {
+                              combinedItems.push({ 
+                                  d: item.char || '', 
+                                  t: item.iast || '', 
+                                  font: item.font || effectiveFont,
+                                  image: item.image || null,
+                                  note: item.note || null,
+                                  catSource: cat.id
+                              });
                           });
-                      });
+                      }
+                  };
+
+                  customCategories.forEach(cat => {
+                      if (cat.isFolder) {
+                          // Unabhängig vom Ordner-Haken: Verarbeite jede Unter-Sammlung, die einzeln aktiv ist
+                          if (cat.collections) {
+                              cat.collections.forEach(subCat => {
+                                  processCollection(subCat);
+                              });
+                          }
+                      } else {
+                          // Normale Sammlung auf Wurzelebene
+                          processCollection(cat);
+                      }
                   });
               }
 
@@ -2491,13 +2758,38 @@ const renderDevanagariSetup = () => (
                                 <div 
                                     className="py-1 select-none cursor-help" 
                                     onMouseEnter={(e) => {
-                                        const activeNames = customCategories.filter(c => c.active).map(c => c.name).join("; ");
+                                        // Rekursive Ermittlung aller wirklich aktiven Sammlungen für den Tooltip
+                                        const getActiveCollectionNames = (list) => {
+                                            let names = [];
+                                            list.forEach(c => {
+                                                if (c.isFolder && c.collections) {
+                                                    names = [...names, ...getActiveCollectionNames(c.collections)];
+                                                } else if (!c.isFolder && c.active) {
+                                                    names.push(c.name);
+                                                }
+                                            });
+                                            return names;
+                                        };
+                                        const activeNamesList = getActiveCollectionNames(customCategories);
+                                        const activeNames = activeNamesList.join("; ");
                                         showHelp(e, lang === 'de' ? "Eigene Zeichen" : "Custom characters", activeNames ? TRANSLATIONS[lang].catCustomActive + activeNames : TRANSLATIONS[lang].catCustomNone);
                                     }} 
                                     onMouseLeave={cancelHelp} 
                                     onClick={(e) => { 
                                         e.stopPropagation(); 
-                                        const activeNames = customCategories.filter(c => c.active).map(c => c.name).join("; ");
+                                        const getActiveCollectionNames = (list) => {
+                                            let names = [];
+                                            list.forEach(c => {
+                                                if (c.isFolder && c.collections) {
+                                                    names = [...names, ...getActiveCollectionNames(c.collections)];
+                                                } else if (!c.isFolder && c.active) {
+                                                    names.push(c.name);
+                                                }
+                                            });
+                                            return names;
+                                        };
+                                        const activeNamesList = getActiveCollectionNames(customCategories);
+                                        const activeNames = activeNamesList.join("; ");
                                         showHelp(e, lang === 'de' ? "Eigene Zeichen" : "Custom characters", activeNames ? TRANSLATIONS[lang].catCustomActive + activeNames : TRANSLATIONS[lang].catCustomNone);
                                     }}
                                 >
@@ -2567,9 +2859,19 @@ const renderDevanagariSession = () => {
                     digits: TRANSLATIONS[lang].catDigits
                 };
                 if (standardNames[source]) return standardNames[source];
-                // Suche in den eigenen Kategorien
+                
+                // 1. Suche auf der Hauptebene
                 const customCat = customCategories.find(c => c.id === source);
-                return customCat ? customCat.name : '';
+                if (customCat) return customCat.name;
+
+                // 2. Suche tiefen-basiert innerhalb der Ordner-Strukturen
+                for (let cat of customCategories) {
+                    if (cat.isFolder && cat.collections) {
+                        const subCat = cat.collections.find(sub => sub.id === source);
+                        if (subCat) return subCat.name; // Nur den Sammlungsnamen zurückgeben
+                    }
+                }
+                return '';
             };
 
             const currentItem = devaItems[devaIndex];
@@ -2882,109 +3184,451 @@ const renderDevanagariSession = () => {
                             </button>
                         </div>
 
-                        {/* Button-Leiste: Gruppiert in zwei Blöcke */}
-                        <div className="flex flex-wrap justify-start md:justify-between items-center gap-2 mb-4 p-3 bg-stone-50 dark:bg-stone-900/30 rounded-xl border border-stone-100 dark:border-stone-700">
-                            {/* Block 1: Aktionen */}
-                            <div className="contents md:flex md:gap-2 md:items-center md:flex-wrap">
-                                <button 
-                                    onClick={() => setIsSortMode(!isSortMode)} 
-                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].sortMode, TRANSLATIONS[lang].sortModeDesc)} 
-                                    onMouseLeave={cancelHelp}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-lg border transition-all shadow-sm ${isSortMode ? 'bg-rose-600 text-white border-rose-600' : 'bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 border-stone-200 dark:border-stone-700'}`}
-                                >
-                                    <ArrowUpDown size={18} />
-                                </button>
-                                <label 
-                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].all, TRANSLATIONS[lang].allDesc)} 
-                                    onMouseLeave={cancelHelp}
-                                    className="h-10 flex items-center gap-1.5 px-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-750 transition-colors shadow-sm text-stone-500 hover:text-rose-600"
-                                >
-                                    <input type="checkbox" checked={customCategories.length > 0 && customCategories.every(c => c.active)} onChange={(e) => { const isChecked = e.target.checked; setCustomCategories(prev => prev.map(c => ({ ...c, active: isChecked }))); }} className="w-4 h-4 accent-rose-600 cursor-pointer" />
-                                    <span className="text-[10px] font-bold uppercase select-none">{TRANSLATIONS[lang].all}</span>
-                                </label>
-                                <button 
-                                    onClick={() => toggleAllCats(true)} 
-                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].expand, TRANSLATIONS[lang].expandDesc)} 
-                                    onMouseLeave={cancelHelp}
-                                    className="h-10 px-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 hover:text-rose-600 rounded-lg text-[10px] font-bold uppercase shadow-sm transition-colors"
-                                >
-                                    {TRANSLATIONS[lang].expand}
-                                </button>
-                                <button 
-                                    onClick={() => toggleAllCats(false)} 
-                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].collapse, TRANSLATIONS[lang].collapseDesc)} 
-                                    onMouseLeave={cancelHelp}
-                                    className="h-10 px-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 hover:text-rose-600 rounded-lg text-[10px] font-bold uppercase shadow-sm transition-colors"
-                                >
-                                    {TRANSLATIONS[lang].collapse}
-                                </button>
-                                <button 
-                                    onClick={() => { setStudyModeContent('custom'); setStudySearch(""); }} 
-                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].viewMode, TRANSLATIONS[lang].viewModeDesc)} 
-                                    onMouseLeave={cancelHelp}
-                                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 transition-colors"
-                                >
-                                    <EyeIcon size={18} />
-                                </button>
-                            </div>
-                            {/* Block 2: Tools */}
-                            <div className="contents md:flex md:gap-2 md:ml-auto">
-                                <button 
-                                    onClick={exportData} 
-                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].export, TRANSLATIONS[lang].exportDesc)} 
-                                    onMouseLeave={cancelHelp}
-                                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 transition-colors"
-                                >
-                                    <ExportIcon size={18} />
-                                </button>
-                                <label 
-                                    onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].import, TRANSLATIONS[lang].importDesc)} 
-                                    onMouseLeave={cancelHelp}
-                                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 transition-colors cursor-pointer"
-                                >
-                                    <ImportIcon size={18} /><input type="file" accept=".json" onChange={importData} className="hidden" />
-                                </label>
-                            </div>
+                        {/* Button-Leiste: Alle Werkzeuge gleichmäßig nebeneinander */}
+                        <div className="flex flex-wrap justify-start items-center gap-2 mb-4 p-3 bg-stone-50 dark:bg-stone-900/30 rounded-xl border border-stone-100 dark:border-stone-700">
+                            <button 
+                                onClick={() => setIsSortMode(!isSortMode)} 
+                                onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].sortMode, TRANSLATIONS[lang].sortModeDesc)} 
+                                onMouseLeave={cancelHelp}
+                                className={`w-10 h-10 flex items-center justify-center rounded-lg border transition-all shadow-sm ${isSortMode ? 'bg-rose-600 text-white border-rose-600' : 'bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 border-stone-200 dark:border-stone-700'}`}
+                            >
+                                <ArrowUpDown size={18} />
+                            </button>
+                            <label 
+                                onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].all, TRANSLATIONS[lang].allDesc)} 
+                                onMouseLeave={cancelHelp}
+                                className="h-10 flex items-center gap-1.5 px-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-750 transition-colors shadow-sm text-stone-500 hover:text-rose-600"
+                            >
+                                <input 
+                                    type="checkbox" 
+                                    checked={customCategories.length > 0 && customCategories.every(c => {
+                                        if (c.isFolder && c.collections) {
+                                            return c.active && c.collections.every(sub => sub.active);
+                                        }
+                                        return c.active;
+                                    })} 
+                                    onChange={(e) => { 
+                                        const isChecked = e.target.checked; 
+                                        setCustomCategories(prev => prev.map(c => {
+                                            if (c.isFolder && c.collections) {
+                                                const updatedSubs = c.collections.map(sub => ({ ...sub, active: isChecked }));
+                                                return { ...c, active: isChecked, collections: updatedSubs };
+                                            }
+                                            return { ...c, active: isChecked };
+                                        })); 
+                                    }} 
+                                    className="w-4 h-4 accent-rose-600 cursor-pointer" 
+                                />
+                                <span className="text-[10px] font-bold uppercase select-none">{TRANSLATIONS[lang].all}</span>
+                            </label>
+                            <button 
+                                onClick={() => toggleAllCats(true)} 
+                                onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].expand, TRANSLATIONS[lang].expandDesc)} 
+                                onMouseLeave={cancelHelp}
+                                className="h-10 px-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 hover:text-rose-600 rounded-lg text-[10px] font-bold uppercase shadow-sm transition-colors"
+                            >
+                                {TRANSLATIONS[lang].expand}
+                            </button>
+                            <button 
+                                onClick={() => toggleAllCats(false)} 
+                                onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].collapse, TRANSLATIONS[lang].collapseDesc)} 
+                                onMouseLeave={cancelHelp}
+                                className="h-10 px-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 hover:text-rose-600 rounded-lg text-[10px] font-bold uppercase shadow-sm transition-colors"
+                            >
+                                {TRANSLATIONS[lang].collapse}
+                            </button>
+                            <button 
+                                onClick={() => { setStudyModeContent('custom'); setStudySearch(""); }} 
+                                onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].viewMode, TRANSLATIONS[lang].viewModeDesc)} 
+                                onMouseLeave={cancelHelp}
+                                className="w-10 h-10 flex items-center justify-center bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 transition-colors"
+                            >
+                                <EyeIcon size={18} />
+                            </button>
+                            <button 
+                                onClick={exportData} 
+                                onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].export, TRANSLATIONS[lang].exportDesc)} 
+                                onMouseLeave={cancelHelp}
+                                className="w-10 h-10 flex items-center justify-center bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 transition-colors"
+                            >
+                                <ExportIcon size={18} />
+                            </button>
+                            <label 
+                                onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].import, TRANSLATIONS[lang].importDesc)} 
+                                onMouseLeave={cancelHelp}
+                                className="w-10 h-10 flex items-center justify-center bg-white dark:bg-stone-800 text-stone-500 hover:text-rose-600 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 transition-colors cursor-pointer"
+                            >
+                                <ImportIcon size={18} /><input type="file" accept=".json" onChange={importData} className="hidden" />
+                            </label>
+                            <button 
+                                onClick={() => { setShowOnlineLibrary(true); window.loadOnlinePoolIndex(); }} 
+                                onMouseEnter={(e) => showHelp(e, TRANSLATIONS[lang].onlinePoolBtn, TRANSLATIONS[lang].onlinePoolDesc)} 
+                                onMouseLeave={cancelHelp}
+                                className="h-10 px-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-[10px] uppercase tracking-wider shadow-sm transition-colors flex items-center justify-center gap-1 outline-none"
+                            >
+                                {TRANSLATIONS[lang].onlinePoolBtn}
+                            </button>
                         </div>
 
                         {/* Kategorien-Header */}
-                        <div className="flex justify-between items-center pb-4 bg-white dark:bg-stone-800">
+                        {(() => {
+                            // Erstellt die Funktion zum Hinzufügen eines neuen Hauptordners auf window-Ebene
+                            window.addFolder = () => {
+                                const folderName = prompt(TRANSLATIONS[lang].folderNamePlaceholder) || "";
+                                if (!folderName.trim()) return;
+                                
+                                const newFolder = {
+                                    id: 'folder_' + Date.now(),
+                                    name: folderName.trim(),
+                                    active: true,
+                                    isFolder: true,
+                                    collections: [] // Hierin landen später die Unter-Sammlungen
+                                };
+                                // newFolder wird jetzt an den Anfang (vor ...prev) gesetzt:
+                                setCustomCategories(prev => [newFolder, ...prev]);
+                            };
+                            return null;
+                        })()}
+
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 pb-4 bg-white dark:bg-stone-800">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">{TRANSLATIONS[lang].myCollections}</h3>
-                            <button onClick={addCategory} className="text-xs bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 px-4 py-2 rounded-lg font-bold hover:bg-rose-200 transition-colors">
-                                {TRANSLATIONS[lang].addCat}
-                            </button>
+                            <div className="flex flex-wrap gap-2">
+                                <button 
+                                    onClick={window.addFolder} 
+                                    className="text-xs bg-stone-100 dark:bg-stone-700 text-stone-700 dark:text-stone-300 px-3 py-2 rounded-lg font-bold hover:bg-stone-200 dark:hover:bg-stone-600 transition-colors border border-stone-200 dark:border-stone-600"
+                                >
+                                    {TRANSLATIONS[lang].addFolder}
+                                </button>
+                                <button 
+                                    onClick={addCategory} 
+                                    className="text-xs bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 px-3 py-2 rounded-lg font-bold hover:bg-rose-200 transition-colors"
+                                >
+                                    {TRANSLATIONS[lang].addCat}
+                                </button>
+                            </div>
                         </div>
                         <div className="h-px bg-stone-100 dark:border-stone-700 mb-4"></div>
                     </div>
 
             {/* Der Inhaltsbereich (scrollbar) */}
-<div className="px-6 md:px-8 pt-0">
+            <div className="px-6 md:px-8 pt-0 flex-1 overflow-y-auto custom-scrollbar">
                 <div className="space-y-2">
                         {/* CATEGORY_LOOP_FIXED */}
                             {customCategories.map(cat => {
                                 const isExpanded = expandedCats.includes(cat.id);
+                                if (!window._showInfoFields) window._showInfoFields = {};
+                                const infoVisible = !!window._showInfoFields[cat.id];
+                                const isFolder = !!cat.isFolder;
+
+                                // Logik für Ordner-Checkbox: Aktiviert/Deaktiviert alle Unter-Sammlungen
+                                const handleFolderCheckboxChange = (isChecked) => {
+                                    setCustomCategories(prev => prev.map(c => {
+                                        if (c.id === cat.id) {
+                                            const updatedSubCollections = (c.collections || []).map(sub => ({ ...sub, active: isChecked }));
+                                            return { ...c, active: isChecked, collections: updatedSubCollections };
+                                        }
+                                        return c;
+                                    }));
+                                };
+
                                 return (
-                                    <div key={cat.id} className="p-3 bg-stone-50 dark:bg-stone-850 rounded-xl border border-stone-100 dark:border-stone-700 mb-4">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <button onClick={() => toggleCatExpanded(cat.id)} className="p-1 hover:bg-stone-200 dark:hover:bg-stone-700 rounded text-stone-400">
-                                                {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-                                            </button>
-                                            {/* Sortierpfeile für Kategorien */}
-                                            {isSortMode && (
-                                                <div className="flex flex-col -space-y-1">
-                                                    <button onClick={() => moveCategory(cat.id, -1)} className="text-stone-400 hover:text-rose-600"><ChevronUp size={14} /></button>
-                                                    <button onClick={() => moveCategory(cat.id, 1)} className="text-stone-400 hover:text-rose-600"><ChevronDown size={14} /></button>
-                                                </div>
-                                            )}
-                                            <input type="checkbox" checked={cat.active} onChange={(e) => updateCategory(cat.id, 'active', e.target.checked)} className="w-5 h-5 accent-rose-600" />
-                                            <input type="text" value={cat.name} onChange={(e) => updateCategory(cat.id, 'name', e.target.value)} className="flex-1 bg-transparent border-b border-transparent focus:border-rose-500 outline-none font-bold text-stone-800 dark:text-stone-200" />
-                                            <button onClick={() => deleteCategory(cat.id)} className="p-2 text-stone-300 hover:text-red-500"><XIcon size={18} /></button>
+                                    <div 
+                                        key={cat.id} 
+                                        className={`p-2.5 md:p-3 rounded-xl border mb-3 transition-all w-full box-border overflow-hidden ${
+                                            isFolder 
+                                                ? 'bg-stone-50 dark:bg-stone-850 border-rose-700/40 dark:border-rose-500/40 shadow-sm ring-1 ring-rose-700/5' 
+                                                : 'bg-stone-50 dark:bg-stone-850 border-stone-100 dark:border-stone-700'
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between flex-nowrap gap-1.5 md:gap-3 w-full min-w-0">
+                                            <div className="flex items-center flex-nowrap gap-1.5 md:gap-2 min-w-0 flex-1">
+                                                <button onClick={() => toggleCatExpanded(cat.id)} className="p-1 hover:bg-stone-200 dark:hover:bg-stone-700 rounded text-stone-400 text-base shrink-0">
+                                                    {isFolder ? (isExpanded ? '📂' : '📁') : (isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />)}
+                                                </button>
+                                                
+                                                {isSortMode && (
+                                                    <div className="flex flex-col -space-y-1 shrink-0">
+                                                        <button onClick={() => moveCategory(cat.id, -1)} className="text-stone-400 hover:text-rose-600"><ChevronUp size={12} /></button>
+                                                        <button onClick={() => moveCategory(cat.id, 1)} className="text-stone-400 hover:text-rose-600"><ChevronDown size={12} /></button>
+                                                    </div>
+                                                )}
+                                                
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={isFolder ? (cat.collections && cat.collections.length > 0 && cat.collections.some(c => c.active)) : cat.active}
+                                                    onChange={(e) => {
+                                                        if (isFolder) {
+                                                            handleFolderCheckboxChange(e.target.checked);
+                                                        } else {
+                                                            updateCategory(cat.id, 'active', e.target.checked);
+                                                        }
+                                                    }} 
+                                                    className={`w-4 h-4 md:w-5 md:h-5 shrink-0 cursor-pointer accent-rose-700 ${
+                                                        isFolder && cat.collections && !cat.collections.every(c => c.active) && cat.collections.some(c => c.active)
+                                                            ? 'opacity-40' 
+                                                            : ''
+                                                    }`} 
+                                                />
+                                                
+                                                <input 
+                                                    type="text" 
+                                                    value={cat.name} 
+                                                    onChange={(e) => updateCategory(cat.id, 'name', e.target.value)} 
+                                                    className={`w-full bg-transparent border-b border-transparent focus:border-rose-500 outline-none font-bold text-xs md:text-base min-w-[60px] truncate ${
+                                                        isFolder 
+                                                            ? 'text-rose-800 dark:text-rose-400' 
+                                                            : 'text-stone-800 dark:text-stone-200'
+                                                    } ${
+                                                        isFolder && cat.collections && !cat.collections.every(c => c.active) && cat.collections.some(c => c.active)
+                                                            ? 'italic opacity-75' 
+                                                            : ''
+                                                    }`} 
+                                                />
+                                            </div>
+                                            
+                                            <div className="flex items-center flex-nowrap gap-1 md:gap-2 shrink-0">
+                                                {/* Kleiner Info-Button am Ende des Namens */}
+                                                <button 
+                                                    onClick={() => {
+                                                        window._showInfoFields[cat.id] = !window._showInfoFields[cat.id];
+                                                        updateCategory(cat.id, '_rerender', Date.now());
+                                                    }} 
+                                                    className={`p-1 md:p-1.5 rounded-lg transition-colors border shrink-0 ${infoVisible ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900' : 'text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 border-transparent'}`}
+                                                    title={TRANSLATIONS[lang].collectionInfoLabel}
+                                                >
+                                                    <span className="w-3.5 h-3.5 md:w-4 md:h-4 flex items-center justify-center font-serif italic text-[11px] md:text-xs font-bold">i</span>
+                                                </button>
+
+                                                {/* Dropdown zum Verschieben der gesamten Sammlung */}
+                                                {!isFolder && (
+                                                    <select
+                                                        onChange={(e) => {
+                                                            const targetFolderId = e.target.value;
+                                                            setCustomCategories(prev => {
+                                                                const currentCat = prev.find(c => c.id === cat.id);
+                                                                if (!currentCat) return prev;
+
+                                                                let cleaned = prev.filter(c => c.id !== cat.id).map(c => {
+                                                                    if (c.isFolder && c.collections) {
+                                                                        return { ...c, collections: c.collections.filter(sub => sub.id !== cat.id) };
+                                                                    }
+                                                                    return c;
+                                                                });
+
+                                                                if (targetFolderId === "root") {
+                                                                    return [currentCat, ...cleaned];
+                                                                } else {
+                                                                    return cleaned.map(c => {
+                                                                        if (c.id === targetFolderId) {
+                                                                            const subs = c.collections || [];
+                                                                            if (!subs.some(sub => sub.id === cat.id)) {
+                                                                                return { ...c, collections: [...subs, currentCat] };
+                                                                            }
+                                                                        }
+                                                                        return c;
+                                                                    });
+                                                                }
+                                                            });
+                                                            e.target.value = "";
+                                                        }}
+                                                        defaultValue=""
+                                                        className="text-[9px] md:text-[10px] bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded px-1 py-0.5 text-stone-500 outline-none w-[65px] md:w-[110px] cursor-pointer shrink-0"
+                                                    >
+                                                        <option value="" disabled>{lang === 'de' ? "Ordner..." : "Folder..."}</option>
+                                                        <option value="root">{(TRANSLATIONS[lang] && TRANSLATIONS[lang].folderRoot) || "❌ Hauptverzeichnis"}</option>
+                                                        {customCategories
+                                                            .filter(c => c.isFolder && c.id !== cat.id)
+                                                            .map(f => (
+                                                                <option key={f.id} value={f.id}>📁 {f.name}</option>
+                                                            ))
+                                                    }
+                                                    </select>
+                                                )}
+
+                                                <button onClick={() => deleteCategory(cat.id)} className="p-1 text-stone-300 hover:text-red-500 shrink-0"><XIcon size={16} /></button>
+                                            </div>
                                         </div>
 
-                                        {isExpanded && (
+                                        {/* Das ausklappbare Info-/Copyright-Feld direkt unter dem Titel */}
+                                        {infoVisible && (
+                                            <div className="mb-3 px-1 font-sans">
+                                                <label className="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider mb-1">
+                                                    {TRANSLATIONS[lang].collectionInfoLabel}
+                                                </label>
+                                                <input 
+                                                    type="text" 
+                                                    value={cat.description || ''} 
+                                                    onChange={(e) => updateCategory(cat.id, 'description', e.target.value)}
+                                                    placeholder={TRANSLATIONS[lang].collectionInfoPlaceholder}
+                                                    className="w-full p-2 border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 text-xs rounded-lg outline-none focus:border-rose-500 dark:text-stone-300 italic"
+                                                />
+                                            </div>
+                                        )}
+
+                                        {/* Unter-Sammlungen im Ordner anzeigen */}
+                                        {isFolder && isExpanded && (
+                                            <div className="mt-2 mb-2 pl-4 md:pl-6 border-l-2 border-rose-700/30 dark:border-rose-500/30 space-y-2">
+                                                {(cat.collections || []).map(subCat => {
+                                                    const subInfoVisible = !!window._showInfoFields[subCat.id];
+                                                    return (
+                                                        <div key={subCat.id} className="p-2 bg-white dark:bg-stone-800 border border-stone-200/60 dark:border-stone-700 rounded-lg shadow-sm">
+                                                            <div className="flex items-center justify-between flex-nowrap gap-2 w-full min-w-0">
+                                                                <div className="flex items-center flex-nowrap gap-2 min-w-0 flex-1">
+                                                                    <input 
+                                                                        type="checkbox" 
+                                                                        checked={subCat.active} 
+                                                                        onChange={(e) => {
+                                                                            const isChecked = e.target.checked;
+                                                                            setCustomCategories(prev => prev.map(c => {
+                                                                                if (c.id === cat.id) {
+                                                                                    const updatedSubs = (c.collections || []).map(sub => sub.id === subCat.id ? { ...sub, active: isChecked } : sub);
+                                                                                    return { ...c, collections: updatedSubs };
+                                                                                }
+                                                                                return c;
+                                                                            }));
+                                                                        }} 
+                                                                        className="w-4 h-4 accent-rose-600 shrink-0" 
+                                                                    />
+                                                                    <input 
+                                                                        type="text" 
+                                                                        value={subCat.name} 
+                                                                        onChange={(e) => {
+                                                                            const newName = e.target.value;
+                                                                            setCustomCategories(prev => prev.map(c => {
+                                                                                if (c.id === cat.id) {
+                                                                                    const updatedSubs = (c.collections || []).map(sub => sub.id === subCat.id ? { ...sub, name: newName } : sub);
+                                                                                    return { ...c, collections: updatedSubs };
+                                                                                }
+                                                                                return c;
+                                                                            }));
+                                                                        }} 
+                                                                        className="w-full bg-transparent border-b border-transparent focus:border-rose-500 outline-none font-medium text-xs md:text-sm min-w-[50px] truncate text-stone-800 dark:text-stone-200" 
+                                                                    />
+                                                                </div>
+
+                                                                <div className="flex items-center flex-nowrap gap-1.5 shrink-0">
+                                                                    <button 
+                                                                        onClick={() => {
+                                                                            window._showInfoFields[subCat.id] = !window._showInfoFields[subCat.id];
+                                                                            updateCategory(cat.id, '_rerender', Date.now());
+                                                                        }} 
+                                                                        className={`p-1 rounded transition-colors border shrink-0 ${subInfoVisible ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400' : 'text-stone-400 border-transparent'}`}
+                                                                    >
+                                                                        <span className="w-3 h-3 flex items-center justify-center font-serif italic text-[10px] font-bold">i</span>
+                                                                    </button>
+
+                                                                    <select
+                                                                        onChange={(e) => {
+                                                                            const targetId = e.target.value;
+                                                                            setCustomCategories(prev => {
+                                                                                let targetCat = null;
+                                                                                // Suche die verschobene Unterkategorie
+                                                                                const currentFolder = prev.find(c => c.id === cat.id);
+                                                                                if (currentFolder && currentFolder.collections) {
+                                                                                    targetCat = currentFolder.collections.find(sub => sub.id === subCat.id);
+                                                                                }
+                                                                                if (!targetCat) return prev;
+
+                                                                                // Aus aktuellem Ordner löschen
+                                                                                let cleaned = prev.map(c => c.id === cat.id ? { ...c, collections: (c.collections || []).filter(sub => sub.id !== subCat.id) } : c);
+
+                                                                                if (targetId === "root") {
+                                                                                    return [targetCat, ...cleaned];
+                                                                                } else {
+                                                                                    return cleaned.map(c => c.id === targetId ? { ...c, collections: [...(c.collections || []), targetCat] } : c);
+                                                                                }
+                                                                            });
+                                                                            e.target.value = "";
+                                                                        }}
+                                                                        defaultValue=""
+                                                                        className="text-[9px] bg-stone-100 dark:bg-stone-900 border border-stone-200 rounded px-1 py-0.5 text-stone-500 outline-none w-[60px] md:w-[100px] cursor-pointer shrink-0"
+                                                                    >
+                                                                        <option value="" disabled>{lang === 'de' ? "Verschieben..." : "Move..."}</option>
+                                                                        <option value="root">{(TRANSLATIONS[lang] && TRANSLATIONS[lang].folderRoot) || "❌ Hauptverzeichnis"}</option>
+                                                                        {customCategories.filter(c => c.isFolder && c.id !== cat.id).map(f => (
+                                                                            <option key={f.id} value={f.id}>📁 {f.name}</option>
+                                                                        ))}
+                                                                    </select>
+
+                                                                    <button 
+                                                                        onClick={() => {
+                                                                            if (window.confirm(lang === 'de' ? 'Sammlung wirklich löschen?' : 'Delete collection?')) {
+                                                                                setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, collections: (c.collections || []).filter(sub => sub.id !== subCat.id) } : c));
+                                                                            }
+                                                                        }} 
+                                                                        className="p-1 text-stone-300 hover:text-red-500 shrink-0"
+                                                                    >
+                                                                        <XIcon size={14} />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            {subInfoVisible && (
+                                                                <div className="mt-2 font-sans">
+                                                                    <input 
+                                                                        type="text" 
+                                                                        value={subCat.description || ''} 
+                                                                        onChange={(e) => {
+                                                                            const newDesc = e.target.value;
+                                                                            setCustomCategories(prev => prev.map(c => {
+                                                                                if (c.id === cat.id) {
+                                                                                    const updatedSubs = (c.collections || []).map(sub => sub.id === subCat.id ? { ...sub, description: newDesc } : sub);
+                                                                                    return { ...c, collections: updatedSubs };
+                                                                                }
+                                                                                return c;
+                                                                            }));
+                                                                        }}
+                                                                        placeholder={TRANSLATIONS[lang].collectionInfoPlaceholder}
+                                                                        className="w-full p-1.5 border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-[11px] rounded outline-none focus:border-rose-500 dark:text-stone-300 italic"
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+
+                                        {!isFolder && isExpanded && (
                                             <div className="mt-4 space-y-4 pl-2 sm:pl-4 border-l-2 border-stone-200 dark:border-stone-700">
                                                 
-                                                {/* Massenimportbereich */}
+                                                {/* Funktion zum Verschieben eines Zeichens in eine andere Sammlung */}
+                                                {(() => {
+                                                    // suche nach diesem exakten kommentar: {/* Funktion zum Verschieben eines Zeichens in eine andere Sammlung */}
+												window.executeItemAction = (action, fromCatId, item, toCatId) => {
+													if (!toCatId) return;
+													
+													setCustomCategories(prev => {
+														let itemToProcess = { ...item };
+														
+														// 1. Wenn verschoben wird, löschen wir es aus der alten Sammlung
+														let updated = prev.map(c => {
+															if (c.id === fromCatId) {
+																if (action === 'move') {
+																	return { ...c, items: (c.items || []).filter(it => it.id !== item.id) };
+																}
+															}
+															return c;
+														});
+														
+														// 2. Bei einer Kopie generieren wir eine frische ID gegen Konflikte
+														if (action === 'copy') {
+															itemToProcess.id = 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+														}
+														
+														// 3. Im Ziel-Ordner OBERSTE Stelle (Anfang des Arrays) einfügen
+														return updated.map(c => {
+															if (c.id === toCatId) {
+																return { ...c, items: [itemToProcess, ...(c.items || [])] };
+															}
+															return c;
+														});
+													});
+													
+													setActiveItemAction(null); // Menü schließen
+												};
+                                                })()}
+
+												{/* Massenimportbereich */}
                                                 <div className="bg-rose-50/50 dark:bg-rose-900/10 p-3 rounded-lg border border-rose-100 dark:border-rose-900/20">
                                                     <div className="flex justify-between items-center mb-2">
                                                         <p className="text-[10px] font-bold text-rose-400 uppercase tracking-wider">{TRANSLATIONS[lang].bulkImport}</p>
@@ -3039,6 +3683,24 @@ const renderDevanagariSession = () => {
                                                                 <input type="text" placeholder={lang === 'de' ? "Schriftzeichen" : "Character"} value={item.char || ''} disabled={!!item.image} onChange={(e) => setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: c.items.map(it => it.id === item.id ? { ...it, char: e.target.value } : it) } : c))} className="w-16 md:w-32 p-1 text-base font-deva border-b border-stone-200 dark:border-stone-700 bg-transparent outline-none focus:border-rose-500 dark:text-stone-200" />
                                                                 <input type="text" placeholder={lang === 'de' ? "+ Fontname (optional)" : "+ Font name (optional)"} value={item.font || ''} onChange={(e) => setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: c.items.map(it => it.id === item.id ? { ...it, font: e.target.value } : it) } : c))} className="flex-1 min-w-[80px] md:w-40 md:flex-none text-[9px] bg-stone-100 dark:bg-stone-900 rounded px-1 py-1 text-stone-500 outline-none" />
                                                                 <input type="text" placeholder="Transliteration" value={item.iast || ''} onChange={(e) => setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: c.items.map(it => it.id === item.id ? { ...it, iast: e.target.value } : it) } : c))} className="flex-1 min-w-[60px] p-1 text-sm border-b border-stone-200 dark:border-stone-700 bg-transparent outline-none focus:border-rose-500 dark:text-stone-200" />
+                                                                
+                                                                {/* Dropdown zum Verschieben in andere Sammlungen */}
+                                                                <select 
+																	onChange={(e) => {
+																		const val = e.target.value;
+																		if (val) {
+																			setActiveItemAction({ action: val, fromCatId: cat.id, item: item });
+																		}
+																		e.target.value = "";
+																	}}
+																	defaultValue=""
+																	className="text-[10px] bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded px-1 py-1 text-stone-500 outline-none w-[80px] cursor-pointer shrink-0 font-bold"
+																>
+																	<option value="" disabled>{lang === 'de' ? "Aktion..." : "Action..."}</option>
+																	<option value="move">📦 {lang === 'de' ? "Verschieben" : "Move"}</option>
+																	<option value="copy">📄 {lang === 'de' ? "Kopieren" : "Copy"}</option>
+																</select>
+
                                                                 <button onClick={() => setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: c.items.filter(it => it.id !== item.id) } : c))} className="text-stone-300 hover:text-red-500 ml-auto p-1"><XIcon size={16} /></button>
                                                             </div>
 
@@ -3078,6 +3740,184 @@ const renderDevanagariSession = () => {
                 </div>
             </div>
         )}
+		{activeItemAction && (() => {
+    // Lokaler Such-State für das Mini-Modal
+    if (!window._itemTargetSearch) window._itemTargetSearch = "";
+    
+    const { action, fromCatId, item } = activeItemAction;
+    
+    // Holt alle Sammlungen (rekursiv flach geklopft), außer der aktuellen Ursprungssammlung
+    const getFlatCats = (list) => {
+        let res = [];
+        list.forEach(c => {
+            if (c.isFolder && c.collections) res = [...res, ...getFlatCats(c.collections)];
+            else if (!c.isFolder && c.id !== fromCatId) res.push(c);
+        });
+        return res;
+    };
+    
+    const availableTargets = getFlatCats(customCategories).filter(c => 
+        c.name.toLowerCase().includes(window._itemTargetSearch.toLowerCase())
+    );
+
+    // Fallback-Übersetzungen, falls die Keys in deinem TRANSLATIONS-Objekt noch fehlen
+    const txtTitle = action === 'move'
+        ? (TRANSLATIONS[lang].moveItemTitle || (lang === 'de' ? "📦 Zeichen verschieben" : "📦 Move Character"))
+        : (TRANSLATIONS[lang].copyItemTitle || (lang === 'de' ? "📄 Zeichen kopieren" : "📄 Copy Character"));
+        
+    const txtPlaceholder = TRANSLATIONS[lang].searchPlaceholder || (lang === 'de' ? "Sammlung suchen..." : "Search collection...");
+    const txtNoResults = TRANSLATIONS[lang].noResults || (lang === 'de' ? "Keine Sammlungen gefunden" : "No collections found");
+    const txtCancel = TRANSLATIONS[lang].cancel || (lang === 'de' ? "Abbrechen" : "Cancel");
+
+    return (
+        <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4 animate-in fade-in duration-200">
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-xs" onClick={() => setActiveItemAction(null)}></div>
+            <div className="relative bg-white dark:bg-stone-850 w-full max-w-sm rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-700 p-5 popup-anim text-left flex flex-col max-h-[70vh]">
+                
+                <h3 className="text-sm font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 mb-3">
+                    {txtTitle}
+                </h3>
+                
+                {/* Dynamische Suche für die Sammlungen */}
+                <input 
+                    type="text"
+                    placeholder={txtPlaceholder}
+                    defaultValue={window._itemTargetSearch}
+                    onChange={(e) => {
+                        window._itemTargetSearch = e.target.value;
+                        setCustomCategories(prev => [...prev]);
+                    }}
+                    className="w-full p-2 mb-3 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-xl outline-none focus:border-rose-500 text-xs text-stone-800 dark:text-stone-200"
+                />
+                
+                {/* Scrollbare Liste der Ziele */}
+                <div className="overflow-y-auto flex-1 space-y-1 pr-1 custom-scrollbar">
+                    {availableTargets.map(target => (
+                        <button
+                            key={target.id}
+                            onClick={() => {
+                                window._itemTargetSearch = "";
+                                window.executeItemAction(action, fromCatId, item, target.id);
+                            }}
+                            className="w-full p-2.5 text-left text-xs bg-stone-50 hover:bg-rose-50 dark:bg-stone-800 dark:hover:bg-rose-950/30 rounded-lg border border-stone-100 dark:border-stone-700 transition-colors text-stone-700 dark:text-stone-300 font-medium truncate block"
+                        >
+                            🎯 {target.name}
+                        </button>
+                    ))}
+                    {availableTargets.length === 0 && (
+                        <div className="text-center py-6 text-xs text-stone-400 italic">
+                            {txtNoResults}
+                        </div>
+                    )}
+                </div>
+                
+                <button 
+                    onClick={() => { window._itemTargetSearch = ""; setActiveItemAction(null); }}
+                    className="w-full mt-4 bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 text-stone-800 dark:text-stone-200 font-bold py-2 rounded-xl text-xs transition-colors"
+                >
+                    {txtCancel}
+                </button>
+            </div>
+        </div>
+    );
+})()}
+
+{/* GITHUB_ONLINE_LIBRARY_MODAL */}
+        {showOnlineLibrary && (
+            <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 animate-in fade-in duration-200">
+                <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowOnlineLibrary(false)}></div>
+                <div className="relative bg-white dark:bg-stone-850 w-full max-w-2xl max-h-[85vh] rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-700 p-6 md:p-8 popup-anim flex flex-col">
+                    
+                    <div className="flex justify-between items-center mb-4 border-b dark:border-stone-700 pb-3">
+                        <h3 className="text-lg font-bold text-rose-800 dark:text-rose-400 flex items-center gap-2">
+                            {TRANSLATIONS[lang].onlineLibraryTitle}
+                        </h3>
+                        <button onClick={() => setShowOnlineLibrary(false)} className="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 outline-none">
+                            <XIcon size={22} />
+                        </button>
+                    </div>
+
+                    {/* Suchleiste für Pool-Inhalt */}
+                    <div className="relative mb-3">
+                        <input 
+                            type="text"
+                            placeholder={TRANSLATIONS[lang].searchIndexPlaceholder}
+                            value={onlineSearch}
+                            onChange={(e) => setOnlineSearch(e.target.value)}
+                            className="w-full p-2.5 bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-xl outline-none focus:border-rose-500 text-sm text-stone-800 dark:text-stone-200"
+                        />
+                    </div>
+
+                    {/* Scrollbare Inhaltsliste */}
+                    <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                        {onlineLoading && (
+                            <div className="text-center py-10 text-xs italic text-stone-400">
+                                {TRANSLATIONS[lang].loadingIndex}
+                            </div>
+                        )}
+                        
+                        {onlinePool && (() => {
+                            const keys = Object.keys(onlinePool).filter(k => {
+                                const entry = onlinePool[k];
+                                const term = onlineSearch.toLowerCase();
+                                return k.toLowerCase().includes(term) || 
+                                       (entry.name_de || "").toLowerCase().includes(term) || 
+                                       (entry.name_en || "").toLowerCase().includes(term) ||
+                                       (entry.author || "").toLowerCase().includes(term);
+                            });
+                            
+                            if (keys.length === 0 && !onlineLoading) {
+                                return <div className="text-center py-8 text-xs text-stone-400 italic">{TRANSLATIONS[lang].noEntriesFound}</div>;
+                            }
+
+                            return keys.map(code => {
+                                const fileObj = onlinePool[code];
+                                const resolvedName = lang === 'de' ? (fileObj.name_de || fileObj.name_en) : (fileObj.name_en || fileObj.name_de);
+                                const resolvedDesc = lang === 'de' ? (fileObj.desc_de || fileObj.desc_en) : (fileObj.desc_en || fileObj.desc_de);
+                                
+                                return (
+                                    <div key={code} className="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-100 dark:border-stone-700/50 flex justify-between items-center gap-4 text-left">
+                                        <div className="min-w-0 flex-1">
+                                            <h4 className="font-bold text-sm text-stone-800 dark:text-stone-200 truncate">
+                                                {resolvedName}
+                                            </h4>
+                                            <p className="text-[11px] text-stone-500 mt-1 italic leading-tight">
+                                                {resolvedDesc}
+                                            </p>
+                                            {fileObj.author && (
+                                                <p className="text-[9px] font-bold uppercase tracking-wider text-stone-400 mt-1">
+                                                    👤 {fileObj.author}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <button 
+                                            onClick={async () => {
+                                                const res = await window.importCollectionWithId(code);
+                                                if (res) {
+                                                    const displayTitle = res[`name_${lang}`] || res.filename;
+                                                    alert(`${TRANSLATIONS[lang].onlineImportSuccess}"${displayTitle}"`);
+                                                }
+                                            }}
+                                            className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-3 py-2 rounded-xl shrink-0 shadow-sm transition-colors outline-none"
+                                        >
+                                            {TRANSLATIONS[lang].addBtn}
+                                        </button>
+                                    </div>
+                                );
+                            });
+                        })()}
+                    </div>
+
+                    <button 
+                        onClick={() => setShowOnlineLibrary(false)}
+                        className="w-full mt-4 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 font-bold py-3 rounded-xl text-xs transition-colors shadow-inner outline-none"
+                    >
+                        {TRANSLATIONS[lang].close}
+                    </button>
+                </div>
+            </div>
+        )}
+		
 {/* UNIVERSAL_STUDY_OVERLAY_V15 */}
 		{studyModeContent && (
 			<div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
@@ -3160,40 +4000,83 @@ const renderDevanagariSession = () => {
 						)}
 
 						{/* Eigene Zeichen */}
-						{studyModeContent === 'custom' && customCategories.filter(c => c.active).map(cat => {
-							const filteredItems = (cat.items || []).filter(item => 
-								(item.char || "").includes(studySearch) || 
-								(item.iast || "").toLowerCase().includes(studySearch.toLowerCase())
-							);
+						{studyModeContent === 'custom' && (() => {
+							// 1. Hilfsfunktion zur rekursiven Extraktion aller Sammlungen aus der Struktur
+							const getAllCollections = (list) => {
+								let result = [];
+								list.forEach(c => {
+									if (c.isFolder && c.collections) {
+										result = [...result, ...getAllCollections(c.collections)];
+									} else if (!c.isFolder) {
+										result.push(c);
+									}
+								});
+								return result;
+							};
 
-							if (studySearch && filteredItems.length === 0) return null;
+							// 2. Flache Liste aller aktiven Sammlungen holen
+							const allActiveCollections = getAllCollections(customCategories).filter(c => c.active);
 
-							return (
-								<div key={cat.id} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-									<h3 className="text-xl font-bold text-rose-700 dark:text-rose-400 mb-6 flex items-center gap-2">
-										<div className="w-2 h-8 bg-rose-500 rounded-full"></div>
-										{cat.name}
-										<span className="text-sm font-normal text-stone-400 ml-2">
-											({filteredItems.length} {TRANSLATIONS[lang].chars})
-										</span>
-									</h3>
-									<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-										{filteredItems.map((item, idx) => (
-											<div key={idx} className="group flex flex-col items-center p-6 bg-stone-50 dark:bg-stone-800/50 rounded-2xl border border-stone-100 dark:border-stone-700 hover:border-rose-300 dark:hover:border-rose-900 transition-all">
-												<div 
-													className="text-6xl mb-4 font-deva text-stone-800 dark:text-stone-100 h-20 flex items-center justify-center group-hover:scale-110 transition-transform"
-													style={(item.font || cat.font) ? { fontFamily: `"${item.font || cat.font}", Sanskrit2003, serif` } : {}}
-												>
-													{item.image ? <img src={item.image} className="h-full w-auto object-contain dark:invert opacity-90" /> : item.char}
+							return allActiveCollections.map(cat => {
+								const filteredItems = (cat.items || []).filter(item => 
+									(item.char || "").includes(studySearch) || 
+									(item.iast || "").toLowerCase().includes(studySearch.toLowerCase())
+								);
+
+								if (studySearch && filteredItems.length === 0) return null;
+
+								return (
+									<div key={cat.id} className="animate-in fade-in slide-in-from-bottom-4 duration-500 mb-12">
+										<h3 className="text-xl font-bold text-rose-700 dark:text-rose-400 mb-6 flex items-center gap-2">
+											<div className="w-2 h-8 bg-rose-500 rounded-full"></div>
+											{cat.name}
+											<span className="text-sm font-normal text-stone-400 ml-2">
+												({filteredItems.length} {TRANSLATIONS[lang].chars})
+											</span>
+										</h3>
+										<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+											{filteredItems.map((item, idx) => (
+												<div key={idx} className="group flex flex-col items-center p-6 bg-stone-50 dark:bg-stone-800/50 rounded-2xl border border-stone-100 dark:border-stone-700 hover:border-rose-300 dark:hover:border-rose-900 transition-all">
+													<div 
+														className="text-6xl mb-4 font-deva text-stone-800 dark:text-stone-100 h-20 flex items-center justify-center group-hover:scale-110 transition-transform"
+														style={(item.font || cat.font) ? { fontFamily: `"${item.font || cat.font}", Sanskrit2003, serif` } : {}}
+													>
+														{item.image ? <img src={item.image} className="h-full w-auto object-contain dark:invert opacity-90" /> : item.char}
+													</div>
+													<div className="text-xl font-bold text-rose-600 dark:text-rose-500 iast-sharp">{item.iast}</div>
+													{item.note && <div className="mt-3 text-[11px] italic text-stone-400 dark:text-stone-500 text-center leading-tight border-t border-stone-200 dark:border-stone-700 pt-2 w-full">{item.note}</div>}
 												</div>
-												<div className="text-xl font-bold text-rose-600 dark:text-rose-500 iast-sharp">{item.iast}</div>
-												{item.note && <div className="mt-3 text-[11px] italic text-stone-400 dark:text-stone-500 text-center leading-tight border-t border-stone-200 dark:border-stone-700 pt-2 w-full">{item.note}</div>}
-											</div>
-										))}
+											))}
+										</div>
 									</div>
-								</div>
-							);
-						})}
+								);
+							});
+						})()}
+
+{/* Leermeldung (angepasst an rekursive Ordner-Struktur) */}
+{studySearch && studyModeContent === 'custom' && (() => {
+    const getAllItems = (list) => {
+        let items = [];
+        list.forEach(c => {
+            if (c.isFolder && c.collections) {
+                items = [...items, ...getAllItems(c.collections)];
+            } else if (!c.isFolder && c.active && c.items) {
+                items = [...items, ...c.items];
+            }
+        });
+        return items;
+    };
+    const totalMatchCount = getAllItems(customCategories).filter(item => 
+        (item.char || "").includes(studySearch) || 
+        (item.iast || "").toLowerCase().includes(studySearch.toLowerCase())
+    ).length;
+
+    return totalMatchCount === 0 ? (
+        <div className="text-center py-20 text-stone-400 italic">
+            {TRANSLATIONS[lang].noResults} "{studySearch}".
+        </div>
+    ) : null;
+})()}
 						
 						{/* Leermeldung */}
 						{studySearch && studyModeContent === 'custom' && customCategories.filter(c => c.active).every(c => (c.items || []).filter(item => (item.char || "").includes(studySearch) || (item.iast || "").toLowerCase().includes(studySearch.toLowerCase())).length === 0) && (
