@@ -709,9 +709,12 @@ const EXCLUDED_COMBINATIONS = new Set([]);
 				addFolder: "+ Ordner hinzufügen",
 				folderNamePlaceholder: "z. B. Andere Schriften",
 				confirmDeleteCat: "Möchtest du diese Sammlung wirklich löschen?",
-				folderRoot: "❌ Hauptverzeichnis",
-				moveItemTitle: "📦 Zeichen verschieben",
-				copyItemTitle: "📄 Zeichen kopieren",
+				collectionAction: "Ordner / Aktion...",
+				collectionMove: "In Hauptverzeichnis verschieben",
+				collectionCopy: "Sammlung kopieren",
+				folderRoot: "Hauptverzeichnis",
+				moveItemTitle: "Zeichen verschieben",
+				copyItemTitle: "Zeichen kopieren",
 				searchPlaceholder: "Sammlung suchen...",
 				cancel: "Abbrechen",
 				onlinePoolBtn: "Online-Pool",
@@ -885,9 +888,12 @@ const EXCLUDED_COMBINATIONS = new Set([]);
 				addFolder: "+ Add folder",
 				folderNamePlaceholder: "e.g., Other scripts",
 				confirmDeleteCat: "Do you really want to delete this collection?",
-				folderRoot: "❌ Root Directory",
-				moveItemTitle: "📦 Move Character",
-				copyItemTitle: "📄 Copy Character",
+				collectionAction: "Folder / Action...",
+				collectionMove: "Move to Root Directory",
+				collectionCopy: "Copy Collection",
+				folderRoot: "Root Directory",
+				moveItemTitle: "Move Character",
+				copyItemTitle: "Copy Character",
 				searchPlaceholder: "Search collection...",
 				cancel: "Cancel",
 				onlinePoolBtn: "Online Pool",
@@ -3504,51 +3510,30 @@ const renderDevanagariSession = () => {
                                                     <span className="w-3.5 h-3.5 md:w-4 md:h-4 flex items-center justify-center font-serif italic text-[11px] md:text-xs font-bold">i</span>
                                                 </button>
 
-                                                {/* Dropdown zum Verschieben der gesamten Sammlung */}
-                                                {!isFolder && (
-                                                    <select
-                                                        onChange={(e) => {
-                                                            const targetFolderId = e.target.value;
-                                                            setCustomCategories(prev => {
-                                                                const currentCat = prev.find(c => c.id === cat.id);
-                                                                if (!currentCat) return prev;
-
-                                                                let cleaned = prev.filter(c => c.id !== cat.id).map(c => {
-                                                                    if (c.isFolder && c.collections) {
-                                                                        return { ...c, collections: c.collections.filter(sub => sub.id !== cat.id) };
-                                                                    }
-                                                                    return c;
-                                                                });
-
-                                                                if (targetFolderId === "root") {
-                                                                    return [currentCat, ...cleaned];
-                                                                } else {
-                                                                    return cleaned.map(c => {
-                                                                        if (c.id === targetFolderId) {
-                                                                            const subs = c.collections || [];
-                                                                            if (!subs.some(sub => sub.id === cat.id)) {
-                                                                                return { ...c, collections: [...subs, currentCat] };
-                                                                            }
-                                                                        }
-                                                                        return c;
-                                                                    });
-                                                                }
-                                                            });
-                                                            e.target.value = "";
-                                                        }}
-                                                        defaultValue=""
-                                                        className="text-[9px] md:text-[10px] bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded px-1 py-0.5 text-stone-500 outline-none w-[65px] md:w-[110px] cursor-pointer shrink-0"
-                                                    >
-                                                        <option value="" disabled>{lang === 'de' ? "Ordner..." : "Folder..."}</option>
-                                                        <option value="root">{(TRANSLATIONS[lang] && TRANSLATIONS[lang].folderRoot) || "❌ Hauptverzeichnis"}</option>
-                                                        {customCategories
-                                                            .filter(c => c.isFolder && c.id !== cat.id)
-                                                            .map(f => (
-                                                                <option key={f.id} value={f.id}>📁 {f.name}</option>
-                                                            ))
-                                                    }
-                                                    </select>
-                                                )}
+                                                {/* Dropdown zum Verschieben und Kopieren der gesamten Sammlung */}
+												{!isFolder && (
+													<select
+														onChange={(e) => {
+															const val = e.target.value;
+															if (!val) return;
+															// Wir legen hier das echte cat-Objekt direkt als "collectionObj" ab
+															setActiveItemAction({ action: val, fromCatId: cat.id, item: null, isCollection: true, collectionObj: cat });
+															e.target.value = "";
+														}}
+														defaultValue=""
+														className="text-[9px] md:text-[10px] bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded px-1 py-0.5 text-stone-500 outline-none w-[65px] md:w-[110px] cursor-pointer shrink-0 font-bold"
+													>
+														<option value="" disabled>
+															{TRANSLATIONS[lang].editTitle ? (lang === 'de' ? "Aktion..." : "Action...") : "Aktion..."}
+														</option>
+														<option value="move">
+															{lang === 'de' ? "Verschieben" : "Move"}
+														</option>
+														<option value="copy">
+															{lang === 'de' ? "Kopieren" : "Copy"}
+														</option>
+													</select>
+												)}
 
                                                 <button onClick={() => deleteCategory(cat.id)} className="p-1 text-stone-300 hover:text-red-500 shrink-0"><XIcon size={16} /></button>
                                             </div>
@@ -3669,8 +3654,8 @@ const renderDevanagariSession = () => {
                                                                         className="text-[9px] bg-stone-100 dark:bg-stone-900 border border-stone-200 rounded px-1 py-0.5 text-stone-500 outline-none w-[65px] md:w-[100px] cursor-pointer shrink-0"
                                                                     >
                                                                         <option value="" disabled>{lang === 'de' ? "Aktion..." : "Action..."}</option>
-                                                                        <option value="move">📦 {lang === 'de' ? "Verschieben" : "Move"}</option>
-                                                                        <option value="copy">📄 {lang === 'de' ? "Kopieren" : "Copy"}</option>
+                                                                        <option value="move"> {lang === 'de' ? "Verschieben" : "Move"}</option>
+                                                                        <option value="copy"> {lang === 'de' ? "Kopieren" : "Copy"}</option>
                                                                     </select>
 
                                                                     <button 
@@ -3787,8 +3772,8 @@ const renderDevanagariSession = () => {
                                                                                     className="text-[10px] bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded px-1 py-1 text-stone-500 outline-none w-[80px] cursor-pointer shrink-0 font-bold"
                                                                                 >
                                                                                     <option value="" disabled>{lang === 'de' ? "Aktion..." : "Action..."}</option>
-                                                                                    <option value="move">📦 {lang === 'de' ? "Verschieben" : "Move"}</option>
-                                                                                    <option value="copy">📄 {lang === 'de' ? "Kopieren" : "Copy"}</option>
+                                                                                    <option value="move"> {lang === 'de' ? "Verschieben" : "Move"}</option>
+                                                                                    <option value="copy"> {lang === 'de' ? "Kopieren" : "Copy"}</option>
                                                                                 </select>
 
                                                                                 <button onClick={() => {
@@ -3840,36 +3825,79 @@ const renderDevanagariSession = () => {
 												// Globale Aktion für das Verschieben/Kopieren von ganzen Sammlungen
 												window.executeCatAction = (action, subCatObj, targetId) => {
 													setCustomCategories(prev => {
-														let catToProcess = { ...subCatObj };
+														// Findet die ID der betroffenen Sammlung (entweder aus dem Objekt oder dem aktiven Modal)
+														const sourceId = (subCatObj && subCatObj.id) ? subCatObj.id : (activeItemAction ? activeItemAction.fromCatId : null);
+														if (!sourceId) return prev;
 														
-														// 1. Aus dem alten Ordner entfernen, falls verschoben wird
-														let cleaned = prev.map(c => {
-															if (c.isFolder && c.collections) {
-																return { ...c, collections: c.collections.filter(sub => sub.id !== subCatObj.id) };
+														// Findet das Original-Objekt der Sammlung tiefer im Baum
+														const findCollectionRecursive = (list, id) => {
+															for (let c of list) {
+																if (!c.isFolder && c.id === id) return c;
+																if (c.isFolder && c.collections) {
+																	const found = findCollectionRecursive(c.collections, id);
+																	if (found) return found;
+																}
 															}
-															return c;
-														});
-														
-														// 2. Bei einer Kopie vergeben wir neue, eindeutige IDs für die Sammlung und alle enthaltenen Zeichen
+															return null;
+														};
+
+														const originalCat = findCollectionRecursive(prev, sourceId);
+														if (!originalCat) return prev; 
+
+														let catToProcess = { ...originalCat };
+
+														// 1. Wenn es eine Kopie ist (Eingepackt in den sauberen if-Zweig)
 														if (action === 'copy') {
 															const freshCatId = 'cat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
 															const freshItems = (catToProcess.items || []).map((it, idx) => ({
 																...it,
 																id: 'item_' + Date.now() + '_' + idx + '_' + Math.random().toString(36).substr(2, 4)
 															}));
+															
+															const suffix = lang === 'de' ? "Kopie" : "Copy";
 															catToProcess = {
 																...catToProcess,
 																id: freshCatId,
-																name: catToProcess.name + " (" + (lang === 'de' ? "Kopie" : "Copy") + ")",
+																name: `${catToProcess.name} (${suffix})`,
 																items: freshItems
 															};
+															
+															let cleanedCopy = [...prev];
+															
+															if (targetId === "root") {
+																return [catToProcess, ...cleanedCopy];
+															} else {
+																return cleanedCopy.map(c => {
+																	if (c.id === targetId) {
+																		return { ...c, collections: [catToProcess, ...(c.collections || [])] };
+																	}
+																	return c;
+																});
+															}
+														} 
+														// 2. Wenn es ein Verschieben ist (Jetzt sauber im else-Zweig isoliert!)
+														else {
+															let cleanedMove = prev.filter(c => c.id !== sourceId).map(c => {
+																if (c.isFolder && c.collections) {
+																	return { ...c, collections: c.collections.filter(sub => sub.id !== sourceId) };
+																}
+																return c;
+															});
+
+															if (targetId === "root") {
+																return [catToProcess, ...cleanedMove];
+															} else {
+																return cleanedMove.map(c => {
+																	if (c.id === targetId) {
+																		const subs = c.collections || [];
+																		if (!subs.some(sub => sub.id === catToProcess.id)) {
+																			return { ...c, collections: [catToProcess, ...subs] };
+																		}
+																	}
+																	return c;
+																});
+															}
 														}
-														
-														// 3. Im Hauptverzeichnis (root) ganz oben platzieren
-														if (targetId === "root") {
-															return [catToProcess, ...cleaned];
-														}
-														return cleaned;
 													});
 												};
 												window.executeItemAction = (action, fromCatId, item, toCatId) => {
@@ -3906,6 +3934,51 @@ const renderDevanagariSession = () => {
 												};
                                                 })()}
 
+												{/* Allgemeiner Fontname für die gesamte Sammlung */}
+												<div className="mb-3 bg-stone-50 dark:bg-stone-900/40 p-3 rounded-lg border border-stone-200 dark:border-stone-800">
+													<p className="text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider mb-2">
+														{lang === 'de' ? "Standard-Schriftart der Sammlung" : "Collection default font"}
+													</p>
+													<div className="flex gap-2">
+														<input
+															type="text"
+															placeholder={lang === 'de' ? "Standard-Font (z.B. uttara.ttf)..." : "Default font (e.g. uttara.ttf)..."}
+															defaultValue={cat.font || ""}
+															onBlur={(e) => {
+																const val = e.target.value.trim();
+																setCustomCategories(prev => prev.map(c => 
+																	c.id === cat.id ? { ...c, font: val } : c
+																));
+															}}
+															className="text-xs px-2 py-1 flex-1 rounded border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 outline-none dark:text-stone-300 focus:border-rose-500"
+														/>
+														<button
+															type="button"
+															onClick={(e) => {
+																// Holt den aktuellen Wert aus dem Input-Feld direkt daneben
+																const inputEl = e.target.previousSibling;
+																const val = inputEl ? inputEl.value.trim() : "";
+																if (!val) return;
+
+																setCustomCategories(prev => prev.map(c => {
+																	if (c.id === cat.id) {
+																		// Aktualisiert die Sammlung UND überschreibt alle 807+ Unterzeichen
+																		const updatedItems = (c.items || []).map(item => ({
+																			...item,
+																			font: val
+																		}));
+																		return { ...c, font: val, items: updatedItems };
+																	}
+																	return c;
+																}));
+															}}
+															className="text-[10px] bg-stone-200 hover:bg-stone-300 dark:bg-stone-850 dark:hover:bg-stone-750 text-stone-700 dark:text-stone-300 px-3 py-1 rounded font-bold transition-colors shrink-0"
+														>
+															{lang === 'de' ? "Für alle Zeichen erzwingen" : "Force for all characters"}
+														</button>
+													</div>
+												</div>
+												
 												{/* Massenimportbereich */}
                                                 <div className="bg-rose-50/50 dark:bg-rose-900/10 p-3 rounded-lg border border-rose-100 dark:border-rose-900/20">
                                                     <div className="flex justify-between items-center mb-2">
@@ -3975,8 +4048,8 @@ const renderDevanagariSession = () => {
 																	className="text-[10px] bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded px-1 py-1 text-stone-500 outline-none w-[80px] cursor-pointer shrink-0 font-bold"
 																>
 																	<option value="" disabled>{lang === 'de' ? "Aktion..." : "Action..."}</option>
-																	<option value="move">📦 {lang === 'de' ? "Verschieben" : "Move"}</option>
-																	<option value="copy">📄 {lang === 'de' ? "Kopieren" : "Copy"}</option>
+																	<option value="move"> {lang === 'de' ? "Verschieben" : "Move"}</option>
+																	<option value="copy"> {lang === 'de' ? "Kopieren" : "Copy"}</option>
 																</select>
 
                                                                 <button onClick={() => setCustomCategories(prev => prev.map(c => c.id === cat.id ? { ...c, items: c.items.filter(it => it.id !== item.id) } : c))} className="text-stone-300 hover:text-red-500 ml-auto p-1"><XIcon size={16} /></button>
@@ -4019,86 +4092,114 @@ const renderDevanagariSession = () => {
             </div>
         )}
 		{activeItemAction && (() => {
-    // Lokaler Such-State für das Mini-Modal
-    if (!window._itemTargetSearch) window._itemTargetSearch = "";
-    
-    const { action, fromCatId, item } = activeItemAction;
-    
-    // Holt alle Sammlungen (rekursiv flach geklopft), außer der aktuellen Ursprungssammlung
-    const getFlatCats = (list) => {
-        let res = [];
-        list.forEach(c => {
-            if (c.isFolder && c.collections) res = [...res, ...getFlatCats(c.collections)];
-            else if (!c.isFolder && c.id !== fromCatId) res.push(c);
-        });
-        return res;
-    };
-    
-    const availableTargets = getFlatCats(customCategories).filter(c => 
-        c.name.toLowerCase().includes(window._itemTargetSearch.toLowerCase())
-    );
+			if (!window._itemTargetSearch) window._itemTargetSearch = "";
+			
+			const { action, fromCatId, item, isCollection, collectionObj } = activeItemAction;
+			
+			const getAvailableTargets = () => {
+				if (isCollection) {
+					return customCategories.filter(c => c.isFolder && c.id !== fromCatId);
+				} else {
+					const getFlatCats = (list) => {
+						let res = [];
+						list.forEach(c => {
+							if (c.isFolder && c.collections) res = [...res, ...getFlatCats(c.collections)];
+							else if (!c.isFolder && c.id !== fromCatId) res.push(c);
+						});
+						return res;
+					};
+					return getFlatCats(customCategories);
+				}
+			};
+			
+			const availableTargets = getAvailableTargets().filter(c => 
+				c.name.toLowerCase().includes(window._itemTargetSearch.toLowerCase())
+			);
 
-    // Fallback-Übersetzungen, falls die Keys in deinem TRANSLATIONS-Objekt noch fehlen
-    const txtTitle = action === 'move'
-        ? (TRANSLATIONS[lang].moveItemTitle || (lang === 'de' ? "📦 Zeichen verschieben" : "📦 Move Character"))
-        : (TRANSLATIONS[lang].copyItemTitle || (lang === 'de' ? "📄 Zeichen kopieren" : "📄 Copy Character"));
-        
-    const txtPlaceholder = TRANSLATIONS[lang].searchPlaceholder || (lang === 'de' ? "Sammlung suchen..." : "Search collection...");
-    const txtNoResults = TRANSLATIONS[lang].noResults || (lang === 'de' ? "Keine Sammlungen gefunden" : "No collections found");
-    const txtCancel = TRANSLATIONS[lang].cancel || (lang === 'de' ? "Abbrechen" : "Cancel");
+			let txtTitle = "";
+			if (isCollection) {
+				txtTitle = action === 'move' ? TRANSLATIONS[lang].actionMove : TRANSLATIONS[lang].collectionCopy;
+			} else {
+				txtTitle = action === 'move' ? TRANSLATIONS[lang].moveItemTitle : TRANSLATIONS[lang].copyItemTitle;
+			}
+				
+			const txtPlaceholder = TRANSLATIONS[lang].searchPlaceholder;
+			const txtNoResults = TRANSLATIONS[lang].noResults;
+			const txtCancel = TRANSLATIONS[lang].cancel;
+			const txtRoot = TRANSLATIONS[lang].folderRoot;
 
-    return (
-        <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4 animate-in fade-in duration-200">
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-xs" onClick={() => setActiveItemAction(null)}></div>
-            <div className="relative bg-white dark:bg-stone-850 w-full max-w-sm rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-700 p-5 popup-anim text-left flex flex-col max-h-[70vh]">
-                
-                <h3 className="text-sm font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 mb-3">
-                    {txtTitle}
-                </h3>
-                
-                {/* Dynamische Suche für die Sammlungen */}
-                <input 
-                    type="text"
-                    placeholder={txtPlaceholder}
-                    defaultValue={window._itemTargetSearch}
-                    onChange={(e) => {
-                        window._itemTargetSearch = e.target.value;
-                        setCustomCategories(prev => [...prev]);
-                    }}
-                    className="w-full p-2 mb-3 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-xl outline-none focus:border-rose-500 text-xs text-stone-800 dark:text-stone-200"
-                />
-                
-                {/* Scrollbare Liste der Ziele */}
-                <div className="overflow-y-auto flex-1 space-y-1 pr-1 custom-scrollbar">
-                    {availableTargets.map(target => (
-                        <button
-                            key={target.id}
-                            onClick={() => {
-                                window._itemTargetSearch = "";
-                                window.executeItemAction(action, fromCatId, item, target.id);
-                            }}
-                            className="w-full p-2.5 text-left text-xs bg-stone-50 hover:bg-rose-50 dark:bg-stone-800 dark:hover:bg-rose-950/30 rounded-lg border border-stone-100 dark:border-stone-700 transition-colors text-stone-700 dark:text-stone-300 font-medium truncate block"
-                        >
-                            🎯 {target.name}
-                        </button>
-                    ))}
-                    {availableTargets.length === 0 && (
-                        <div className="text-center py-6 text-xs text-stone-400 italic">
-                            {txtNoResults}
-                        </div>
-                    )}
-                </div>
-                
-                <button 
-                    onClick={() => { window._itemTargetSearch = ""; setActiveItemAction(null); }}
-                    className="w-full mt-4 bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 text-stone-800 dark:text-stone-200 font-bold py-2 rounded-xl text-xs transition-colors"
-                >
-                    {txtCancel}
-                </button>
-            </div>
-        </div>
-    );
-})()}
+			return (
+				<div className="fixed inset-0 z-[8000] flex items-center justify-center p-4 animate-in fade-in duration-200">
+					<div className="absolute inset-0 bg-black/70 backdrop-blur-xs" onClick={() => setActiveItemAction(null)}></div>
+					<div className="relative bg-white dark:bg-stone-850 w-full max-w-sm rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-700 p-5 popup-anim text-left flex flex-col max-h-[70vh]">
+						
+						<h3 className="text-sm font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 mb-3">
+							{txtTitle}
+						</h3>
+						
+						<input 
+							type="text"
+							placeholder={txtPlaceholder}
+							defaultValue={window._itemTargetSearch}
+							onChange={(e) => {
+								window._itemTargetSearch = e.target.value;
+								setCustomCategories(prev => [...prev]);
+							}}
+							className="w-full p-2 mb-3 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-xl outline-none focus:border-rose-500 text-xs text-stone-800 dark:text-stone-200"
+						/>
+						
+						<div className="overflow-y-auto flex-1 space-y-1 pr-1 custom-scrollbar">
+							
+							{isCollection && (
+								<button
+									onClick={() => {
+										window._itemTargetSearch = "";
+										// Wir übergeben das echte, gesicherte Objekt statt null
+										window.executeCatAction(action, collectionObj, "root");
+										setActiveItemAction(null);
+									}}
+									className="w-full p-2.5 text-left text-xs bg-rose-50/40 hover:bg-rose-50 dark:bg-stone-800/40 dark:hover:bg-rose-950/30 rounded-lg border border-dashed border-rose-200 dark:border-stone-700 transition-colors text-stone-700 dark:text-stone-300 font-bold block mb-2"
+								>
+									📍 {txtRoot}
+								</button>
+							)}
+
+							{availableTargets.map(target => (
+								<button
+									key={target.id}
+									onClick={() => {
+										window._itemTargetSearch = "";
+										if (isCollection) {
+											// Wir übergeben das echte, gesicherte Objekt statt null
+											window.executeCatAction(action, collectionObj, target.id);
+										} else {
+											window.executeItemAction(action, fromCatId, item, target.id);
+										}
+										setActiveItemAction(null);
+									}}
+									className="w-full p-2.5 text-left text-xs bg-stone-50 hover:bg-rose-50 dark:bg-stone-800 dark:hover:bg-rose-950/30 rounded-lg border border-stone-100 dark:border-stone-700 transition-colors text-stone-700 dark:text-stone-300 font-medium truncate block"
+								>
+									{isCollection ? "📂 " : "🎯 "} {target.name}
+								</button>
+							))}
+							
+							{availableTargets.length === 0 && (
+								<div className="text-center py-6 text-xs text-stone-400 italic">
+									{txtNoResults}
+								</div>
+							)}
+						</div>
+						
+						<button 
+							onClick={() => { window._itemTargetSearch = ""; setActiveItemAction(null); }}
+							className="w-full mt-4 bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 text-stone-800 dark:text-stone-200 font-bold py-2 rounded-xl text-xs transition-colors"
+						>
+							{txtCancel}
+						</button>
+					</div>
+				</div>
+			);
+		})()}
 
 {/* GITHUB_ONLINE_LIBRARY_MODAL */}
         {showOnlineLibrary && (
@@ -4224,17 +4325,18 @@ const renderDevanagariSession = () => {
             </div>
         )}
 		
-{/* UNIVERSAL_STUDY_OVERLAY_V15 */}
+		{/* UNIVERSAL_STUDY_OVERLAY_V15 */}
 		{studyModeContent && (
 			<div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
 				<div className="absolute inset-0 bg-stone-900/80 backdrop-blur-md" onClick={() => setStudyModeContent(null)}></div>
 				
-				<div className="relative bg-white dark:bg-stone-850 w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden rounded-3xl shadow-2xl p-6 md:p-12 popup-anim border border-stone-200 dark:border-stone-700">
+				{/* pt-3 hält den weißen oberen Rand elegant schmal */}
+				<div className="relative bg-white dark:bg-stone-850 w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden rounded-3xl shadow-2xl pb-6 px-6 md:pb-12 md:px-12 pt-3 popup-anim border border-stone-200 dark:border-stone-700">
 					
-					{/* Schließen-Button */}
+					{/* Schließen-Button – Komplett aus der Blockade-Zone nach unten verschoben */}
 					<button 
 						onClick={() => setStudyModeContent(null)} 
-						className="absolute top-6 right-10 md:top-8 md:right-14 p-2 transition-colors z-50 text-stone-400 hover:text-rose-600 outline-none"
+						className="absolute top-9 right-14 md:top-12 md:right-16 p-2 transition-colors z-[99999] text-stone-400 hover:text-rose-600 outline-none"
 						title={TRANSLATIONS[lang].close}
 					>
 						<XIcon size={28} />
