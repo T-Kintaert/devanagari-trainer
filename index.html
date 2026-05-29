@@ -1786,6 +1786,59 @@ useEffect(() => {
               };
               reader.readAsDataURL(file);
           };
+		  
+          // --- INTEGRATION DER CUSTOM FONTS MIT GITHUB FALLBACK ---
+          const registerCustomFont = (fontName) => {
+              if (!fontName) return;
+              const normalized = fontName.trim();
+              if (!normalized) return;
+              
+              // Verhindert doppeltes Registrieren
+              const styleId = "font-face-" + normalized.replace(/[^a-zA-Z0-5]/g, "");
+              if (document.getElementById(styleId)) return;
+              
+              // Direkte Online-URL zu deinem GitHub-Pages-Verzeichnis
+              const githubFontUrl = `https://t-kintaert.github.io/devanagari-trainer/${normalized}`;
+              
+              const style = document.createElement("style");
+              style.id = styleId;
+              
+              // Die klassische, synchrone Kette (wie bei Sanskrit2003):
+              // 1. Schau auf dem PC (local) -> 2. Schau im App-Ordner (relativ) -> 3. Schau auf GitHub (absolut)
+              style.appendChild(document.createTextNode(`
+                  @font-face {
+                      font-family: "${normalized}";
+                      src: local("${normalized}"),
+                           url("${normalized}") format("truetype"),
+                           url("${githubFontUrl}") format("truetype");
+                      font-display: swap;
+                  }
+              `));
+              document.head.appendChild(style);
+          };
+          
+          window.registerCustomFont = registerCustomFont;
+
+          // Automatisches Vorladen aller Schriftarten aus dem customCategories-Array beim App-Start
+          useEffect(() => {
+              const loadFontsRecursively = (list) => {
+                  list.forEach(c => {
+                      if (c.isFolder && c.collections) {
+                          loadFontsRecursively(c.collections);
+                      } else {
+                          if (c.font) registerCustomFont(c.font);
+                          if (c.items) {
+                              c.items.forEach(item => {
+                                  if (item.font) registerCustomFont(item.font);
+                              });
+                          }
+                      }
+                  });
+              };
+              if (customCategories) {
+                  loadFontsRecursively(customCategories);
+              }
+          }, [customCategories]);
 
           // --- DEVANAGARI STATE ---
           // PERSISTENCE_LOGIC_V20
@@ -1909,19 +1962,38 @@ useEffect(() => {
 
                       // Erfolg: Oben hinzufügen (Prepend) und IDs frisch generieren, um Doppelgänger zu vermeiden
                       const sanitizedImported = imported.map((cat, catIdx) => {
-                          // Absolut eindeutige ID durch Kombination aus Zeitstempel, Index und Zufallsstring
                           const uniqueCatId = 'cat_' + Date.now() + '_' + catIdx + '_' + Math.random().toString(36).substr(2, 7);
+                          
+                          // Zeichen der Hauptebene säubern
                           const sanitizedItems = (cat.items || []).map((item, itemIdx) => ({
                               ...item,
                               id: 'item_' + Date.now() + '_' + catIdx + '_' + itemIdx + '_' + Math.random().toString(36).substr(2, 9)
                           }));
+
+                          // Unter-Sammlungen säubern, falls es sich um einen Ordner handelt
+                          const sanitizedCollections = (cat.collections || []).map((sub, subIdx) => ({
+                              ...sub,
+                              id: 'subcat_' + Date.now() + '_' + catIdx + '_' + subIdx + '_' + Math.random().toString(36).substr(2, 7),
+                              // WICHTIG: Die Unter-Sammlung behält ihre eigene Beschreibung (falls vorhanden) 
+                              // und wird NICHT mehr mit der Beschreibung des Hauptordners überschrieben.
+                              description: sub.description || '',
+                              items: (sub.items || []).map((subItem, subItemIdx) => ({
+                                  ...subItem,
+                                  id: 'subitem_' + Date.now() + '_' + catIdx + '_' + subIdx + '_' + subItemIdx + '_' + Math.random().toString(36).substr(2, 9)
+                              }))
+                          }));
+
                           return {
                               ...cat,
-                              id: uniqueCatId, // Jede importierte Sammlung erhält zwingend eine eigene, frische ID
-                              items: sanitizedItems
+                              id: uniqueCatId,
+                              // Die Hauptbeschreibung bleibt exakt auf der Ordnerebene verankert
+                              description: cat.description || '', 
+                              items: sanitizedItems,
+                              collections: sanitizedCollections
                           };
                       });
 
+                      // Hier werden die bereinigten Daten aktiv in den App-State gepusht
                       setCustomCategories(prev => [...sanitizedImported, ...prev]);
                       alert(TRANSLATIONS[lang].importSuccess);
                   } catch (err) {
@@ -2061,7 +2133,8 @@ const addCategory = () => {
                         active: cat.active !== undefined ? cat.active : true,
                         isFolder: false,
                         name: cat[`name_${lang}`] || cat.name || targetFileInfo[`name_${lang}`],
-                        description: cat[`desc_${lang}`] || cat.description || targetFileInfo[`desc_${lang}`] || '',
+                        // KORREKTUR: Unter-Sammlungen nutzen nur noch ihre eigenen Beschreibungen und erben NICHT mehr die Pool-Beschreibung des Ordners
+                        description: cat[`desc_${lang}`] || cat.description || '',
                         items: sanitizedItems
                     };
                 };
@@ -2078,6 +2151,8 @@ const addCategory = () => {
                             ...incoming,
                             id: uniqueFolderId,
                             name: incoming[`name_${lang}`] || incoming.name || targetFileInfo[`name_${lang}`],
+                            // KORREKTUR: Die Hauptbeschreibung des Ordners wird hier explizit auf der Ordnerebene verankert
+                            description: incoming[`desc_${lang}`] || incoming.description || targetFileInfo[`desc_${lang}`] || '',
                             active: incoming.active !== undefined ? incoming.active : true,
                             isFolder: true,
                             collections: subCollections
@@ -2085,8 +2160,22 @@ const addCategory = () => {
                         
                         updated = [preparedFolder, ...updated];
                     } else {
-                        // Normale flache Sammlung
-                        const preparedCat = sanitizeCollection(incoming, catIdx);
+                        // Normale flache Sammlung (erhält wie gewohnt die Pool-Beschreibung, falls sie keine eigene hat)
+                        const uniqueCatId = 'cat_' + Date.now() + '_' + catIdx + '_' + Math.random().toString(36).substr(2, 7);
+                        const sanitizedItems = (incoming.items || []).map((item, itemIdx) => ({
+                            ...item,
+                            id: 'item_' + Date.now() + '_' + catIdx + '_' + itemIdx + '_' + Math.random().toString(36).substr(2, 9)
+                        }));
+                        
+                        const preparedCat = {
+                            ...incoming,
+                            id: uniqueCatId,
+                            active: incoming.active !== undefined ? incoming.active : true,
+                            isFolder: false,
+                            name: incoming[`name_${lang}`] || incoming.name || targetFileInfo[`name_${lang}`],
+                            description: incoming[`desc_${lang}`] || incoming.description || targetFileInfo[`desc_${lang}`] || '',
+                            items: sanitizedItems
+                        };
                         updated = [preparedCat, ...updated];
                     }
                 });
@@ -4064,33 +4153,61 @@ const renderDevanagariSession = () => {
                                 const resolvedName = lang === 'de' ? (fileObj.name_de || fileObj.name_en) : (fileObj.name_en || fileObj.name_de);
                                 const resolvedDesc = lang === 'de' ? (fileObj.desc_de || fileObj.desc_en) : (fileObj.desc_en || fileObj.desc_de);
                                 
+                                // Wir nutzen das bereits in deiner App existierende _showInfoFields-Objekt
+                                if (!window._showInfoFields) window._showInfoFields = {};
+                                const isDescVisible = !!window._showInfoFields[code];
+                                
                                 return (
-                                    <div key={code} className="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-100 dark:border-stone-700/50 flex justify-between items-center gap-4 text-left">
-                                        <div className="min-w-0 flex-1">
-                                            <h4 className="font-bold text-sm text-stone-800 dark:text-stone-200 truncate">
-                                                {resolvedName}
-                                            </h4>
-                                            <p className="text-[11px] text-stone-500 mt-1 italic leading-tight">
-                                                {resolvedDesc}
-                                            </p>
-                                            {fileObj.author && (
-                                                <p className="text-[9px] font-bold uppercase tracking-wider text-stone-400 mt-1">
-                                                    👤 {fileObj.author}
-                                                </p>
-                                            )}
+                                    <div key={code} className="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-100 dark:border-stone-700/50 flex flex-col gap-2 text-left">
+                                        <div className="flex justify-between items-center gap-4 w-full min-w-0">
+                                            <div className="min-w-0 flex-1">
+                                                <h4 className="font-bold text-sm text-stone-800 dark:text-stone-200 leading-tight">
+                                                    {resolvedName}
+                                                </h4>
+                                                {fileObj.author && (
+                                                    <p className="text-[9px] font-bold uppercase tracking-wider text-stone-400 mt-1">
+                                                        👤 {fileObj.author}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                {/* Das i-Symbol toggelt die Sichtbarkeit und nutzt die React-Suchfunktion für ein direktes UI-Update */}
+                                                {resolvedDesc && (
+                                                    <button 
+                                                        onClick={() => {
+                                                            window._showInfoFields[code] = !window._showInfoFields[code];
+                                                            // Ein kleiner Trick, um die Ansicht sofort reaktiv zu aktualisieren
+                                                            setOnlineSearch(prev => prev + " ");
+                                                            setTimeout(() => setOnlineSearch(prev => prev.trim()), 10);
+                                                        }} 
+                                                        className={`p-1 w-6 h-6 flex items-center justify-center rounded-lg transition-colors border text-xs ${isDescVisible ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/60' : 'text-stone-400 border-stone-200 dark:border-stone-700 hover:text-rose-600'}`}
+                                                    >
+                                                        <span className="font-serif italic font-bold">i</span>
+                                                    </button>
+                                                )}
+                                                
+                                                <button 
+                                                    onClick={async () => {
+                                                        const res = await window.importCollectionWithId(code);
+                                                        if (res) {
+                                                            const displayTitle = res[`name_${lang}`] || res.filename;
+                                                            alert(`${TRANSLATIONS[lang].onlineImportSuccess}"${displayTitle}"`);
+                                                        }
+                                                    }}
+                                                    className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-3 py-2 rounded-xl shrink-0 shadow-sm transition-colors outline-none"
+                                                >
+                                                    {TRANSLATIONS[lang].addBtn}
+                                                </button>
+                                            </div>
                                         </div>
-                                        <button 
-                                            onClick={async () => {
-                                                const res = await window.importCollectionWithId(code);
-                                                if (res) {
-                                                    const displayTitle = res[`name_${lang}`] || res.filename;
-                                                    alert(`${TRANSLATIONS[lang].onlineImportSuccess}"${displayTitle}"`);
-                                                }
-                                            }}
-                                            className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-3 py-2 rounded-xl shrink-0 shadow-sm transition-colors outline-none"
-                                        >
-                                            {TRANSLATIONS[lang].addBtn}
-                                        </button>
+                                        
+                                        {/* Die Beschreibung klappt erst nach Klick auf das (i) auf */}
+                                        {resolvedDesc && isDescVisible && (
+                                            <div className="text-[11px] text-stone-500 dark:text-stone-400 italic leading-tight bg-white dark:bg-stone-900/60 p-2 rounded-lg border border-stone-100 dark:border-stone-800 animate-in fade-in slide-in-from-top-1 duration-200">
+                                                {resolvedDesc}
+                                            </div>
+                                        )}
                                     </div>
                                 );
                             });
