@@ -3,8 +3,8 @@
     "filename": "Some-alternative-Devanagari-characters.json",
     "name_de": "Einige alternative Devanāgarī-Zeichen",
     "name_en": "Some alternative Devanāgarī characters",
-    "desc_de": "Sammlung von abweichenden Schriftstilen und historischen Formen wie dem nördlichen Stil.",
-    "desc_en": "Collection of variant script styles and historical forms such as the northern style.",
+    "desc_de": "Sammlung von abweichenden Schriftzeichen, einschließlich nördlicher Formen.",
+    "desc_en": "Collection of variant characters, including Northern forms.",
     "author": "T. Kintaert"
   },
   "807_belegte_ligaturen": {
@@ -18,9 +18,9 @@
   "sanskrit_in_anderen_Brahmi-Schriften": {
     "filename": "The-Sanskrit-alphasyllabary-in-other-Brahmi-scripts.json",
     "name_de": "Das Alphasyllabar des Sanskrit in anderen Brāhmī-Schriften",
-    "name_en": "The Sanskrit alphasyllabary in Bengali, Brāhmī, Gujarati, Kannada, Malayalam, Odiya, Punjabi, Telugu, and Tibetan (dbu can).",
+    "name_en": "The Sanskrit alphasyllabary in other Brahmi scripts",
     "desc_de": "Das Alphasyllabar des Sanskrit in Bengali, Brāhmī, Gujarati, Kannada, Malayalam, Odiya, Panjabi, Telugu und Tibetisch (dbu can). Erzeugt mit Hilfe von Aksharamukha (https://www.aksharamukha.com/converter).",
-    "desc_en": "Collection of variant script styles and historical forms such as the northern style. Generated using Aksharamukha (https://www.aksharamukha.com/converter).",
+    "desc_en": "The Sanskrit alphasyllabary in Bengali, Brāhmī, Gujarati, Kannada, Malayalam, Odiya, Punjabi, Telugu, and Tibetan (dbu can). Generated using Aksharamukha (https://www.aksharamukha.com/converter)",
     "author": "T. Kintaert"
   }
 }
