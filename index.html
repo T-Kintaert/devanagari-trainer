@@ -2297,40 +2297,41 @@ const addCategory = () => {
               "9": ["1", "8", "0"],
           }), []);
 
-		// --- HANDLERS ---
-
 // --- HANDLERS ---
 
 		const handleDevaNext = useCallback((wasIncorrect = false) => {
-            if (devaMode === 'quiz' && !quizAnswered) return;
+			if (devaMode === 'quiz' && !quizAnswered) return;
 
-            let activeItems = devaItems;
-            const currentItem = devaItems[devaIndex];
+			let activeItems = devaItems;
+			const currentItem = devaItems[devaIndex];
 
-            if (wasIncorrect === true) {
-                if (currentItem) {
-                    // SRS: Fehler sitzungsübergreifend hochzählen
-                    const itemKey = currentItem.t || currentItem.iast || 'unknown';
-                    setDevaSrsScores(prev => ({
-                        ...prev,
-                        [itemKey]: (prev[itemKey] || 0) + 1
-                    }));
+			if (wasIncorrect === true) {
+				if (currentItem) {
+					// Fehlerbehandlung und Wiedereinfügen NUR im Zufallsmodus erlauben!
+					if (devaOrder === 'random') {
+						// SRS: Fehler sitzungsübergreifend hochzählen
+						const itemKey = currentItem.t || currentItem.iast || 'unknown';
+						setDevaSrsScores(prev => ({
+							...prev,
+							[itemKey]: (prev[itemKey] || 0) + 1
+						}));
 
-                    // Bestehende Kurzzeit-Schleife (Wiedereinfügen im aktuellen Array)
-                    const randomOffset = Math.floor(Math.random() * (7 - 3 + 1)) + 3;
-                    const insertIndex = devaIndex + 1 + randomOffset;
-                    
-                    const updatedItems = [...devaItems];
-                    if (insertIndex >= updatedItems.length) {
-                        updatedItems.push(currentItem);
-                    } else {
-                        updatedItems.splice(insertIndex, 0, currentItem);
-                    }
-                    
-                    activeItems = updatedItems;
-                    setDevaItems(updatedItems);
-                }
-            } else {
+						// Bestehende Kurzzeit-Schleife (Wiedereinfügen im aktuellen Array)
+						const randomOffset = Math.floor(Math.random() * (7 - 3 + 1)) + 3;
+						const insertIndex = devaIndex + 1 + randomOffset;
+						
+						const updatedItems = [...devaItems];
+						if (insertIndex >= updatedItems.length) {
+							updatedItems.push(currentItem);
+						} else {
+							updatedItems.splice(insertIndex, 0, currentItem);
+						}
+						
+						activeItems = updatedItems;
+						setDevaItems(updatedItems);
+					}
+				}
+			} else {
                 // --- SRS-ERWEITERUNG: Bei richtiger Antwort den Fehlerscore abbauen ---
                 if (currentItem) {
                     const itemKey = currentItem.t || currentItem.iast || 'unknown';
@@ -2349,7 +2350,7 @@ const addCategory = () => {
                 }
             }
 
-            if (devaIndex < activeItems.length - 1) {
+            if (devaIndex < devaItems.length - 1) {
                 setIsAnimating(false);
                 setShowCardBack(false);
 
@@ -2361,8 +2362,9 @@ const addCategory = () => {
                     setQuizSelection(null);
                     setQuizFocusIndex(-1);
                     
-                    const pool = window._devaFullPool || activeItems;
-                    const nextOptions = generateQuizOptions(activeItems[nextIdx], pool);
+                    // Original aus v2-245 wiederhergestellt: Wir übergeben devaItems,
+                    // damit die Quelle (catSource) für die Set-Isolation intakt bleibt!
+                    const nextOptions = generateQuizOptions(devaItems[nextIdx], devaItems);
                     setQuizOptions(nextOptions);
                 }
 
@@ -2372,7 +2374,7 @@ const addCategory = () => {
             }
 
             if (document.activeElement) document.activeElement.blur();
-        }, [devaIndex, devaItems, devaMode, quizAnswered, setDevaSrsScores]);
+        }, [devaIndex, devaItems, devaMode, quizAnswered, setDevaSrsScores, devaOrder]);
 
           // --- EFFECTS ---
           useEffect(() => {
@@ -2695,10 +2697,21 @@ const startDevanagari = () => {
         let items = [];
         const currentSets = devaSet || [];
         
-        if (currentSets.includes('basic')) items = [...items, ...DEVANAGARI_DATA.basic];
-        if (currentSets.includes('diacritics')) items = [...items, ...DEVANAGARI_DATA.diacritics];
-        if (currentSets.includes('ligatures')) items = [...items, ...DEVANAGARI_DATA.ligatures];
-        if (currentSets.includes('digits')) items = [...items, ...DEVANAGARI_DATA.digits];
+        // Standard-Sets hinzufügen (Original aus v2-245 wiederhergestellt)
+        currentSets.forEach(set => {
+            if (DEVANAGARI_DATA[set]) {
+                DEVANAGARI_DATA[set].forEach(item => {
+                    items.push({ 
+                        d: item.d, 
+                        t: item.t, 
+                        font: '', 
+                        image: null,
+                        note: null,
+                        catSource: set // Herkunft wird hier verlässlich gespeichert!
+                    });
+                });
+            }
+        });
         
         if (currentSets.includes('custom')) {
             const processCollection = (cat) => {
@@ -2740,36 +2753,30 @@ const startDevanagari = () => {
             return;
         }
 
-        // --- SRS-ERWEITERUNG: Sortierung nach Fehlerschweregrad vor dem Abschneiden ---
-        // Wir sortieren die gesammelten Zeichen so, dass Elemente mit SRS-Punkten nach oben wandern.
-        // Bei gleichem oder keinem Score bleibt die relative Reihenfolge oder wird danach gemischt.
-        let prioritizedItems = [...items].sort((a, b) => {
-            const scoreA = devaSrsScores[a.t || a.iast] || 0;
-            const scoreB = devaSrsScores[b.t || b.iast] || 0;
-            return scoreB - scoreA; // Höhere Fehlerscores kommen nach ganz oben
-        });
+        // --- SRS-ERWEITERUNG: Sortierung nach Fehlerschweregrad nur im Zufallsmodus ---
+        let prioritizedItems = [...items];
 
-        // Wenn die gewünschte Fragenanzahl (z.B. 10 oder 20) kleiner ist als der Gesamtpool, 
-        // nehmen wir jetzt die ersten X Elemente (wodurch die Problemzeichen garantiert dabei sind!)
-        // Hinweis: Falls deine App ein Eingabefeld für die Fragenanzahl nutzt (z.B. devaCount),
-        // kannst du hier die Begrenzung aktivieren. Da wir den Code kompakt halten, belassen wir es 
-        // zunächst bei der reinen Priorisierung im Array.
-        
-        // 2. Sortierung anwenden (Zufällig innerhalb der Prioritäten oder rein sequentiell)
         if (devaOrder === 'random') {
-            // Um den SRS-Effekt nicht komplett durch pures Shuffeln zu zerstören,
-            // mischen wir hier nur Zeichen, die denselben Fehlerscore haben.
+            // Höhere Fehlerscores kommen nach ganz oben, bei gleichem Score wird gemischt
             prioritizedItems.sort((a, b) => {
                 const scoreA = devaSrsScores[a.t || a.iast] || 0;
                 const scoreB = devaSrsScores[b.t || b.iast] || 0;
-                if (scoreA === scoreB) return Math.random() - 0.5;
-                return scoreB - scoreA;
+                
+                if (scoreA === scoreB) {
+                    return Math.random() - 0.5; // Zufällige Mischung bei gleichem Score
+                }
+                return scoreB - scoreA; // Problemzeichen nach oben pushen
             });
         }
+        // Wenn devaOrder === 'sequential' (Geordnet) ist, bleibt prioritizedItems völlig 
+        // unberührt in der festen Reihenfolge der originalen Sammlung.
 
         // --- KORREKTUR: Begrenzung auf die vom User gewählte Fragenanzahl anwenden ---
-        // Nutzt devaQuestionCount (Standard: 20), um das Array vor dem Start sauber zu kürzen.
-        const limit = typeof devaQuestionCount !== 'undefined' ? parseInt(devaQuestionCount, 10) : 20;
+        // Wenn das Feld leer gelassen wurde (""), nutzen wir automatisch den Standardwert 20
+        const limit = (devaQuestionCount === "" || typeof devaQuestionCount === 'undefined') 
+            ? 20 
+            : parseInt(devaQuestionCount, 10);
+            
         const finalItems = (limit > 0 && prioritizedItems.length > limit) 
             ? prioritizedItems.slice(0, limit) 
             : prioritizedItems;
@@ -3067,10 +3074,16 @@ const renderDevanagariSetup = () => (
                                 type="number" 
                                 min="1"
                                 max="999"
-                                value={devaQuestionCount || 20} 
+                                value={devaQuestionCount === 0 ? "" : (devaQuestionCount || "")} 
+                                placeholder="20"
                                 onChange={(e) => {
-                                    const val = parseInt(e.target.value, 10);
-                                    setDevaQuestionCount(isNaN(val) ? "" : Math.max(1, val));
+                                    const valStr = e.target.value;
+                                    if (valStr === "") {
+                                        setDevaQuestionCount("");
+                                    } else {
+                                        const val = parseInt(valStr, 10);
+                                        setDevaQuestionCount(isNaN(val) ? "" : Math.max(1, val));
+                                    }
                                 }}
                                 className="w-full py-2 px-3 text-sm text-center font-bold bg-stone-100 dark:bg-stone-900 border border-transparent focus:border-rose-500 rounded-lg outline-none text-stone-800 dark:text-stone-200"
                             />
@@ -3129,7 +3142,7 @@ const renderDevanagariSetup = () => (
                             <div className="text-sm font-medium text-stone-500">{devaIndex + 1} / {devaItems.length}</div>
                             <div className="w-10"></div>
                         </div>
-                        
+						                        
                         {/* Kategorie-Label */}
                         <div className="text-center mb-4">
 							<span className="text-xs uppercase tracking-widest text-stone-400 font-semibold text-center block w-full">
@@ -4510,14 +4523,14 @@ const renderDevanagariSetup = () => (
 		{/* UNIVERSAL_STUDY_OVERLAY_V15 */}
 		{studyModeContent && (
 			<div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-				<div className="absolute inset-0 bg-stone-900/80 backdrop-blur-md" onClick={() => setStudyModeContent(null)}></div>
+				<div className="absolute inset-0 bg-stone-900/80 backdrop-blur-md" onClick={() => { setStudyModeContent(null); setStudySearch(""); }}></div>
 				
 				{/* pt-3 hält den weißen oberen Rand elegant schmal */}
 				<div className="relative bg-white dark:bg-stone-850 w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden rounded-3xl shadow-2xl pb-6 px-6 md:pb-12 md:px-12 pt-3 popup-anim border border-stone-200 dark:border-stone-700">
 					
 					{/* Schließen-Button – Komplett aus der Blockade-Zone nach unten verschoben */}
 					<button 
-						onClick={() => setStudyModeContent(null)} 
+						onClick={() => { setStudyModeContent(null); setStudySearch(""); }} 
 						className="absolute top-9 right-14 md:top-12 md:right-16 p-2 transition-colors z-[99999] text-stone-400 hover:text-rose-600 outline-none"
 						title={TRANSLATIONS[lang].close}
 					>
@@ -4571,10 +4584,23 @@ const renderDevanagariSetup = () => (
 						{['basic', 'diacritics', 'ligatures', 'digits'].includes(studyModeContent) && (
 							<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
 								{DEVANAGARI_DATA[studyModeContent]
-									.filter(item => 
-										item.d.includes(studySearch) || 
-										item.t.toLowerCase().includes(studySearch.toLowerCase())
-									)
+									.filter(item => {
+										const queryOriginal = studySearch.trim();
+										if (!queryOriginal) return true;
+
+										// Überprüfen, ob die Suche in echten Anführungszeichen steht (mindestens vorn und hinten = Länge >= 2)
+										const isExact = queryOriginal.length >= 2 && queryOriginal.startsWith('"') && queryOriginal.endsWith('"');
+
+										if (isExact) {
+											const exactQuery = queryOriginal.slice(1, -1).toLowerCase();
+											return (item.t && item.t.toLowerCase() === exactQuery) || 
+												   (item.d && item.d.toLowerCase() === exactQuery);
+										} else {
+											const query = queryOriginal.toLowerCase();
+											return (item.t && item.t.toLowerCase().includes(query)) || 
+												   (item.d && item.d.toLowerCase().includes(query));
+										}
+									})
 									.map((item, idx) => (
 										<div key={idx} className="relative flex flex-col items-center p-6 bg-stone-50 dark:bg-stone-800/50 rounded-2xl border border-stone-100 dark:border-stone-700 transition-all">
 											<div 
@@ -4608,10 +4634,26 @@ const renderDevanagariSetup = () => (
 							const allActiveCollections = getAllCollections(customCategories).filter(c => c.active);
 
 							return allActiveCollections.map(cat => {
-								const filteredItems = (cat.items || []).filter(item => 
-									(item.char || "").includes(studySearch) || 
-									(item.iast || "").toLowerCase().includes(studySearch.toLowerCase())
-								);
+								const filteredItems = (cat.items || []).filter(item => {
+									const queryOriginal = studySearch.trim();
+									if (!queryOriginal) return true;
+
+									// Überprüfen, ob die Suche in echten Anführungszeichen steht (Länge >= 2)
+									const isExact = queryOriginal.length >= 2 && queryOriginal.startsWith('"') && queryOriginal.endsWith('"');
+
+									const targetIast = item.iast || "";
+									const targetChar = item.char || "";
+
+									if (isExact) {
+										const exactQuery = queryOriginal.slice(1, -1).toLowerCase();
+										return targetIast.toLowerCase() === exactQuery || 
+											   targetChar.toLowerCase() === exactQuery;
+									} else {
+										const query = queryOriginal.toLowerCase();
+										return targetIast.toLowerCase().includes(query) || 
+											   targetChar.includes(query);
+									}
+								});
 
 								if (studySearch && filteredItems.length === 0) return null;
 
