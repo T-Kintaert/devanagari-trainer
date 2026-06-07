@@ -2302,79 +2302,93 @@ const addCategory = () => {
 		const handleDevaNext = useCallback((wasIncorrect = false) => {
 			if (devaMode === 'quiz' && !quizAnswered) return;
 
-			let activeItems = devaItems;
 			const currentItem = devaItems[devaIndex];
 
 			if (wasIncorrect === true) {
 				if (currentItem) {
-					// Fehlerbehandlung und Wiedereinfügen NUR im Zufallsmodus erlauben!
-					if (devaOrder === 'random') {
-						// SRS: Fehler sitzungsübergreifend hochzählen
-						const itemKey = currentItem.t || currentItem.iast || 'unknown';
-						setDevaSrsScores(prev => ({
-							...prev,
-							[itemKey]: (prev[itemKey] || 0) + 1
-						}));
+					const itemKey = (currentItem.t || '').trim() || 'unknown';
+					
+					// 1. Im sitzungsübergreifenden SRS-Speicher hochzählen
+					setDevaSrsScores(prev => ({
+						...prev,
+						[itemKey]: (prev[itemKey] || 0) + 1
+					}));
 
-						// Bestehende Kurzzeit-Schleife (Wiedereinfügen im aktuellen Array)
-						const randomOffset = Math.floor(Math.random() * (7 - 3 + 1)) + 3;
-						const insertIndex = devaIndex + 1 + randomOffset;
-						
-						const updatedItems = [...devaItems];
-						if (insertIndex >= updatedItems.length) {
-							updatedItems.push(currentItem);
-						} else {
-							updatedItems.splice(insertIndex, 0, currentItem);
+					// 2. Im Session-Tracker als "in dieser Session falsch beantwortet" markieren
+					try {
+						const currentErrors = JSON.parse(sessionStorage.getItem('deva_session_errors') || '[]');
+						if (!currentErrors.includes(itemKey)) {
+							currentErrors.push(itemKey);
+							sessionStorage.setItem('deva_session_errors', JSON.stringify(currentErrors));
 						}
-						
-						activeItems = updatedItems;
-						setDevaItems(updatedItems);
+					} catch (e) {
+						console.error("Fehler beim Speichern des Session-Trackers", e);
+					}
+
+					// 3. WIEDERHOLUNG INNERHALB DER SESSION: Nur erlauben, wenn wir im Zufallsmodus sind!
+					// Wenn devaOrder === 'sequential' (Geordnet) gewählt ist, bleibt die Liste stabil 
+					// und das Zeichen wird innerhalb der Session NICHT noch einmal angehängt.
+					if (devaOrder === 'random') {
+						setDevaItems(prev => [...prev, { ...currentItem }]);
+						}
+					}
+			} else {
+				// --- SRS-ERWEITERUNG: Bei richtiger Antwort den Fehlerscore kontrolliert abbauen ---
+				if (currentItem && devaOrder === 'random') {
+					const itemKey = (currentItem.t || '').trim() || 'unknown';
+					
+					// Wir prüfen im sessionStorage, ob das Zeichen in DIESER Session schon mal falsch war
+					let wasWrongInThisSession = false;
+					try {
+						const currentErrors = JSON.parse(sessionStorage.getItem('deva_session_errors') || '[]');
+						wasWrongInThisSession = currentErrors.includes(itemKey);
+					} catch (e) {}
+
+					// Nur abbauen, wenn es in dieser Runde von Anfang an fehlerfrei lief!
+					if (!wasWrongInThisSession) {
+						setDevaSrsScores(prev => {
+							const currentScore = prev[itemKey] || 0;
+							if (currentScore <= 0) return prev;
+							
+							const newScores = { ...prev };
+							newScores[itemKey] = currentScore - 1;
+							
+							if (newScores[itemKey] <= 0) {
+								delete newScores[itemKey];
+							}
+							return newScores;
+						});
 					}
 				}
+			}
+
+			// Weiterschalten zur nächsten Karte
+			if (devaIndex < devaItems.length - 1) {
+				setIsAnimating(false);
+				setShowCardBack(false);
+
+				const nextIdx = devaIndex + 1;
+				setDevaIndex(nextIdx);
+
+				if (devaMode === 'quiz') {
+					setQuizAnswered(false);
+					setQuizSelection(null);
+					setQuizFocusIndex(-1);
+					
+					// FIX: Wir nutzen hier konsequent den ungeschnittenen window._devaFullPool, 
+					// damit immer genügend Distraktoren für die Buttons bereitstehen!
+					const fullPool = window._devaFullPool || devaItems;
+					const nextOptions = generateQuizOptions(devaItems[nextIdx], fullPool);
+					setQuizOptions(nextOptions);
+				}
+
+				setTimeout(() => { setIsAnimating(true); }, 50);
 			} else {
-                // --- SRS-ERWEITERUNG: Bei richtiger Antwort den Fehlerscore abbauen ---
-                if (currentItem) {
-                    const itemKey = currentItem.t || currentItem.iast || 'unknown';
-                    setDevaSrsScores(prev => {
-                        const currentScore = prev[itemKey] || 0;
-                        if (currentScore <= 0) return prev;
-                        
-                        const newScores = { ...prev };
-                        newScores[itemKey] = currentScore - 1;
-                        
-                        if (newScores[itemKey] <= 0) {
-                            delete newScores[itemKey];
-                        }
-                        return newScores;
-                    });
-                }
-            }
+				setAppState('setup_devanagari');
+			}
 
-            if (devaIndex < devaItems.length - 1) {
-                setIsAnimating(false);
-                setShowCardBack(false);
-
-                const nextIdx = devaIndex + 1;
-                setDevaIndex(nextIdx);
-
-                if (devaMode === 'quiz') {
-                    setQuizAnswered(false);
-                    setQuizSelection(null);
-                    setQuizFocusIndex(-1);
-                    
-                    // Original aus v2-245 wiederhergestellt: Wir übergeben devaItems,
-                    // damit die Quelle (catSource) für die Set-Isolation intakt bleibt!
-                    const nextOptions = generateQuizOptions(devaItems[nextIdx], devaItems);
-                    setQuizOptions(nextOptions);
-                }
-
-                setTimeout(() => { setIsAnimating(true); }, 50);
-            } else {
-                setAppState('setup_devanagari');
-            }
-
-            if (document.activeElement) document.activeElement.blur();
-        }, [devaIndex, devaItems, devaMode, quizAnswered, setDevaSrsScores, devaOrder]);
+			if (document.activeElement) document.activeElement.blur();
+		}, [devaIndex, devaItems, devaMode, quizAnswered, setDevaSrsScores, devaOrder]);
 
           // --- EFFECTS ---
           useEffect(() => {
@@ -2757,22 +2771,24 @@ const startDevanagari = () => {
         let prioritizedItems = [...items];
 
         if (devaOrder === 'random') {
-            // Höhere Fehlerscores kommen nach ganz oben, bei gleichem Score wird gemischt
-            prioritizedItems.sort((a, b) => {
-                const scoreA = devaSrsScores[a.t || a.iast] || 0;
-                const scoreB = devaSrsScores[b.t || b.iast] || 0;
-                
-                if (scoreA === scoreB) {
-                    return Math.random() - 0.5; // Zufällige Mischung bei gleichem Score
-                }
-                return scoreB - scoreA; // Problemzeichen nach oben pushen
-            });
+            const scoresDict = devaSrsScores || {};
+            
+            // Isoliere alle Zeichen, die aktuell einen Fehlerscore > 0 besitzen
+            const errorItems = prioritizedItems.filter(item => (scoresDict[(item.t || '').trim()] || 0) > 0);
+            // Isoliere alle fehlerfreien Zeichen
+            const normalItems = prioritizedItems.filter(item => (scoresDict[(item.t || '').trim()] || 0) === 0);
+            
+            // Beide Teillisten werden für sich getrennt gemischt, um Abwechslung zu garantieren
+            const shuffledErrors = errorItems.sort(() => Math.random() - 0.5);
+            const shuffledNormals = normalItems.sort(() => Math.random() - 0.5);
+            
+            // Die Problemzeichen werden als Block an den absoluten Anfang gesetzt!
+            prioritizedItems = [...shuffledErrors, ...shuffledNormals];
         }
         // Wenn devaOrder === 'sequential' (Geordnet) ist, bleibt prioritizedItems völlig 
         // unberührt in der festen Reihenfolge der originalen Sammlung.
 
         // --- KORREKTUR: Begrenzung auf die vom User gewählte Fragenanzahl anwenden ---
-        // Wenn das Feld leer gelassen wurde (""), nutzen wir automatisch den Standardwert 20
         const limit = (devaQuestionCount === "" || typeof devaQuestionCount === 'undefined') 
             ? 20 
             : parseInt(devaQuestionCount, 10);
@@ -2781,6 +2797,14 @@ const startDevanagari = () => {
             ? prioritizedItems.slice(0, limit) 
             : prioritizedItems;
 
+        // RETTUNG DER DISTRAKTOREN: Wir sichern alle ungeschnittenen, passenden Übungszeichen global,
+        // damit handleDevaNext immer genügend Falschantworten für die Buttons findet.
+        window._devaFullPool = items;
+
+        // SESSION-TRACKER LEEREN: Alten Fehler-Speicher für diese neue Runde zurücksetzen
+        sessionStorage.removeItem('deva_session_errors');
+
+        // Zustände für die Session festlegen
         setDevaItems(finalItems);
         setDevaIndex(0);
         setQuizScore(0);
@@ -2789,10 +2813,11 @@ const startDevanagari = () => {
         
         // --- KORREKTUR: Karte für die neue Session garantiert auf die Vorderseite zurücksetzen ---
         setShowCardBack(false);
-        if (typeof setDevaFlashSel !== 'undefined') setDevaFlashSel(null); // Falls noch ein Button-Highlight aktiv war
+        if (typeof setDevaFlashSel !== 'undefined') setDevaFlashSel(null);
         
         if (devaMode === 'quiz') {
-            setQuizOptions(generateQuizOptions(finalItems[0], finalItems));
+            // Erste Frage mit dem ungeschnittenen Pool initialisieren
+            setQuizOptions(generateQuizOptions(finalItems[0], window._devaFullPool));
         }
         
         setAppState('devanagari_session');
