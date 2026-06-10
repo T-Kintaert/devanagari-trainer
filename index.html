@@ -624,6 +624,10 @@ const EXCLUDED_COMBINATIONS = new Set([]);
 				bulkTextPlaceholder: "क्ष;kṣa\nत्र;tra",
 				ctrlEnter: "Strg + Enter zum Hinzufügen",
 				singleChar: "+ Einzelnes Zeichen hinzufügen",
+				fontLabelCustom: "Schriftart (optional):",
+				fontPlaceholderCustom: "Sanskrit2003 - 30.07.2019.otf",
+				fontHintCustom: "Geben Sie hier den vollständigen Dateinamen eines Devanāgarī-Unicode-Fonts inklusive Endung ein (z. B. 'uttara.ttf'). Wenn dieses Feld leer bleibt, wird automatisch 'Sanskrit2003 - 30.07.2019.otf' als Standard verwendet. Befindet sich die Schriftdatei im selben Ordner wie diese HTML-App, wird sie für einen schnelleren Start direkt von dort geladen. Andernfalls wird sie, sofern vorhanden, aus dem Online-GitHub-Repository nachgeladen.",
+				fontInputLabelCustom: "Dateiname des Devanāgarī-Fonts:",
 				// Info Modal
 				projectInfo: "Projektinformationen",
 				version: "Version",
@@ -803,6 +807,10 @@ const EXCLUDED_COMBINATIONS = new Set([]);
 				bulkTextPlaceholder: "क्ष;kṣa\nत्र;tra",
 				ctrlEnter: "Ctrl + Enter to add",
 				singleChar: "Add single character",
+				fontLabelCustom: "Font (optional):",
+				fontPlaceholderCustom: "Sanskrit2003 - 30.07.2019.otf",
+				fontHintCustom: "Enter the full filename of a Devanāgarī Unicode font, including its extension (e.g., 'uttara.ttf'). If this field is left empty, 'Sanskrit2003 - 30.07.2019.otf' is automatically used as the default. If the font file is located in the same folder as this HTML app, it will be loaded directly from there for a faster launch. Otherwise, it will be fetched from the online GitHub repository, if available.",
+				fontInputLabelCustom: "Filename of the Devanāgarī font:",
 				// Info Modal
 				projectInfo: "Project information",
 				version: "Version",
@@ -3448,27 +3456,23 @@ const renderDevanagariSetup = () => (
                 <div className="relative bg-white dark:bg-stone-800 w-full max-w-md p-8 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-700 popup-anim">
                     <h2 className="text-xl font-bold text-stone-800 dark:text-stone-100 mb-4 flex items-center">
                         <SettingsIcon className="mr-2 text-rose-600" size={20} />
-                        {TRANSLATIONS[lang].fontSettings}
+                        {lang === 'de' ? 'Schriftart (optional)' : 'Font (optional)'}
                     </h2>
                     
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-bold text-stone-700 dark:text-stone-300 mb-2">
-                                {lang === 'de' ? "Lokaler Dateiname der Devanāgarī-Unicode-Schriftart:" : "Local filename of the Devanāgarī Unicode font:"}
+                                {TRANSLATIONS[lang].fontInputLabelCustom}
                             </label>
                             <input 
                                 type="text"
                                 value={customFontName}
                                 onChange={(e) => setCustomFontName(e.target.value)}
-                                placeholder={lang === 'de' ? "z. B. Sanskrit2003 - 30.07.2019.otf" : "e.g. Sanskrit2003 - 30.07.2019.otf"}
+                                placeholder={TRANSLATIONS[lang].fontPlaceholderCustom}
                                 className="w-full p-3 border border-stone-300 dark:border-stone-600 rounded-lg dark:bg-stone-700 dark:text-stone-200 focus:ring-2 focus:ring-rose-500 outline-none font-mono text-sm"
                             />
-                            <p className="mt-2 text-[11px] text-stone-500 leading-relaxed italic">
-                                {lang === 'de' 
-                                    ? "Hinweis: Die Datei muss sich im selben Ordner wie diese HTML-Datei befinden." 
-                                    : "Note: The file must be located in the same folder as this HTML file."}
-                                <br/>
-                                Standard: <span className="font-mono">Sanskrit2003 - 30.07.2019.otf</span>
+                            <p className="mt-3 text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
+                                {TRANSLATIONS[lang].fontHintCustom}
                             </p>
                         </div>
                     </div>
