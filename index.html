@@ -1822,17 +1822,21 @@ useEffect(() => {
               // Direkte Online-URL zu deinem GitHub-Pages-Verzeichnis im Unterordner fonts/
               const githubFontUrl = `https://t-kintaert.github.io/devanagari-trainer/fonts/${normalized}`;
               
+              // Dynamische Ermittlung des Formats anhand der Dateiendung
+              const isOtf = normalized.toLowerCase().endsWith('.otf');
+              const formatType = isOtf ? 'opentype' : 'truetype';
+              
               const style = document.createElement("style");
               style.id = styleId;
               
-              // Die klassische, synchrone Kette (wie bei Sanskrit2003):
+              // Die klassische, synchrone Kette:
               // 1. Schau auf dem PC (local) -> 2. Schau im fonts/-Ordner (relativ) -> 3. Schau auf GitHub im fonts/-Ordner (absolut)
               style.appendChild(document.createTextNode(`
                   @font-face {
                       font-family: "${normalized}";
                       src: local("${normalized}"),
-                           url("fonts/${normalized}") format("truetype"),
-                           url("${githubFontUrl}") format("truetype");
+                           url("fonts/${normalized}") format("${formatType}"),
+                           url("${githubFontUrl}") format("${formatType}");
                       font-display: swap;
                   }
               `));
