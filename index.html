@@ -57,8 +57,8 @@ Details: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de
         font-family: 'Sanskrit2003'; 
         src: local('Sanskrit 2003'), 
              local('Sanskrit2003'),
-             url("Sanskrit2003 - 30.07.2019.otf") format('opentype'),
-             url("https://t-kintaert.github.io/devanagari-trainer/Sanskrit2003%20-%2030.07.2019.otf") format('opentype');
+             url("fonts/Sanskrit2003 - 30.07.2019.otf") format('opentype'),
+             url("https://t-kintaert.github.io/devanagari-trainer/fonts/Sanskrit2003%20-%2030.07.2019.otf") format('opentype');
         font-weight: normal;
         font-style: normal;
         font-display: swap;
@@ -1819,19 +1819,19 @@ useEffect(() => {
               const styleId = "font-face-" + normalized.replace(/[^a-zA-Z0-5]/g, "");
               if (document.getElementById(styleId)) return;
               
-              // Direkte Online-URL zu deinem GitHub-Pages-Verzeichnis
-              const githubFontUrl = `https://t-kintaert.github.io/devanagari-trainer/${normalized}`;
+              // Direkte Online-URL zu deinem GitHub-Pages-Verzeichnis im Unterordner fonts/
+              const githubFontUrl = `https://t-kintaert.github.io/devanagari-trainer/fonts/${normalized}`;
               
               const style = document.createElement("style");
               style.id = styleId;
               
               // Die klassische, synchrone Kette (wie bei Sanskrit2003):
-              // 1. Schau auf dem PC (local) -> 2. Schau im App-Ordner (relativ) -> 3. Schau auf GitHub (absolut)
+              // 1. Schau auf dem PC (local) -> 2. Schau im fonts/-Ordner (relativ) -> 3. Schau auf GitHub im fonts/-Ordner (absolut)
               style.appendChild(document.createTextNode(`
                   @font-face {
                       font-family: "${normalized}";
                       src: local("${normalized}"),
-                           url("${normalized}") format("truetype"),
+                           url("fonts/${normalized}") format("truetype"),
                            url("${githubFontUrl}") format("truetype");
                       font-display: swap;
                   }
@@ -3403,11 +3403,11 @@ const renderDevanagariSetup = () => (
                                 </h2>
                                 <div className="space-y-2 text-stone-700 dark:text-stone-300 leading-relaxed text-sm">
                                     <p><strong>{TRANSLATIONS[lang].version}:</strong> Devanāgarī Trainer 2.1</p>
-                                    <p><strong>{TRANSLATIONS[lang].conception}:</strong> Thomas Kintaert (<a href={TRANSLATIONS[lang].istbUrl} target="_blank" className="text-rose-600 hover:underline">{lang === 'de' ? "Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB]" : "Department of South Asian, Tibetan and Buddhist Studies"}</a>, {lang === 'de' ? "Universität Wien" : "University of Vienna"})</p>
+                                    <p><strong>{TRANSLATIONS[lang].conception}:</strong> Thomas Kintaert (<a href={TRANSLATIONS[lang].istbUrl} target="_blank" className="text-rose-600 hover:underline">{TRANSLATIONS[lang].libraryTitle === 'Studierbibliothek' ? "Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB]" : "Department of South Asian, Tibetan and Buddhist Studies"}</a>, {lang === 'de' ? "Universität Wien" : "University of Vienna"})</p>
                                     <p><strong>{TRANSLATIONS[lang].period}:</strong> {lang === 'de' ? "November 2025 – Mai 2026" : "November 2025 – May 2026"}</p>
                                     <p><strong>{TRANSLATIONS[lang].techImp}:</strong><br/>{TRANSLATIONS[lang].techImpDesc}</p>
                                     <p><strong>{TRANSLATIONS[lang].sources}:</strong></p>
-                                    <ul className="space-y-1 ml-1">
+                                    <ul className="space-y-1 ml-1 text-xs">
                                         <li>• <b>{lang === 'de' ? "360 häufigste Devanāgarī-Ligaturen" : "360 most common Devanāgarī ligatures"}:</b> Stiehl, Ulrich. „2. Die häufigsten Ligaturen im klassischen Sanskrit“. Devanagari, Sanskrit Web, S. 7–25.</li>
                                         <li>• <b>{lang === 'de' ? "Devanāgarī-Schriftart" : "Devanāgarī font"}:</b> <i>Sanskrit 2003</i>. Version 1.20, Omkarananda Ashram, 30. Juli 2019.</li>
                                     </ul>
