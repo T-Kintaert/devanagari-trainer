@@ -1815,11 +1815,8 @@ useEffect(() => {
               const normalized = fontName.trim();
               if (!normalized) return;
               
-              // CSS-sicherer Name: Punkte werden für die font-family durch Unterstriche ersetzt
-              const safeFontFamily = normalized.replace(/\./g, "_");
-              
-              // Verhindert doppeltes Registrieren anhand des sicheren Namens
-              const styleId = "font-face-" + safeFontFamily.replace(/[^a-zA-Z0-9_]/g, "");
+              // Verhindert doppeltes Registrieren direkt über den exakten Namen
+              const styleId = "font-face-" + normalized.replace(/[^a-zA-Z0-9]/g, "");
               if (document.getElementById(styleId)) return;
               
               // Direkte Online-URL zu deinem GitHub-Pages-Verzeichnis im Unterordner fonts/
@@ -1832,13 +1829,12 @@ useEffect(() => {
               const style = document.createElement("style");
               style.id = styleId;
               
-              // Im @font-face vergeben wir die bereinigte safeFontFamily, 
-              // laden aber über url() die echte Datei inklusive Punkt und Endung!
+              // Durch die expliziten Anführungszeichen um "${normalized}" sind 
+              // Punkte im Namen für Chrome, Firefox und Safari absolut legal!
               style.appendChild(document.createTextNode(`
                   @font-face {
-                      font-family: "${safeFontFamily}";
+                      font-family: "${normalized}";
                       src: local("${normalized}"),
-                           local("${safeFontFamily}"),
                            url("fonts/${normalized}") format("${formatType}"),
                            url("${githubFontUrl}") format("${formatType}");
                       font-display: swap;
@@ -2659,7 +2655,7 @@ const addCategory = () => {
 
             fontStyles += `
                 .font-deva { 
-                    font-family: "${baseFont.replace(/\./g, "_")}", "Sanskrit2003", serif; 
+                    font-family: "${baseFont}", "Sanskrit2003", serif; 
                 }
             `;
             
