@@ -1815,8 +1815,11 @@ useEffect(() => {
               const normalized = fontName.trim();
               if (!normalized) return;
               
-              // Verhindert doppeltes Registrieren
-              const styleId = "font-face-" + normalized.replace(/[^a-zA-Z0-5]/g, "");
+              // CSS-sicherer Name: Punkte werden für die font-family durch Unterstriche ersetzt
+              const safeFontFamily = normalized.replace(/\./g, "_");
+              
+              // Verhindert doppeltes Registrieren anhand des sicheren Namens
+              const styleId = "font-face-" + safeFontFamily.replace(/[^a-zA-Z0-9_]/g, "");
               if (document.getElementById(styleId)) return;
               
               // Direkte Online-URL zu deinem GitHub-Pages-Verzeichnis im Unterordner fonts/
@@ -1829,12 +1832,13 @@ useEffect(() => {
               const style = document.createElement("style");
               style.id = styleId;
               
-              // Die klassische, synchrone Kette:
-              // 1. Schau auf dem PC (local) -> 2. Schau im fonts/-Ordner (relativ) -> 3. Schau auf GitHub im fonts/-Ordner (absolut)
+              // Im @font-face vergeben wir die bereinigte safeFontFamily, 
+              // laden aber über url() die echte Datei inklusive Punkt und Endung!
               style.appendChild(document.createTextNode(`
                   @font-face {
-                      font-family: "${normalized}";
+                      font-family: "${safeFontFamily}";
                       src: local("${normalized}"),
+                           local("${safeFontFamily}"),
                            url("fonts/${normalized}") format("${formatType}"),
                            url("${githubFontUrl}") format("${formatType}");
                       font-display: swap;
@@ -2655,7 +2659,7 @@ const addCategory = () => {
 
             fontStyles += `
                 .font-deva { 
-                    font-family: "${baseFont}", "Sanskrit2003", serif; 
+                    font-family: "${baseFont.replace(/\./g, "_")}", "Sanskrit2003", serif; 
                 }
             `;
             
