@@ -374,10 +374,12 @@ const CheckIcon = ({ size = 24, className = "" }) => (
                 if (image) return (
                     <img src={image} alt="Sanskrit Zeichen" className="max-h-[4.1rem] w-auto object-contain bg-transparent dark:invert dark:opacity-90 dark:mix-blend-screen transition-all select-none" />
                 );
+                // CSS-sicherer Name für das fontFamily-Matching: Punkte zu Unterstrichen
+                const safeCustomFont = isCustomFont ? isCustomFont.trim() : "";
                 return (
                     <span 
                         className={lang === 'deva' ? 'text-8xl font-deva' : lang === 'iast' ? 'text-3xl iast-sharp font-bold px-2 text-center' : 'text-3xl font-serif font-bold px-2 text-center'}
-                        style={lang === 'deva' && isCustomFont ? { fontFamily: `"${isCustomFont}", Sanskrit2003, "Noto Serif Devanagari", serif` } : {}}
+                        style={lang === 'deva' && isCustomFont ? { fontFamily: `"${safeCustomFont}", "Sanskrit2003", "Noto Serif Devanagari", serif` } : {}}
                         dangerouslySetInnerHTML={{ __html: content }}
                     />
                 );
@@ -626,7 +628,7 @@ const EXCLUDED_COMBINATIONS = new Set([]);
 				singleChar: "+ Einzelnes Zeichen hinzufügen",
 				fontLabelCustom: "Schriftart (optional):",
 				fontPlaceholderCustom: "Sanskrit2003 - 30.07.2019.otf",
-				fontHintCustom: "Geben Sie hier den vollständigen Dateinamen eines Devanāgarī-Unicode-Fonts inklusive Endung ein (z. B. 'uttara.ttf'). Wenn dieses Feld leer bleibt, wird automatisch 'Sanskrit2003 - 30.07.2019.otf' als Standard verwendet. Befindet sich die Schriftdatei im selben Ordner wie diese HTML-App, wird sie für einen schnelleren Start direkt von dort geladen. Andernfalls wird sie, sofern vorhanden, aus dem Online-GitHub-Repository nachgeladen.",
+				fontHintCustom: "Geben Sie hier den Dateinamen eines Devanāgarī-Unicode-Fonts ohne Endung ein (z. B. 'uttara'). Wenn dieses Feld leer bleibt, wird automatisch 'Sanskrit2003 - 30.07.2019.otf' als Standard verwendet. Befindet sich die Schriftdatei im selben Ordner wie diese HTML-App, wird sie für einen schnelleren Start direkt von dort geladen. Andernfalls wird sie, sofern vorhanden, aus dem Online-GitHub-Repository nachgeladen.",
 				fontInputLabelCustom: "Dateiname des Devanāgarī-Fonts:",
 				// Info Modal
 				projectInfo: "Projektinformationen",
@@ -809,7 +811,7 @@ const EXCLUDED_COMBINATIONS = new Set([]);
 				singleChar: "Add single character",
 				fontLabelCustom: "Font (optional):",
 				fontPlaceholderCustom: "Sanskrit2003 - 30.07.2019.otf",
-				fontHintCustom: "Enter the full filename of a Devanāgarī Unicode font, including its extension (e.g., 'uttara.ttf'). If this field is left empty, 'Sanskrit2003 - 30.07.2019.otf' is automatically used as the default. If the font file is located in the same folder as this HTML app, it will be loaded directly from there for a faster launch. Otherwise, it will be fetched from the online GitHub repository, if available.",
+				fontHintCustom: "Enter the filename of a Devanāgarī Unicode font without its extension (e.g., 'uttara'). If this field is left empty, 'Sanskrit2003 - 30.07.2019.otf' is automatically used as the default. If the font file is located in the same folder as this HTML app, it will be loaded directly from there for a faster launch. Otherwise, it will be fetched from the online GitHub repository, if available.",
 				fontInputLabelCustom: "Filename of the Devanāgarī font:",
 				// Info Modal
 				projectInfo: "Project information",
@@ -1820,22 +1822,34 @@ useEffect(() => {
               if (document.getElementById(styleId)) return;
               
               // Direkte Online-URL zu deinem GitHub-Pages-Verzeichnis im Unterordner fonts/
-              const githubFontUrl = `https://t-kintaert.github.io/devanagari-trainer/fonts/${normalized}`;
+              const githubFontUrl = `https://t-kintaert.github.io/devanagari-trainer/fonts/${encodeURIComponent(normalized)}`;
               
-              // Dynamische Ermittlung des Formats anhand der Dateiendung
+              // Dynamische Ermittlung des Formats anhand der echten Dateiendung
               const isOtf = normalized.toLowerCase().endsWith('.otf');
               const formatType = isOtf ? 'opentype' : 'truetype';
+              
+              // Berechnet den reinen PostScript-Namen ohne Endung (z.B. "uttara" aus "uttara.ttf")
+              const postScriptName = normalized.replace(/\.[^/.]+$/, "");
               
               const style = document.createElement("style");
               style.id = styleId;
               
-              // Durch die expliziten Anführungszeichen um "${normalized}" sind 
-              // Punkte im Namen für Chrome, Firefox und Safari absolut legal!
               style.appendChild(document.createTextNode(`
                   @font-face {
                       font-family: "${normalized}";
-                      src: local("${normalized}"),
-                           url("fonts/${normalized}") format("${formatType}"),
+                      src: local("${postScriptName}"),
+                           local("${normalized}"),
+                           url("./${encodeURIComponent(normalized)}") format("${formatType}"),
+                           url("fonts/${encodeURIComponent(normalized)}") format("${formatType}"),
+                           url("${githubFontUrl}") format("${formatType}");
+                      font-display: swap;
+                  }
+                  @font-face {
+                      font-family: "${postScriptName}";
+                      src: local("${postScriptName}"),
+                           local("${normalized}"),
+                           url("./${encodeURIComponent(normalized)}") format("${formatType}"),
+                           url("fonts/${encodeURIComponent(normalized)}") format("${formatType}"),
                            url("${githubFontUrl}") format("${formatType}");
                       font-display: swap;
                   }
@@ -2642,11 +2656,31 @@ const addCategory = () => {
             uniqueFonts.forEach(fontFile => {
                 const trimmed = fontFile.trim();
                 if (trimmed !== "") {
+                    const isOtf = trimmed.toLowerCase().endsWith('.otf');
+                    const formatType = isOtf ? 'opentype' : 'truetype';
+                    const githubFontUrl = `https://t-kintaert.github.io/devanagari-trainer/fonts/${encodeURIComponent(trimmed)}`;
+                    
+                    // Berechnet den reinen Namen ohne Endung (z.B. "uttara" aus "uttara.ttf")
+                    const postScriptName = trimmed.replace(/\.[^/.]+$/, "");
+
+                    // Wir registrieren den Font unter dem Originalnamen UND dem reinen Namen ohne Endung
                     fontStyles += `
                         @font-face {
                             font-family: "${trimmed}";
-                            src: url("${encodeURI(trimmed)}") format("opentype"), 
-                                 url("${encodeURI(trimmed)}") format("truetype");
+                            src: local("${postScriptName}"),
+                                 local("${trimmed}"),
+                                 url("./${encodeURIComponent(trimmed)}") format("${formatType}"),
+                                 url("fonts/${encodeURIComponent(trimmed)}") format("${formatType}"),
+                                 url("${githubFontUrl}") format("${formatType}");
+                            font-display: swap;
+                        }
+                        @font-face {
+                            font-family: "${postScriptName}";
+                            src: local("${postScriptName}"),
+                                 local("${trimmed}"),
+                                 url("./${encodeURIComponent(trimmed)}") format("${formatType}"),
+                                 url("fonts/${encodeURIComponent(trimmed)}") format("${formatType}"),
+                                 url("${githubFontUrl}") format("${formatType}");
                             font-display: swap;
                         }
                     `;
@@ -2654,15 +2688,13 @@ const addCategory = () => {
             });
 
             fontStyles += `
-                .font-deva { 
-                    font-family: "${baseFont}", "Sanskrit2003", serif; 
-                }
+                .font-deva { \n\t\t\t\t\tfont-family: "${baseFont}", "Sanskrit2003", serif !important; \n\t\t\t\t}
             `;
             
             const oldStyle = document.getElementById('dynamic-font-style');
             if (oldStyle) oldStyle.remove();
             
-const styleEl = document.createElement('style');
+            const styleEl = document.createElement('style');
             styleEl.id = 'dynamic-font-style';
             styleEl.innerHTML = fontStyles;
             document.head.appendChild(styleEl);
@@ -3472,6 +3504,13 @@ const renderDevanagariSetup = () => (
                                 type="text"
                                 value={customFontName}
                                 onChange={(e) => setCustomFontName(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setShowFontSettings(false);
+                                    }
+                                }}
                                 placeholder={TRANSLATIONS[lang].fontPlaceholderCustom}
                                 className="w-full p-3 border border-stone-300 dark:border-stone-600 rounded-lg dark:bg-stone-700 dark:text-stone-200 focus:ring-2 focus:ring-rose-500 outline-none font-mono text-sm"
                             />
