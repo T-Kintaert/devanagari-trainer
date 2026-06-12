@@ -656,7 +656,9 @@ const EXCLUDED_COMBINATIONS = new Set([]);
 				fluencyAuto: "Automatischer Durchlauf",
 				charsPerMinute: "Silben pro Minute",
 				nextText: "Nächster Text",
-				textEntryLabel: "Text eingeben (Devanāgarī)",
+				textEntryLabel: "Originaltext einfügen (Devanāgarī, Bengali, Malayalam etc.)",
+				textEntryIastLabel: "Optional: IAST-Paralleltext für Silben-Mapping (Wortanzahl muss übereinstimmen)",
+				textEntryIastPlaceholder: "Fügen Sie hier den spiegelbildlichen IAST-Text ein...",
 				loadBtn: "LADEN",
 				loadSample: "BEISPIELTEXT LADEN",
 				helpTitle: "Hilfe zur Texteingabe",
@@ -839,7 +841,9 @@ const EXCLUDED_COMBINATIONS = new Set([]);
 				fluencyAuto: "Auto mode",
 				charsPerMinute: "Syllables per minute",
 				nextText: "Next text",
-				textEntryLabel: "Enter text (Devanāgarī)",
+				textEntryLabel: "Paste original text (Devanāgarī, Bengali, Malayalam etc.)",
+				textEntryIastLabel: "Optional: IAST parallel text for syllable mapping (word counts must match)",
+				textEntryIastPlaceholder: "Paste the mirrored IAST text here...",
 				loadBtn: "LOAD",
 				loadSample: "LOAD SAMPLE TEXT",
 				helpTitle: "Help with text entry",
@@ -1136,6 +1140,7 @@ const EXCLUDED_COMBINATIONS = new Set([]);
             };
             const [readingState, setReadingState] = useState('input');		
             const [textInput, setTextInput] = useState('');
+			const [textInputIast, setTextInputIast] = useState('');
             const [devaOutput, setDevaOutput] = useState(''); 
             const [syllableCount, setSyllableCount] = useState(0);
             const [startTime, setStartTime] = useState(null);
@@ -1154,21 +1159,73 @@ const EXCLUDED_COMBINATIONS = new Set([]);
             useEffect(() => {
                 const text = textInput;
                 setDevaOutput(text);
-                setSyllableCount(countSyllables(text));
+                
+                if (textInputIast.trim()) {
+                    // Bereinige typische Sanskrit-Satzzeichen für die Zählung
+                    const cleanIast = textInputIast.replace(/[।॥|.]/g, '');
+                    // Zähle die exakten IAST-Silben anhand der Vokal-Blöcke
+                    const matches = cleanIast.match(/[aāiīuūṛṝḷeaioauṃḥ]+m̐?/gi);
+                    setSyllableCount(matches ? matches.length : 0);
+                } else {
+                    setSyllableCount(countSyllables(text));
+                }
                 
                 if (readingState !== 'input') {
                     setReadingState('input'); 
                 }
-            }, [textInput]);
+            }, [textInput, textInputIast]);
+
+            const [parsedLines, setParsedLines] = useState([]);
 
             const startReading = useCallback(() => {
-                if (!devaOutput.trim()) return;
+                if (!textInput.trim()) return;
+
+                const origLines = textInput.split('\n');
+                const iastLines = textInputIast.trim() ? textInputIast.split('\n') : [];
+                const hasParallelIast = iastLines.length > 0;
+
+                let globalWordIdx = 0;
+
+                const parsed = origLines.map((line, lineIdx) => {
+                    const origWords = line.trim().split(/\s+/).filter(Boolean);
+                    const correspondingIastLine = hasParallelIast ? (iastLines[lineIdx] || '') : '';
+                    const iastWords = correspondingIastLine.trim().split(/\s+/).filter(Boolean);
+
+                    const wordsInLine = origWords.map((origWord, wordIdx) => {
+                        let assignedIast = '';
+
+                        if (hasParallelIast) {
+                            // Spiegelbildliche Wort-zu-Wort-Zuordnung aus dem Paralleltext
+                            assignedIast = iastWords[wordIdx] || '';
+                            if (assignedIast === '|' || assignedIast === '||' || assignedIast === '।' || assignedIast === '॥') {
+                                assignedIast = '';
+                            }
+                        } else {
+                            // Fallback für reines Devanāgarī: Automatische Transliteration
+                            assignedIast = devanagariToIast(origWord);
+                        }
+
+                        return {
+                            id: globalWordIdx++,
+                            original: origWord,
+                            transliteration: assignedIast || origWord,
+                            isPunctuation: origWord === '|' || origWord === '||' || origWord === '।' || origWord === '॥'
+                        };
+                    });
+
+                    return {
+                        id: lineIdx,
+                        words: wordsInLine
+                    };
+                });
+
+                setParsedLines(parsed);
                 setReadingState('reading');
                 setStartTime(Date.now());
                 setEndTime(null);
                 setFinalSyllableCount(syllableCount);
-                setHighlightedAksharaIndex(pacerActive ? 0 : -1); // Starte Pacer, falls aktiv
-            }, [devaOutput, syllableCount, pacerActive]);
+                setHighlightedAksharaIndex(pacerActive ? 0 : -1);
+            }, [textInput, textInputIast, syllableCount, pacerActive]);
 
             const finishReading = useCallback(() => {
                 const finalTime = Date.now();
@@ -1366,14 +1423,13 @@ useEffect(() => {
                 }
             }, [readingState, finishReadingAtSyllable, pacerActive, popup.visible, popup.content]);
             
-            // Rendering des Textes: Zerlegt in Wörter, dann Wörter in Silben
-            const renderDevaTextWithHover = (devaText) => {
-                if (!devaText) return null;
-                const parts = devaText.match(/(\S+|\s+|[।॥])/g) || [];
+            // Rendering des Textes: Nutzt das synchronisierte parsedLines-Array
+            const renderDevaTextWithHover = () => {
+                if (!parsedLines || parsedLines.length === 0) return null;
                 
                 let currentSyllableIndex = 0; 
+                const hasParallelIast = textInputIast.trim().length > 0;
                 
-               // Definiert das Verhalten der umschließenden Textbox
                 const textContainerClass = `font-deva flex-1 overflow-y-auto transition-all text-left whitespace-pre-wrap ${
                     isTheaterMode 
                         ? 'absolute inset-0 z-[6000] pt-32 p-12 md:p-20 w-screen h-screen rounded-none border-none shadow-none m-0 bg-white dark:bg-stone-850' 
@@ -1382,7 +1438,6 @@ useEffect(() => {
                 
                 return (
                     <>
-                        {/* Der Button außerhalb des Containers */}
                         <button
                             onClick={(e) => { e.stopPropagation(); setIsTheaterMode(!isTheaterMode); }}
                             className={`fixed z-[9999] w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-stone-850 shadow-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors border border-stone-200 dark:border-stone-700 cursor-pointer outline-none top-3 ${
@@ -1419,39 +1474,84 @@ useEffect(() => {
                                 />
                             )}
                             
-                            {parts.map((part, index) => {
-                                if (part.trim() === '' || part === '।' || part === '॥') {
-                                    return <span key={index}>{part}</span>;
-                                }
+                            {parsedLines.map((line) => (
+                                <div key={line.id} className="block mb-2">
+                                    {line.words.map((word) => {
+                                        if (word.isPunctuation) {
+                                            return <span key={word.id} className="text-3xl mx-1 align-middle">{word.original}</span>;
+                                        }
 
-                                const aksharas = splitIntoAksharas(part);
-                                return (
-                                    <span
-                                        key={index}
-                                        className="inline-block relative isolate rounded px-1 pt-1 pb-2 transition-colors whitespace-pre-wrap hover:bg-amber-500/20 dark:hover:bg-amber-500/30 text-3xl mx-0.5"
-                                        data-deva-word={part}
-                                        onMouseEnter={handleWordEnter}
-                                        onMouseLeave={() => setPopup({ ...popup, visible: false })}
-                                    >
-                                        {aksharas.map((ak, idx) => {
-                                            const indexToAssign = currentSyllableIndex++;
-                                            const isHighlighted = pacerActive && indexToAssign === highlightedAksharaIndex;
-                                            const pacerClasses = isHighlighted ? (darkMode ? 'pacer-highlight-dark' : 'pacer-highlight-light') : '';
-                                            
-                                            return (
-                                                <span 
-                                                    key={idx}
-                                                    className={`syllable-hover inline-block ${pacerClasses}`}
-                                                    onClick={(e) => handleSyllableClick(e, ak)}
-                                                    data-syllable-index={indexToAssign} 
-                                                >
-                                                    {ak}
-                                                </span>
-                                            );
-                                        })}
-                                    </span>
-                                );
-                            })}
+                                        // Schreibsilben der Originalschrift aufspalten
+                                        const aksharas = splitIntoAksharas(word.original);
+                                        
+                                        // Wenn IAST vorhanden ist, spalten wir das zugehörige IAST-Wort nach Vokalen auf
+                                        let iastSyllables = [];
+                                        if (hasParallelIast && word.transliteration) {
+                                            // Splittet IAST-Wörter näherungsweise anhand der Vokale auf
+                                            iastSyllables = word.transliteration.match(/[^aāiīuūṛṝḷeaioauṃḥ]*[aāiīuūṛṝḷeaioauṃḥ]+m̐?/gi) || [word.transliteration];
+                                        }
+
+                                        return (
+                                            <span
+                                                key={word.id}
+                                                className="inline-block relative isolate rounded px-1 pt-1 pb-2 transition-colors whitespace-pre-wrap hover:bg-amber-500/20 dark:hover:bg-amber-500/30 text-3xl mx-1 align-middle"
+                                                data-deva-word={word.original}
+                                                data-assigned-iast={word.transliteration}
+                                                onMouseEnter={(e) => {
+                                                    if (readingState === 'reading' && pacerActive) return;
+                                                    const rect = e.currentTarget.getBoundingClientRect();
+                                                    const container = e.currentTarget.closest('.overflow-y-auto');
+                                                    setPopup({ 
+                                                        visible: true, 
+                                                        x: rect.left - container.getBoundingClientRect().left + container.scrollLeft - 12, 
+                                                        y: rect.bottom - container.getBoundingClientRect().top + container.scrollTop, 
+                                                        content: word.transliteration,
+                                                        isSyllable: false
+                                                    });
+                                                }}
+                                                onMouseLeave={() => setPopup({ ...popup, visible: false })}
+                                            >
+                                                {aksharas.map((ak, idx) => {
+                                                    const indexToAssign = currentSyllableIndex++;
+                                                    const isHighlighted = pacerActive && indexToAssign === highlightedAksharaIndex;
+                                                    const pacerClasses = isHighlighted ? (darkMode ? 'pacer-highlight-dark' : 'pacer-highlight-light') : '';
+                                                    
+                                                    // Hol dir die passende IAST-Silbe aus dem spiegelbildlichen Array
+                                                    const specificIastSyllable = iastSyllables[idx] || devanagariToIast(ak);
+
+                                                    return (
+                                                        <span 
+                                                            key={idx}
+                                                            className={`syllable-hover inline-block ${pacerClasses}`}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); 
+                                                                if (readingState === 'reading') {
+                                                                    finishReadingAtSyllable(indexToAssign);
+                                                                    return; 
+                                                                }
+                                                                const rect = e.target.getBoundingClientRect();
+                                                                const container = e.target.closest('.overflow-y-auto');
+                                                                const containerRect = container.getBoundingClientRect();
+                                                                
+                                                                setPopup({ 
+                                                                    visible: true, 
+                                                                    x: Math.round(rect.left - containerRect.left + container.scrollLeft - 12),
+                                                                    y: Math.round(e.currentTarget.closest('[data-deva-word]').getBoundingClientRect().bottom - containerRect.top + container.scrollTop), 
+                                                                    content: specificIastSyllable, 
+                                                                    isSyllable: true
+                                                                });
+                                                            }}
+                                                            data-syllable-index={indexToAssign} 
+                                                        >
+                                                            {ak}
+                                                        </span>
+                                                    );
+                                                })}
+                                            </span>
+                                        );
+                                    })}
+                                </div>
+                            ))}
                             <div className="h-4 w-full"></div>
                         </div>
                     </>
@@ -1478,26 +1578,56 @@ useEffect(() => {
                            dangerouslySetInnerHTML={{ __html: isTouch ? TRANSLATIONS[lang].introTouch : TRANSLATIONS[lang].introMouse }} />
 
                         <div className="space-y-4">
-                            <label className="block text-sm font-bold text-stone-700 dark:text-stone-300 font-sans">
-                                {TRANSLATIONS[lang].textEntryLabel}
-                            </label>
-                            
-                            <div className="flex flex-wrap gap-2">
-                                {Object.keys(SANSKRIT_SAMPLES).map(name => (
-                                    <button key={name}
-                                        onClick={() => {
-                                            const sampleText = SANSKRIT_SAMPLES[name].text;
-                                            setTextInput(textInput === sampleText ? '' : sampleText);
-                                        }}
-                                        className={`text-xs uppercase font-bold px-3 py-1.5 rounded-md transition-colors border shadow-sm font-sans ${
-                                            textInput === SANSKRIT_SAMPLES[name].text
-                                            ? 'bg-rose-100 text-rose-600 border-rose-300'
-                                            : 'bg-stone-100 dark:bg-stone-700 text-stone-500 hover:bg-rose-100 hover:text-rose-600 border-stone-200 dark:border-stone-600'
-                                        }`}
-                                    >
-                                        {TRANSLATIONS[lang].loadSample}
-                                    </button>
-                                ))}
+                            <div>
+                                <label className="block text-xs font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-2 font-sans">
+                                    {TRANSLATIONS[lang].textEntryLabel}
+                                </label>
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                    {Object.keys(SANSKRIT_SAMPLES).map(name => (
+                                        <button key={name}
+                                            onClick={() => {
+                                                const sampleText = SANSKRIT_SAMPLES[name].text;
+                                                const sampleIast = SANSKRIT_SAMPLES[name].iast || '';
+                                                if (textInput === sampleText) {
+                                                    setTextInput('');
+                                                    setTextInputIast('');
+                                                } else {
+                                                    setTextInput(sampleText);
+                                                    setTextInputIast(sampleIast);
+                                                }
+                                            }}
+                                            className={`text-xs uppercase font-bold px-3 py-1.5 rounded-md transition-colors border shadow-sm font-sans ${
+                                                textInput === SANSKRIT_SAMPLES[name].text
+                                                ? 'bg-rose-100 text-rose-600 border-rose-300'
+                                                : 'bg-stone-100 dark:bg-stone-700 text-stone-500 hover:bg-rose-100 hover:text-rose-600 border-stone-200 dark:border-stone-600'
+                                            }`}
+                                        >
+                                            {TRANSLATIONS[lang].loadSample}
+                                        </button>
+                                    ))}
+                                </div>
+                                <textarea
+                                    value={textInput}
+                                    onChange={(e) => setTextInput(e.target.value)}
+                                    placeholder={TRANSLATIONS[lang].inputPlaceholder}
+                                    rows="6"
+                                    className="w-full p-3 border border-stone-300 dark:border-stone-600 rounded-lg dark:bg-stone-700 dark:text-stone-200 font-deva text-2xl focus:outline-none focus:ring-2 focus:ring-rose-500 min-h-[150px] resize-none shadow-inner"
+                                    maxLength={10000}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-2 font-sans">
+                                    {TRANSLATIONS[lang].textEntryIastLabel}
+                                </label>
+                                <textarea
+                                    value={textInputIast}
+                                    onChange={(e) => setTextInputIast(e.target.value)}
+                                    placeholder={TRANSLATIONS[lang].textEntryIastPlaceholder}
+                                    rows="4"
+                                    className="w-full p-3 border border-stone-300 dark:border-stone-600 rounded-lg dark:bg-stone-700 dark:text-stone-200 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 min-h-[100px] resize-none shadow-inner"
+                                    maxLength={10000}
+                                />
                             </div>
 
                             {/* Dynamische Quellenangabe mit Hyperlink-Logik (REPARIERT) */}
@@ -1515,15 +1645,6 @@ useEffect(() => {
                                     })}
                                 </div>
                             )}
-
-                            <textarea
-                                value={textInput}
-                                onChange={(e) => setTextInput(e.target.value)}
-                                placeholder={TRANSLATIONS[lang].inputPlaceholder}
-                                rows="6"
-                                className="w-full p-3 border border-stone-300 dark:border-stone-600 rounded-lg dark:bg-stone-700 dark:text-stone-200 font-deva text-2xl focus:outline-none focus:ring-2 focus:ring-rose-500 min-h-[180px] resize-none shadow-inner"
-                                maxLength={10000}
-                            />
 
                             <div className="font-sans">
                                 <button 
@@ -1558,7 +1679,39 @@ useEffect(() => {
 
                     {/* Sticky Footer */}
                     <div className="p-5 bg-white/90 dark:bg-stone-800/90 backdrop-blur-md border-t border-stone-100 dark:border-stone-700 shrink-0">
-                        <button onClick={() => setReadingState('review')} 
+                        <button onClick={() => {
+                            if (textInput.trim()) {
+                                const origLines = textInput.split('\n');
+                                const iastLines = textInputIast.trim() ? textInputIast.split('\n') : [];
+                                const hasParallelIast = iastLines.length > 0;
+                                let globalWordIdx = 0;
+
+                                const parsed = origLines.map((line, lineIdx) => {
+                                    const origWords = line.trim().split(/\s+/).filter(Boolean);
+                                    const correspondingIastLine = hasParallelIast ? (iastLines[lineIdx] || '') : '';
+                                    const iastWords = correspondingIastLine.trim().split(/\s+/).filter(Boolean);
+
+                                    const wordsInLine = origWords.map((origWord, wordIdx) => {
+                                        let assignedIast = '';
+                                        if (hasParallelIast) {
+                                            assignedIast = iastWords[wordIdx] || '';
+                                            if (assignedIast === '|' || assignedIast === '||' || assignedIast === '।' || assignedIast === '॥') assignedIast = '';
+                                        } else {
+                                            assignedIast = devanagariToIast(origWord);
+                                        }
+                                        return {
+                                            id: globalWordIdx++,
+                                            original: origWord,
+                                            transliteration: assignedIast || origWord,
+                                            isPunctuation: origWord === '|' || origWord === '||' || origWord === '।' || origWord === '॥'
+                                        };
+                                    });
+                                    return { id: lineIdx, words: wordsInLine };
+                                });
+                                setParsedLines(parsed);
+                            }
+                            setReadingState('review');
+                        }} 
                             disabled={!textInput.trim()}
                             className={`w-full bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-xl font-bold shadow-lg flex justify-center items-center space-x-2 transition-all active:scale-95 ${!textInput.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
@@ -1612,7 +1765,7 @@ useEffect(() => {
                             </div>
                         </div>
                         
-                        {renderDevaTextWithHover(devaOutput)}
+                        {renderDevaTextWithHover}
                         <div className="h-4"></div> {/* Abstandshalter am Ende */}
                     </div>
 
@@ -1642,7 +1795,7 @@ useEffect(() => {
 
                     {/* Mittlerer Bereich: Hier liegt der einzige Scrollbalken für den Inhalt */}
                     <div className="flex-1 overflow-y-auto px-6 md:px-8 pb-4 custom-scrollbar">
-						{renderDevaTextWithHover(devaOutput)}
+						{renderDevaTextWithHover}
                         <div className="h-4"></div>
 					</div>
                     
