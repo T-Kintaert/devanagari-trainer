@@ -1484,11 +1484,38 @@ useEffect(() => {
                                         // Schreibsilben der Originalschrift aufspalten
                                         const aksharas = splitIntoAksharas(word.original);
                                         
-                                        // Wenn IAST vorhanden ist, spalten wir das zugehörige IAST-Wort nach Vokalen auf
+                                        // Wenn IAST vorhanden ist, spalten wir das zugehörige IAST-Wort vollautomatisch nach indischer Silbenlogik auf
                                         let iastSyllables = [];
                                         if (hasParallelIast && word.transliteration) {
-                                            // Splittet IAST-Wörter näherungsweise anhand der Vokale auf
-                                            iastSyllables = word.transliteration.match(/[^aāiīuūṛṝḷeaioauṃḥ]*[aāiīuūṛṝḷeaioauṃḥ]+m̐?/gi) || [word.transliteration];
+                                            const rawIast = word.transliteration;
+                                            const vowelRegex = /[aāiīuūṛṝḷeaioau]/gi;
+                                            let match;
+                                            const vowelIndices = [];
+                                            while ((match = vowelRegex.exec(rawIast)) !== null) {
+                                                vowelIndices.push(match.index);
+                                            }
+
+                                            // Wenn die Vokalanzahl mit den indischen Aksharas übereinstimmt, schneiden wir mathematisch exakt an den Silbengrenzen
+                                            if (vowelIndices.length === aksharas.length) {
+                                                let lastCut = 0;
+                                                for (let i = 0; i < aksharas.length; i++) {
+                                                    let nextCut = (i < aksharas.length - 1) ? vowelIndices[i] + 1 : rawIast.length;
+                                                    
+                                                    // Nimm eventuell folgende nasale Modifikatoren (ṃ, ḥ, m̐) mit in die aktuelle Silbe
+                                                    while (nextCut < rawIast.length && /[ṃḥm̐]/i.test(rawIast[nextCut])) {
+                                                        nextCut++;
+                                                    }
+                                                    
+                                                    iastSyllables.push(rawIast.substring(lastCut, nextCut));
+                                                    lastCut = nextCut;
+                                                }
+                                            } else {
+                                                // Fallback, falls die Textlängen ungleich sind: Wort wird gleichmäßig aufgeteilt
+                                                const chunkSize = Math.max(1, Math.ceil(rawIast.length / aksharas.length));
+                                                for (let i = 0; i < aksharas.length; i++) {
+                                                    iastSyllables.push(rawIast.substr(i * chunkSize, chunkSize));
+                                                }
+                                            }
                                         }
 
                                         return (
@@ -1516,8 +1543,8 @@ useEffect(() => {
                                                     const isHighlighted = pacerActive && indexToAssign === highlightedAksharaIndex;
                                                     const pacerClasses = isHighlighted ? (darkMode ? 'pacer-highlight-dark' : 'pacer-highlight-light') : '';
                                                     
-                                                    // Hol dir die passende IAST-Silbe aus dem spiegelbildlichen Array
-                                                    const specificIastSyllable = iastSyllables[idx] || devanagariToIast(ak);
+                                                    // 1:1 Zuordnung: Hol dir das automatisch portionierte IAST-Stück
+                                                    const specificIastSyllable = hasParallelIast ? (iastSyllables[idx] || word.transliteration) : devanagariToIast(ak);
 
                                                     return (
                                                         <span 
@@ -1529,14 +1556,15 @@ useEffect(() => {
                                                                     finishReadingAtSyllable(indexToAssign);
                                                                     return; 
                                                                 }
-                                                                const rect = e.target.getBoundingClientRect();
-                                                                const container = e.target.closest('.overflow-y-auto');
+                                                                const rect = e.currentTarget.getBoundingClientRect();
+                                                                const container = e.currentTarget.closest('.overflow-y-auto');
                                                                 const containerRect = container.getBoundingClientRect();
+                                                                const wordRect = e.currentTarget.closest('[data-deva-word]').getBoundingClientRect();
                                                                 
                                                                 setPopup({ 
                                                                     visible: true, 
                                                                     x: Math.round(rect.left - containerRect.left + container.scrollLeft - 12),
-                                                                    y: Math.round(e.currentTarget.closest('[data-deva-word]').getBoundingClientRect().bottom - containerRect.top + container.scrollTop), 
+                                                                    y: Math.round(wordRect.bottom - containerRect.top + container.scrollTop), 
                                                                     content: specificIastSyllable, 
                                                                     isSyllable: true
                                                                 });
@@ -1765,7 +1793,7 @@ useEffect(() => {
                             </div>
                         </div>
                         
-                        {renderDevaTextWithHover}
+                        {renderDevaTextWithHover()}
                         <div className="h-4"></div> {/* Abstandshalter am Ende */}
                     </div>
 
@@ -1795,7 +1823,7 @@ useEffect(() => {
 
                     {/* Mittlerer Bereich: Hier liegt der einzige Scrollbalken für den Inhalt */}
                     <div className="flex-1 overflow-y-auto px-6 md:px-8 pb-4 custom-scrollbar">
-						{renderDevaTextWithHover}
+						{renderDevaTextWithHover()}
                         <div className="h-4"></div>
 					</div>
                     
