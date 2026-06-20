@@ -1,5 +1,5 @@
 <!--
-DEVANĀGARĪ TRAINER 3.0.0
+DEVANĀGARĪ TRAINER 3.1.0
 Konzeption: Thomas Kintaert (Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB], Universität Wien) Erstellungszeitraum: November 2025 – Juni 2026
 
 TECHNISCHE UMSETZUNG: Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini- Modelle 2.5 und 3 (Flash und Pro, inkl. der Gemini-Funktion Canvas) ermöglicht.
@@ -8636,6 +8636,57 @@ var DEVANAGARI_DATA = {
     t: "9"
   }]
 };
+// === VERSION_CHECK_LOGIC ===
+const APP_VERSION = "3.0.0";
+async function checkForUpdates() {
+  try {
+    // Schutz vor file:// Protokoll: Bricht im lokalen Offline-Modus lautlos ab
+    if (!window.location.protocol.startsWith('http')) {
+      console.log("Lokaler Datei-Modus. Update-Check deaktiviert.");
+      return;
+    }
+    const response = await fetch(window.location.href, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    });
+    if (!response.ok) return;
+    const htmlText = await response.text();
+    const match = htmlText.match(/const\s+APP_VERSION\s*=\s*["']([^"']+)["']/);
+    if (match && match[1]) {
+      const serverVersion = match[1];
+      if (serverVersion !== APP_VERSION) {
+        showUpdateNotification(serverVersion);
+      }
+    }
+  } catch (error) {
+    console.log("Server nicht erreichbar oder offline. Keine Update-Prüfung.");
+  }
+}
+function showUpdateNotification(newVersion) {
+  const banner = document.createElement('div');
+  banner.setAttribute('style', 'position:fixed; bottom:20px; right:20px; ' + 'background:#1c1917; color:#f1f0ef; ' + 'padding:20px; border-radius:16px; ' + 'box-shadow:0 20px 40px rgba(0,0,0,0.5); ' + 'z-index:99999; max-width:280px; ' + 'border:1px solid rgba(120,113,108,0.4); ' + 'font-family:sans-serif; font-size:14px; position:relative;');
+  banner.innerHTML = `
+      <button onclick="this.closest('div').remove()" style="position:absolute; top:10px; right:12px; background:none; border:none; color:#78716c; font-size:16px; cursor:pointer; line-height:1;">✕</button>
+      <p style="margin:0 0 6px 0; font-weight:bold; color:#f43f5e;">Update verfügbar! (v${newVersion})</p>
+      <p style="margin:0 0 14px 0; font-size:13px; color:#a8a29e;">Der Browser nutzt eine alte Version aus dem Cache.</p>
+      <button onclick="window.location.reload(true)" style="
+        display:block; width:100%; background:#e11d48;
+        color:#fff; font-weight:bold; padding:8px 16px;
+        border:none; border-radius:10px; font-size:12px;
+        cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.3);"
+        onmouseover="this.style.background='#be123c'"
+        onmouseout="this.style.background='#e11d48'">
+        Jetzt neu laden
+      </button>
+    `;
+  document.body.appendChild(banner);
+}
+
+// Die echte Prüfung 3 Sekunden nach dem Start der App ausführen
+setTimeout(checkForUpdates, 3000);
+// ============================
 var TRANSLATIONS = {
   de: (_de = {
     // General
@@ -8792,8 +8843,8 @@ var TRANSLATIONS = {
     onlinePoolDesc: "Öffne Sammlungen von GitHub, die geteilt und bereitgestellt wurden.",
     onlineLibraryTitle: "Sanskrit Online-Bibliothek",
     collectionIdPlaceholder: "Sammlungs-ID eingeben (z. B. 101)...",
-	known: "Gewusst",
-    notKnown: "Nicht gewusst",
+    known: "Gewusst",
+    notKnown: "Nicht gewusst"
   }, _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_de, "loadBtn", "Laden"), "searchIndexPlaceholder", "Verzeichnis durchsuchen..."), "loadingIndex", "Lade Index von GitHub..."), "noEntriesFound", "Keine Einträge gefunden."), "addBtn", "Hinzufügen"), "onlineImportSuccess", "Online-Sammlung erfolgreich importiert:\n"), "importErrorPool", "Die eingegebene ID ist leider nicht aktiv oder ungültig. Bitte prüfe den Pool auf GitHub."), "importErrorFetch", "Fehler beim Laden der Online-Daten. Bitte Internetverbindung prüfen."), "onlineImportSuccess", "Erfolgreich importiert: "), "importErrorPool", "Sammlung im Online-Verzeichnis nicht gefunden."), _defineProperty(_defineProperty(_de, "importErrorFetch", "Fehler beim Laden der Sammlungsdatei von GitHub."), "loadingIndexError", "Das Inhaltsverzeichnis des Online-Pools konnte nicht geladen werden.")),
   en: (_en = {
     // General
@@ -8951,7 +9002,7 @@ var TRANSLATIONS = {
     onlineLibraryTitle: "Sanskrit Online Library",
     collectionIdPlaceholder: "Enter collection ID (e.g. 101)...",
     known: "Known",
-    notKnown: "Not Known",
+    notKnown: "Not Known"
   }, _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_en, "loadBtn", "Load"), "searchIndexPlaceholder", "Search index..."), "loadingIndex", "Loading GitHub index..."), "noEntriesFound", "No entries found."), "addBtn", "Add"), "onlineImportSuccess", "Online collection successfully imported:\n"), "importErrorPool", "The entered ID is currently inactive or invalid. Please check the pool on GitHub."), "importErrorFetch", "Error loading online data. Please check your internet connection."), "onlineImportSuccess", "Successfully imported: "), "importErrorPool", "Collection not found in the online directory."), _defineProperty(_defineProperty(_en, "importErrorFetch", "Error loading the collection file from GitHub."), "loadingIndexError", "The online pool directory could not be loaded."))
 };
 
@@ -11865,11 +11916,11 @@ var SanskritTrainer = function SanskritTrainer() {
       className: "w-8 h-8 rounded-full border-2 border-rose-800 dark:border-rose-400 flex items-center justify-center mr-3 text-base font-serif italic"
     }, "i"), TRANSLATIONS[lang].projectInfo), /*#__PURE__*/React.createElement("div", {
       className: "space-y-2 text-stone-700 dark:text-stone-300 leading-relaxed text-sm"
-    }, /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].version, ":"), " Devan\u0101gar\u012B Trainer 3.3.0"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].conception, ":"), " Thomas Kintaert (", /*#__PURE__*/React.createElement("a", {
+    }, /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].version, ":"), " Devan\u0101gar\u012B Trainer 3.1.0"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].conception, ":"), " Thomas Kintaert (", /*#__PURE__*/React.createElement("a", {
       href: TRANSLATIONS[lang].istbUrl,
       target: "_blank",
       className: "text-rose-600 hover:underline"
-    }, TRANSLATIONS[lang].libraryTitle === 'Studierbibliothek' ? "Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB]" : "Department of South Asian, Tibetan and Buddhist Studies"), ", ", lang === 'de' ? "Universität Wien" : "University of Vienna", ")"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].period, ":"), " ", lang === 'de' ? "November 2025 – Juni 2026" : "November 2025 – June 2026"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].techImp, ":"), /*#__PURE__*/React.createElement("br", null), TRANSLATIONS[lang].techImpDesc), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].sources, ":")), /*#__PURE__*/React.createElement("ul", {
+    }, TRANSLATIONS[lang].libraryTitle === 'Studierbibliothek' ? "Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB]" : "Department of South Asian, Tibetan and Buddhist Studies"), ", ", lang === 'de' ? "Universität Wien" : "University of Vienna", ")"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].period, ":"), " ", lang === 'de' ? "November 2025 – Juni 2026" : "November 2025 – May June"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].techImp, ":"), /*#__PURE__*/React.createElement("br", null), TRANSLATIONS[lang].techImpDesc), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].sources, ":")), /*#__PURE__*/React.createElement("ul", {
       className: "space-y-1 ml-1 text-xs"
     }, /*#__PURE__*/React.createElement("li", null, "\u2022 ", /*#__PURE__*/React.createElement("b", null, lang === 'de' ? "360 häufigste Devanāgarī-Ligaturen" : "360 most common Devanāgarī ligatures", ":"), " Stiehl, Ulrich. \u201E2. Die h\xE4ufigsten Ligaturen im klassischen Sanskrit\u201C. Devanagari, Sanskrit Web, S. 7\u201325."), /*#__PURE__*/React.createElement("li", null, "\u2022 ", /*#__PURE__*/React.createElement("b", null, lang === 'de' ? "Devanāgarī-Schriftart" : "Devanāgarī font", ":"), " ", /*#__PURE__*/React.createElement("i", null, "Sanskrit 2003"), ". Version 1.20, Omkarananda Ashram, 30. Juli 2019.")), /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-stone-500 dark:text-stone-400 pt-1 pl-4 border-l-2 border-stone-200 dark:border-stone-700 leading-relaxed"
