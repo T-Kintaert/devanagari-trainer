@@ -8688,23 +8688,24 @@ function showUpdateNotification(newVersion) {
 setTimeout(checkForUpdates, 3000);
 // ============================
 var TRANSLATIONS = {
-  de: (_de = {
-    // General
+  de: {
+    // ── 1. General ────────────────────────────────────────────────────────────
     home: "Home",
     back: "Zurück",
     close: "Schließen",
+    cancel: "Abbrechen",
     saveClose: "Speichern & Schließen",
     next: "Nächste",
-    nextQuestion: "Nächste Frage",
     finish: "Abschließen",
     start: "Starten",
     info: "Information",
     search: "Suchen",
-    // Home
+    edit: "Bearbeiten",
+    // ── 2. Home ───────────────────────────────────────────────────────────────
     appTitle: "Devanāgarī für Sanskrit",
     appSubtitle: "Schrifttrainer",
     startPractice: "Üben starten",
-    // Setup
+    // ── 3. Setup ──────────────────────────────────────────────────────────────
     setupTitle: "Devanāgarī-Trainer",
     learnChars: "Zeichen lernen",
     readTexts: "Texte lesen",
@@ -8717,7 +8718,8 @@ var TRANSLATIONS = {
     direction: "Abfragerichtung",
     seqNote: "Geordnete Reihenfolge nur bei Auswahl eines einzelnen Pakets möglich",
     fontSettings: "Schriftart wählen",
-    // Categories
+    selectAtLeastOne: "Bitte wähle mindestens ein Paket aus!",
+    // ── 4. Categories ─────────────────────────────────────────────────────────
     catBasic: "Grundzeichen",
     catBasicDesc: "Eigenständige Vokalzeichen und Konsonanten mit inhärentem Vokal <i>a</i>",
     catDiacritics: "Vokaldiakritika",
@@ -8729,50 +8731,18 @@ var TRANSLATIONS = {
     catCustom: "+ Eigene Zeichen",
     catCustomNone: "Keine Zeichensammlung ausgewählt",
     catCustomActive: "Aktiv: ",
-    // Editor
-    editTitle: "Eigene Zeichen verwalten",
-    addCat: "+ Sammlung hinzufügen",
-    myCollections: "Meine Sammlungen",
-    sortMode: "Sortiermodus",
-    sortModeDesc: "Reihenfolge der Sammlungen und einzelner Zeichen manuell ändern",
-    all: "Alles",
-    allDesc: "Alle Zeichensammlungen aus- oder abwählen",
-    expand: "Ausklappen",
-    collapse: "Einklappen",
-    viewMode: "Ansichtsmodus",
-    viewModeDesc: "Übersicht aller ausgewählten Zeichensammlungen öffnen",
-    "export": "Exportieren",
-    exportDesc: "Ausgewählte Zeichensammlungen als JSON-Datei sichern",
-    "import": "Importieren",
-    importDesc: "Zeichen aus einer externen JSON-Datei laden",
-    bulkImport: "Massenimport (z. B.: Devanāgarī;IAST)",
-    bulkFontPlaceholder: "Fontname (für primäres Schriftzeichen)",
-    bulkTextPlaceholder: "क्ष;kṣa\nत्र;tra",
-    ctrlEnter: "Strg + Enter zum Hinzufügen",
-    singleChar: "+ Einzelnes Zeichen hinzufügen",
-    fontLabelCustom: "Schriftart (optional):",
-    fontPlaceholderCustom: "Sanskrit2003 - 30.07.2019.otf",
-    fontHintCustom: "Geben Sie hier den Dateinamen eines Devanāgarī-Unicode-Fonts ohne Endung ein (z. B. 'uttara'). Wenn dieses Feld leer bleibt, wird automatisch 'Sanskrit2003 - 30.07.2019.otf' als Standard verwendet. Befindet sich die Schriftdatei im selben Ordner wie diese HTML-App, wird sie für einen schnelleren Start direkt von dort geladen. Andernfalls wird sie, sofern vorhanden, aus dem Online-GitHub-Repository nachgeladen.",
-    fontInputLabelCustom: "Dateiname des Devanāgarī-Fonts:",
-    // Info Modal
-    projectInfo: "Projektinformationen",
-    version: "Version",
-    conception: "Konzeption",
-    period: "Erstellungszeitraum",
-    techImp: "Technische Umsetzung",
-    techImpDesc: "Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini- Modelle 2.5, 3, 3.1 und 3.5 (Flash und Pro) und des Claude-Modells Sonnet 4.6 ermöglicht.",
-    sources: "Quellen & Urheberrechte",
-    fontHint: "Hinweis zur Darstellung: Für eine optimale Anzeige der Schriftzeichen, insbesondere der komplexen Ligaturen, wird die Verwendung der Schriftart <i>Sanskrit2003 - 30.07.2019.otf</i> empfohlen.",
-    privacy: "Datenschutz",
-    privacyDesc: "Zur korrekten Darstellung der IAST-Diakritika (Google Fonts) sowie für technische Basisfunktionen (React, Tailwind) lädt diese App externe Ressourcen. Dabei wird technisch bedingt die IP-Adresse an die jeweiligen Anbieter übertragen.",
-    license: "Lizenz",
-    newCatDefault: "Neue Zeichensammlung",
-    libraryTitle: "Studierbibliothek",
-    noResults: "Keine Treffer gefunden für",
-    searchActive: "Suche aktiv...",
-    chars: "Zeichen",
+    // ── 5. Trainer / Quiz / Flashcards ────────────────────────────────────────
+    count: "Anzahl",
+    questionLabel: "Frage",
+    answerLabel: "Antwort",
+    showNote: "Hinweis anzeigen",
     flipHintClick: "KLICKEN ODER ENTER ZUM UMDREHEN",
     flipHintTap: "TIPPEN ZUM UMDREHEN",
+    known: "Gewusst",
+    notKnown: "Nicht gewusst",
+    nextQuestion: "Nächste Frage",
+    chars: "Zeichen",
+    // ── 6. Reading Fluency ────────────────────────────────────────────────────
     fluencyTitle: "Leseflüssigkeit & Tempo",
     fluencyStart: "Start",
     fluencyStop: "Stopp",
@@ -8781,16 +8751,14 @@ var TRANSLATIONS = {
     charsPerMinute: "Silben pro Minute",
     nextText: "Nächster Text",
     textEntryLabel: "Text eingeben (Devanāgarī)",
-    loadBtn: "LADEN",
     loadSample: "BEISPIELTEXT LADEN",
     helpTitle: "Hilfe zur Texteingabe",
     helpIntro: "Diese App benötigt eine <strong>Devanāgarī-Unicode-Schriftart</strong>. Falls Sie Text in einer anderen indischen Schrift, in Transliteration (z. B. IAST) oder als Bild vorliegen haben, nutzen Sie bitte externe Tools:",
     helpConv: "Umwandlung in Devanāgarī:",
     helpOCR: "Bild zu Text (OCR):",
     showTextBtn: "Text anzeigen",
-    introTouch: "Fügen Sie einen <strong>Devanāgarī-Text</strong> ein und tippen Sie auf „Text anzeigen“. Tippen Sie auf einen <strong>Wortblock</strong>, um dessen <strong>IAST-Transliteration</strong> zu sehen. Ein zweites Tippen auf eine <strong>Schreibsilbe (<i>akṣara</i>)</strong> zeigt nur deren Transliteration.",
-    introMouse: "Fügen Sie einen <strong>Devanāgarī-Text</strong> ein und klicken Sie auf „Text anzeigen“. Beim Lesen können Sie mit der Maus über einen <strong>Wortblock</strong> fahren, um dessen <strong>IAST-Transliteration</strong> zu sehen, oder auf einzelne <strong>Schreibsilben (<i>akṣara</i>)</strong> klicken, um nur diese zu transliterieren.",
-    edit: "Bearbeiten",
+    introTouch: "Fügen Sie einen <strong>Devanāgarī-Text</strong> ein und tippen Sie auf „Text anzeigen\". Tippen Sie auf einen <strong>Wortblock</strong>, um dessen <strong>IAST-Transliteration</strong> zu sehen. Ein zweites Tippen auf eine <strong>Schreibsilbe (<i>akṣara</i>)</strong> zeigt nur deren Transliteration.",
+    introMouse: "Fügen Sie einen <strong>Devanāgarī-Text</strong> ein und klicken Sie auf „Text anzeigen\". Beim Lesen können Sie mit der Maus über einen <strong>Wortblock</strong> fahren, um dessen <strong>IAST-Transliteration</strong> zu sehen, oder auf einzelne <strong>Schreibsilben (<i>akṣara</i>)</strong> klicken, um nur diese zu transliterieren.",
     reviewTitle: "Textüberprüfung & Pacer",
     pacerEnable: "Pacer (Lesehilfe) aktivieren",
     target: "Ziel-",
@@ -8807,13 +8775,8 @@ var TRANSLATIONS = {
     restartBtn: "Erneut lesen",
     sessionAborted: "Session manuell bei Silbe {count} beendet",
     pacerTarget: "Pacer-Ziel: {speed} SPM",
-    inputPlaceholder: "Z. B. अस्त्युत्तरस्यां दिशि देवतात्मा हिमालयो नाम नगाधिराजः।",
-    importSuccess: "Import erfolgreich! Die neuen Sets wurden oben hinzugefügt.",
-    importError: "Fehler beim Import: ",
-    istbUrl: "https://stb.univie.ac.at/",
-    ccUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de",
-    expandDesc: "Alle Zeichensammlungen ausklappen",
-    collapseDesc: "Alle Zeichensammlungen einklappen",
+    inputPlaceholder: "Z. B. अस्त्युत्तरस्यां दिशi देवतात्मा हिमालयो नाम नगाधिराजः।",
+    readingComingSoon: "Hier wird das Modul zum Lesen von Texten integriert.",
     feedback: {
       beginner: ["Ein wichtiger erster Schritt! Nehmen Sie sich die Zeit, die Formen der Zeichen genau zu verinnerlichen. Die Geschwindigkeit kommt mit der Vertrautheit ganz von selbst.", "Gut gemacht! Sie bauen gerade die neuronale Verbindung zu den Schriftzeichen auf. Bleiben Sie dran. Beständigkeit ist am Anfang der wichtigste Faktor."],
       intermediate: ["Das ist ein guter Start! Konzentrieren Sie sich auf eine gleichmäßige Lesegeschwindigkeit, um die SPM weiter zu steigern.", "Ihr Lesefluss stabilisiert sich. Achten Sie darauf, den Blick schon leicht auf das nächste Wort zu richten, während Sie das aktuelle zu Ende lesen."],
@@ -8821,48 +8784,120 @@ var TRANSLATIONS = {
       fluent: ["Sehr flüssig! Selbst komplexe Ligaturen scheinen Sie nicht mehr aufzuhalten.", "Wunderbarer Lesefluss! Sie haben den Übergang vom Entziffern zum echten Lesen gemeistert."],
       expert: ["Herausragend! Diese Geschwindigkeit zeugt von einer tiefen Vertrautheit mit der Devanāgarī.", "Exzellent! Ihr visuelles Gedächtnis für die Devanāgarī-Zeichen ist hochgradig trainiert."]
     },
-    fontBackupDesc: "Die App sucht die Schriftart Sanskrit2003 primär in Ihrem lokalen Ordner. Falls nicht vorhanden, wird sie automatisch als Backup von GitHub geladen.",
-    localStatusActive: "Sie führen die App lokal aus. Schriftarten und Sammlungen werden aus Ihrem lokalen Verzeichnis bezogen.",
-    downloadPrompt: "Möchten Sie den Trainer lokal auf Ihrem Computer starten?",
-    downloadBtnText: "App für lokalen Start herunterladen (.zip)",
-    collectionInfoPlaceholder: "Beschreibung, Herkunft oder Copyright-Informationen dieser Sammlung...",
-    collectionInfoLabel: "Sammlungs-Info:",
-    moveToCollection: "Verschieben nach...",
+    // ── 7. Editor / Collections ───────────────────────────────────────────────
+    editTitle: "Eigene Zeichen verwalten",
+    addCat: "+ Sammlung hinzufügen",
     addFolder: "+ Ordner hinzufügen",
-    folderNamePlaceholder: "z. B. Andere Schriften",
+    myCollections: "Meine Sammlungen",
+    newCatDefault: "Neue Zeichensammlung",
+    sortMode: "Sortiermodus",
+    sortModeDesc: "Reihenfolge der Sammlungen und einzelner Zeichen manuell ändern",
+    all: "Alles",
+    allDesc: "Alle Zeichensammlungen aus- oder abwählen",
+    expand: "Ausklappen",
+    expandDesc: "Alle Zeichensammlungen ausklappen",
+    collapse: "Einklappen",
+    collapseDesc: "Alle Zeichensammlungen einklappen",
+    viewMode: "Ansichtsmodus",
+    viewModeDesc: "Übersicht aller ausgewählten Zeichensammlungen öffnen",
+    "export": "Exportieren",
+    exportDesc: "Ausgewählte Zeichensammlungen als JSON-Datei sichern",
+    "import": "Importieren",
+    importDesc: "Zeichen aus einer externen JSON-Datei laden",
+    bulkImport: "Massenimport (z. B.: Devanāgarī;IAST)",
+    bulkFontPlaceholder: "Fontname (für primäres Schriftzeichen)",
+    bulkTextPlaceholder: "क्ष;kṣa\nत्र;tra",
+    ctrlEnter: "Strg + Enter zum Hinzufügen",
+    singleChar: "+ Einzelnes Zeichen hinzufügen",
+    charLabel: "Schriftzeichen",
+    fontNameOptional: "+ Fontname (optional)",
+    fontOptional: "Schriftart (optional)",
+    notePlaceholder: "... (Anmerkung, Merkhilfe etc.)",
+    actionLabel: "Aktion...",
+    actionCopy: "Kopieren",
+    copySuffix: "Kopie",
+    collectionInfoLabel: "Sammlungs-Info:",
+    collectionInfoPlaceholder: "Beschreibung, Herkunft oder Copyright-Informationen dieser Sammlung...",
+    collDefaultFont: "Standard-Schriftart der Sammlung",
+    collDefaultFontPlaceholder: "Standard-Font (z.B. uttara.ttf)...",
+    forceFont: "Für alle Zeichen erzwingen",
     confirmDeleteCat: "Möchtest du diese Sammlung wirklich löschen?",
     collectionAction: "Ordner / Aktion...",
     collectionMove: "In Hauptverzeichnis verschieben",
     collectionCopy: "Sammlung kopieren",
     folderRoot: "Hauptverzeichnis",
+    folderNamePlaceholder: "z. B. Andere Schriften",
+    moveToCollection: "Verschieben nach...",
     moveItemTitle: "Zeichen verschieben",
     copyItemTitle: "Zeichen kopieren",
     searchPlaceholder: "Sammlung suchen...",
-    cancel: "Abbrechen",
+    importSuccess: "Import erfolgreich! Die neuen Sets wurden oben hinzugefügt.",
+    importError: "Fehler beim Import: ",
+    // ── 8. Online Pool ────────────────────────────────────────────────────────
     onlinePoolBtn: "Online-Pool",
     onlinePoolDesc: "Öffne Sammlungen von GitHub, die geteilt und bereitgestellt wurden.",
     onlineLibraryTitle: "Sanskrit Online-Bibliothek",
     collectionIdPlaceholder: "Sammlungs-ID eingeben (z. B. 101)...",
-    known: "Gewusst",
-    notKnown: "Nicht gewusst"
-  }, _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_de, "loadBtn", "Laden"), "searchIndexPlaceholder", "Verzeichnis durchsuchen..."), "loadingIndex", "Lade Index von GitHub..."), "noEntriesFound", "Keine Einträge gefunden."), "addBtn", "Hinzufügen"), "onlineImportSuccess", "Online-Sammlung erfolgreich importiert:\n"), "importErrorPool", "Die eingegebene ID ist leider nicht aktiv oder ungültig. Bitte prüfe den Pool auf GitHub."), "importErrorFetch", "Fehler beim Laden der Online-Daten. Bitte Internetverbindung prüfen."), "onlineImportSuccess", "Erfolgreich importiert: "), "importErrorPool", "Sammlung im Online-Verzeichnis nicht gefunden."), _defineProperty(_defineProperty(_de, "importErrorFetch", "Fehler beim Laden der Sammlungsdatei von GitHub."), "loadingIndexError", "Das Inhaltsverzeichnis des Online-Pools konnte nicht geladen werden.")),
-  en: (_en = {
-    // General
+    searchIndexPlaceholder: "Verzeichnis durchsuchen...",
+    loadingIndex: "Lade Index von GitHub...",
+    loadingIndexError: "Das Inhaltsverzeichnis des Online-Pools konnte nicht geladen werden.",
+    noEntriesFound: "Keine Einträge gefunden.",
+    addBtn: "Hinzufügen",
+    loadBtn: "Laden",
+    onlineImportSuccess: "Erfolgreich importiert: ",
+    importErrorPool: "Sammlung im Online-Verzeichnis nicht gefunden.",
+    importErrorFetch: "Fehler beim Laden der Sammlungsdatei von GitHub.",
+    noResults: "Keine Treffer gefunden für",
+    searchActive: "Suche aktiv...",
+    // ── 9. Info Modal ─────────────────────────────────────────────────────────
+    projectInfo: "Projektinformationen",
+    version: "Version",
+    conception: "Konzeption",
+    period: "Erstellungszeitraum",
+    periodValue: "November 2025 – Juni 2026",
+    uniName: "Universität Wien",
+    deptName: "Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB]",
+    libraryTitle: "Studierbibliothek",
+    istbUrl: "https://stb.univie.ac.at/",
+    techImp: "Technische Umsetzung",
+    techImpDesc: "Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini- Modelle 2.5, 3, 3.1 und 3.5 (Flash und Pro) und des Claude-Modells Sonnet 4.6 ermöglicht.",
+    sources: "Quellen & Urheberrechte",
+    ligatureSource: "360 häufigste Devanāgarī-Ligaturen",
+    devaFont: "Devanāgarī-Schriftart",
+    fontHint: "Hinweis zur Darstellung: Für eine optimale Anzeige der Schriftzeichen, insbesondere der komplexen Ligaturen, wird die Verwendung der Schriftart <i>Sanskrit2003 - 30.07.2019.otf</i> empfohlen.",
+    privacy: "Datenschutz",
+    privacyDesc: "Zur korrekten Darstellung der IAST-Diakritika (Google Fonts) sowie für technische Basisfunktionen (React, Tailwind) lädt diese App externe Ressourcen. Dabei wird technisch bedingt die IP-Adresse an die jeweiligen Anbieter übertragen.",
+    license: "Lizenz",
+    ccUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de",
+    // ── 10. Font ──────────────────────────────────────────────────────────────
+    fontLabelCustom: "Schriftart (optional):",
+    fontPlaceholderCustom: "Sanskrit2003 - 30.07.2019.otf",
+    fontHintCustom: "Geben Sie hier den Dateinamen eines Devanāgarī-Unicode-Fonts ohne Endung ein (z. B. 'uttara'). Wenn dieses Feld leer bleibt, wird automatisch 'Sanskrit2003 - 30.07.2019.otf' als Standard verwendet. Befindet sich die Schriftdatei im selben Ordner wie diese HTML-App, wird sie für einen schnelleren Start direkt von dort geladen. Andernfalls wird sie, sofern vorhanden, aus dem Online-GitHub-Repository nachgeladen.",
+    fontInputLabelCustom: "Dateiname des Devanāgarī-Fonts:",
+    fontBackupDesc: "Die App sucht die Schriftart Sanskrit2003 primär in Ihrem lokalen Ordner. Falls nicht vorhanden, wird sie automatisch als Backup von GitHub geladen.",
+    // ── 11. Misc ──────────────────────────────────────────────────────────────
+    localStatusActive: "Sie führen die App lokal aus. Schriftarten und Sammlungen werden aus Ihrem lokalen Verzeichnis bezogen.",
+    downloadPrompt: "Möchten Sie den Trainer lokal auf Ihrem Computer starten?",
+    downloadBtnText: "App für lokalen Start herunterladen (.zip)"
+  },
+  en: {
+    // ── 1. General ────────────────────────────────────────────────────────────
     home: "Home",
     back: "Back",
     close: "Close",
+    cancel: "Cancel",
     saveClose: "Save & close",
     next: "Next",
-    nextQuestion: "Next question",
     finish: "Finish",
     start: "Start",
     info: "Information",
     search: "Search",
-    // Home
+    edit: "Edit",
+    // ── 2. Home ───────────────────────────────────────────────────────────────
     appTitle: "Devanāgarī for Sanskrit",
     appSubtitle: "Script trainer",
     startPractice: "Start practice",
-    // Setup
+    // ── 3. Setup ──────────────────────────────────────────────────────────────
     setupTitle: "Devanāgarī trainer",
     learnChars: "Learn characters",
     readTexts: "Read texts",
@@ -8875,7 +8910,8 @@ var TRANSLATIONS = {
     direction: "Direction",
     seqNote: "Sequential order is only available when a single set is selected",
     fontSettings: "Select font",
-    // Categories
+    selectAtLeastOne: "Please select at least one set!",
+    // ── 4. Categories ─────────────────────────────────────────────────────────
     catBasic: "Basic characters",
     catBasicDesc: "Independent vowels and consonants with inherent vowel <i>a</i>",
     catDiacritics: "Vowel diacritics",
@@ -8887,50 +8923,18 @@ var TRANSLATIONS = {
     catCustom: "+ Custom characters",
     catCustomNone: "No collection selected",
     catCustomActive: "Active: ",
-    // Editor
-    editTitle: "Manage custom characters",
-    addCat: "+ Add collection",
-    myCollections: "My collections",
-    sortMode: "Sort mode",
-    sortModeDesc: "Manually change the order of collections and individual characters",
-    all: "All",
-    allDesc: "Select / Deselect all character collections",
-    expand: "Expand all",
-    collapse: "Collapse all",
-    viewMode: "View mode",
-    viewModeDesc: "Open overview of all selected character collections",
-    "export": "Export",
-    exportDesc: "Save selected character collections as a JSON file",
-    "import": "Import",
-    importDesc: "Load characters from an external JSON file",
-    bulkImport: "Bulk import (e.g.: Devanāgarī;IAST)",
-    bulkFontPlaceholder: "Font name (for primary character)",
-    bulkTextPlaceholder: "क्ष;kṣa\nत्र;tra",
-    ctrlEnter: "Ctrl + Enter to add",
-    singleChar: "Add single character",
-    fontLabelCustom: "Font (optional):",
-    fontPlaceholderCustom: "Sanskrit2003 - 30.07.2019.otf",
-    fontHintCustom: "Enter the filename of a Devanāgarī Unicode font without its extension (e.g., 'uttara'). If this field is left empty, 'Sanskrit2003 - 30.07.2019.otf' is automatically used as the default. If the font file is located in the same folder as this HTML app, it will be loaded directly from there for a faster launch. Otherwise, it will be fetched from the online GitHub repository, if available.",
-    fontInputLabelCustom: "Filename of the Devanāgarī font:",
-    // Info Modal
-    projectInfo: "Project information",
-    version: "Version",
-    conception: "Conceptualization",
-    period: "Creation period",
-    techImp: "Technical implementation",
-    techImpDesc: "This application was developed in a dialogic process with Artificial Intelligence. The programming was made possible through the use of Google Gemini models 2.5, 3, 3.1, and 3.5 (Flash and Pro), as well as the Claude Sonnet 4.6 model.",
-    sources: "Sources & Copyrights",
-    fontHint: "Display note: For optimal display of characters, especially complex ligatures, the use of the font <i>Sanskrit2003 - 30.07.2019.otf</i> is recommended.",
-    privacy: "Privacy",
-    privacyDesc: "To correctly display IAST diacritics (Google Fonts) and for basic technical functions (React, Tailwind), this app loads external resources. For technical reasons, your IP address is transmitted to the respective providers.",
-    license: "License",
-    newCatDefault: "New character collection",
-    libraryTitle: "Study library",
-    noResults: "No results found for",
-    searchActive: "Search active...",
-    chars: "Characters",
+    // ── 5. Trainer / Quiz / Flashcards ────────────────────────────────────────
+    count: "Count",
+    questionLabel: "Question",
+    answerLabel: "Answer",
+    showNote: "Show note",
     flipHintClick: "CLICK OR ENTER TO FLIP",
     flipHintTap: "TAP TO FLIP",
+    known: "Known",
+    notKnown: "Not Known",
+    nextQuestion: "Next question",
+    chars: "Characters",
+    // ── 6. Reading Fluency ────────────────────────────────────────────────────
     fluencyTitle: "Reading fluency & tempo",
     fluencyStart: "Start",
     fluencyStop: "Stop",
@@ -8939,7 +8943,6 @@ var TRANSLATIONS = {
     charsPerMinute: "Syllables per minute",
     nextText: "Next text",
     textEntryLabel: "Enter text (Devanāgarī)",
-    loadBtn: "LOAD",
     loadSample: "LOAD SAMPLE TEXT",
     helpTitle: "Help with text entry",
     helpIntro: "This app requires a <strong>Devanāgarī Unicode font</strong>. If you have text in another Indian script, in Roman transliteration (e.g., IAST), or as an image, please use external tools:",
@@ -8948,7 +8951,6 @@ var TRANSLATIONS = {
     showTextBtn: "Show text",
     introTouch: "Paste a <strong>Devanāgarī text</strong> and tap the 'Show text' button. While reading, hover over a <strong>word block</strong> to see its <strong>IAST transliteration</strong>, or click on individual <strong>orthographic syllables (<i>akṣara</i>)</strong> to transliterate only those.",
     introMouse: "Paste a <strong>Devanāgarī text</strong> and click the 'Show text' button. While reading, hover over a <strong>word block</strong> to see its <strong>IAST transliteration</strong>, or click on individual <strong>orthographic syllables (<i>akṣara</i>)</strong> to transliterate only those.",
-    edit: "Edit",
     reviewTitle: "Text review & pacer",
     pacerEnable: "Enable pacer (reading aid)",
     target: "Target-",
@@ -8965,45 +8967,111 @@ var TRANSLATIONS = {
     restartBtn: "Read again",
     sessionAborted: "Session manually ended at syllable {count}",
     pacerTarget: "Pacer target: {speed} SPM",
-    inputPlaceholder: "E.g. अस्त्युत्तरस्यां दिशि देवतात्मा हिमालयो नाम नगाधिराजः।",
-    importSuccess: "Import successful! New sets have been added to the top.",
-    importError: "Error during import: ",
-    istbUrl: "https://stb.univie.ac.at/en/",
-    ccUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en",
-    expandDesc: "Expand all character collections",
-    collapseDesc: "Collapse all character collections",
+    inputPlaceholder: "E.g. अस्त्युत्तरस्यां दिशि देवतात्मा हिमालयो नाम नगाधिราชः।",
+    readingComingSoon: "The module for reading texts will be integrated here.",
     feedback: {
       beginner: ["A vital first step! Take your time to truly internalize the shapes of the characters. Speed will come naturally as you become more familiar with them.", "Well done! You are currently building the neural connections to the characters. Keep at it—consistency is the most important factor at the start."],
       intermediate: ["A solid start! Focus on maintaining a steady reading pace to further increase your SPM.", "Your flow is stabilizing. Try to glance slightly ahead at the next word while finishing the current one."],
       advanced: ["You're making great progress! Keep up this steady rhythm to gain even more confidence.", "A brisk pace! Your character recognition is now firm enough that you can focus more on correct pronunciation and emphasis."],
-      fluent: ["Very fluent! Even complex ligatures don't seem to slow you down anymore.", "Wonderful flow! You've mastered the transition from deciphering to true reading."],
+      fluent: ["Very fluent! Even complex ligatures don't seem to slow you down anymore.", "Wonderful flow! You've mastered the transition from decoding to true reading."],
       expert: ["Outstanding! This speed demonstrates a deep familiarity with Devanāgarī.", "Excellent! Your visual memory for Devanāgarī characters is highly trained."]
     },
-    fontBackupDesc: "The app primarily searches for the Sanskrit2003 font in your local folder. If not present, it will automatically be loaded from GitHub as a backup.",
-    localStatusActive: "You are running the app locally. Fonts and collections are obtained from your local directory.",
-    downloadPrompt: "Would you like to run the trainer locally on your computer?",
-    downloadBtnText: "Download app for local start (.zip)",
-    collectionInfoPlaceholder: "Description, origin, or copyright information of this collection...",
-    collectionInfoLabel: "Collection Info:",
-    moveToCollection: "Move to...",
+    // ── 7. Editor / Collections ───────────────────────────────────────────────
+    editTitle: "Manage custom characters",
+    addCat: "+ Add collection",
     addFolder: "+ Add folder",
-    folderNamePlaceholder: "e.g., Other scripts",
+    myCollections: "My collections",
+    newCatDefault: "New character collection",
+    sortMode: "Sort mode",
+    sortModeDesc: "Manually change the order of collections and individual characters",
+    all: "All",
+    allDesc: "Select / Deselect all character collections",
+    expand: "Expand all",
+    expandDesc: "Expand all character collections",
+    collapse: "Collapse all",
+    collapseDesc: "Collapse all character collections",
+    viewMode: "View mode",
+    viewModeDesc: "Open overview of all selected character collections",
+    "export": "Export",
+    exportDesc: "Save selected character collections as a JSON file",
+    "import": "Import",
+    importDesc: "Load characters from an external JSON file",
+    bulkImport: "Bulk import (e.g.: Devanāgarī;IAST)",
+    bulkFontPlaceholder: "Font name (for primary character)",
+    bulkTextPlaceholder: "क्ष;kṣa\nत्र;tra",
+    ctrlEnter: "Ctrl + Enter to add",
+    singleChar: "Add single character",
+    charLabel: "Character",
+    fontNameOptional: "+ Font name (optional)",
+    fontOptional: "Font (optional)",
+    notePlaceholder: "... (note, mnemonic etc.)",
+    actionLabel: "Action...",
+    actionCopy: "Copy",
+    copySuffix: "Copy",
+    collectionInfoLabel: "Collection Info:",
+    collectionInfoPlaceholder: "Description, origin, or copyright information of this collection...",
+    collDefaultFont: "Collection default font",
+    collDefaultFontPlaceholder: "Default font (e.g. uttara.ttf)...",
+    forceFont: "Force for all characters",
     confirmDeleteCat: "Do you really want to delete this collection?",
     collectionAction: "Folder / Action...",
     collectionMove: "Move to Root Directory",
     collectionCopy: "Copy Collection",
     folderRoot: "Root Directory",
+    folderNamePlaceholder: "e.g., Other scripts",
+    moveToCollection: "Move to...",
     moveItemTitle: "Move Character",
     copyItemTitle: "Copy Character",
     searchPlaceholder: "Search collection...",
-    cancel: "Cancel",
+    importSuccess: "Import successful! New sets have been added to the top.",
+    importError: "Error during import: ",
+    // ── 8. Online Pool ────────────────────────────────────────────────────────
     onlinePoolBtn: "Online Pool",
     onlinePoolDesc: "Open collections shared and hosted on GitHub.",
     onlineLibraryTitle: "Sanskrit Online Library",
     collectionIdPlaceholder: "Enter collection ID (e.g. 101)...",
-    known: "Known",
-    notKnown: "Not Known"
-  }, _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_en, "loadBtn", "Load"), "searchIndexPlaceholder", "Search index..."), "loadingIndex", "Loading GitHub index..."), "noEntriesFound", "No entries found."), "addBtn", "Add"), "onlineImportSuccess", "Online collection successfully imported:\n"), "importErrorPool", "The entered ID is currently inactive or invalid. Please check the pool on GitHub."), "importErrorFetch", "Error loading online data. Please check your internet connection."), "onlineImportSuccess", "Successfully imported: "), "importErrorPool", "Collection not found in the online directory."), _defineProperty(_defineProperty(_en, "importErrorFetch", "Error loading the collection file from GitHub."), "loadingIndexError", "The online pool directory could not be loaded."))
+    searchIndexPlaceholder: "Search index...",
+    loadingIndex: "Loading GitHub index...",
+    loadingIndexError: "The online pool directory could not be loaded.",
+    noEntriesFound: "No entries found.",
+    addBtn: "Add",
+    loadBtn: "Load",
+    onlineImportSuccess: "Successfully imported: ",
+    importErrorPool: "Collection not found in the online directory.",
+    importErrorFetch: "Error loading the collection file from GitHub.",
+    noResults: "No results found for",
+    searchActive: "Search active...",
+    // ── 9. Info Modal ─────────────────────────────────────────────────────────
+    projectInfo: "Project information",
+    version: "Version",
+    conception: "Conceptualization",
+    period: "Creation period",
+    periodValue: "November 2025 – June 2026",
+    uniName: "University of Vienna",
+    deptName: "Department of South Asian, Tibetan and Buddhist Studies",
+    libraryTitle: "Study library",
+    istbUrl: "https://stb.univie.ac.at/en/",
+    techImp: "Technical implementation",
+    techImpDesc: "This application was developed in a dialogic process with Artificial Intelligence. The programming was made possible through the use of Google Gemini models 2.5, 3, 3.1, and 3.5 (Flash and Pro), as well as the Claude Sonnet 4.6 model.",
+    sources: "Sources & Copyrights",
+    ligatureSource: "360 most common Devanāgarī ligatures",
+    devaFont: "Devanāgarī font",
+    fontHint: "Display note: For optimal display of characters, especially complex ligatures, the use of the font <i>Sanskrit2003 - 30.07.2019.otf</i> is recommended.",
+    privacy: "Privacy",
+    privacyDesc: "To correctly display IAST diacritics (Google Fonts) and for basic technical functions (React, Tailwind), this app loads external resources. For technical reasons, your IP address is transmitted to the respective providers.",
+    license: "License",
+    ccUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en",
+    // ── 10. Font ──────────────────────────────────────────────────────────────
+    fontLabelCustom: "Font (optional):",
+    fontPlaceholderCustom: "Sanskrit2003 - 30.07.2019.otf",
+    fontHintCustom: "Enter the filename of a Devanāgarī Unicode font without its extension (e.g., 'uttara'). If this field is left empty, 'Sanskrit2003 - 30.07.2019.otf' is automatically used as the default. If the font file is located in the same folder as this HTML app, it will be loaded directly from there for a faster launch. Otherwise, it will be fetched from the online GitHub repository, if available.",
+    fontInputLabelCustom: "Filename of the Devanāgarī font:",
+    fontBackupDesc: "The app primarily searches for the Sanskrit2003 font in your local folder. If not present, it will automatically be loaded from GitHub as a backup.",
+    // ── 11. Misc ──────────────────────────────────────────────────────────────
+    localStatusActive: "You are running the app locally. Fonts and collections are obtained from your local directory.",
+    downloadPrompt: "Would you like to run the trainer locally on your computer?",
+    downloadBtnText: "Download app for local start (.zip)"
+  }
 };
 
 // FLUENCY TRAINER
@@ -10327,7 +10395,7 @@ var SanskritTrainer = function SanskritTrainer() {
     });
   };
   var deleteCategory = function deleteCategory(id) {
-    var confirmMsg = TRANSLATIONS[lang] && TRANSLATIONS[lang].confirmDeleteCat || (lang === 'de' ? 'Sammlung wirklich löschen?' : 'Delete collection?');
+    var confirmMsg = TRANSLATIONS[lang].confirmDeleteCat;
     if (window.confirm(confirmMsg)) {
       setCustomCategories(function (prev) {
         // 1. Prüfen, ob das Element direkt auf der Hauptebene liegt
@@ -10813,7 +10881,8 @@ var SanskritTrainer = function SanskritTrainer() {
               if (success) {
                 newUrl = window.location.pathname;
                 window.history.replaceState({}, document.title, newUrl);
-                alert(lang === 'de' ? "\uD83C\uDF89 Online-Sammlung erfolgreich importiert:\n\"".concat(success.name_de || success.filename, "\"") : "\uD83C\uDF89 Online collection successfully imported:\n\"".concat(success.name_en || success.filename, "\""));
+                var catName = lang === 'de' ? success.name_de || success.filename : success.name_en || success.filename;
+                alert(TRANSLATIONS[lang].onlineImportSuccess + '"' + catName + '"');
               }
             case 2:
               return _context4.a(2);
@@ -11184,7 +11253,7 @@ var SanskritTrainer = function SanskritTrainer() {
       items = [].concat(_toConsumableArray(items), _toConsumableArray(customItems));
     }
     if (items.length === 0) {
-      alert(lang === 'de' ? "Bitte wähle mindestens ein Paket aus!" : "Please select at least one set!");
+      alert(TRANSLATIONS[lang].selectAtLeastOne);
       return;
     }
 
@@ -11369,7 +11438,7 @@ var SanskritTrainer = function SanskritTrainer() {
       className: "text-2xl font-bold mb-4"
     }, TRANSLATIONS[lang].readTexts), /*#__PURE__*/React.createElement("p", {
       className: "text-stone-500 mb-6"
-    }, lang === 'de' ? "Hier wird das Modul zum Lesen von Texten integriert." : "The module for reading texts will be integrated here."), /*#__PURE__*/React.createElement("button", {
+    }, TRANSLATIONS[lang].readingComingSoon), /*#__PURE__*/React.createElement("button", {
       onClick: function onClick() {
         return setAppState('setup_devanagari');
       },
@@ -11528,7 +11597,7 @@ var SanskritTrainer = function SanskritTrainer() {
         };
         var activeNamesList = _getActiveCollectionNames(customCategories);
         var activeNames = activeNamesList.join("; ");
-        showHelp(e, lang === 'de' ? "Eigene Zeichen" : "Custom characters", activeNames ? TRANSLATIONS[lang].catCustomActive + activeNames : TRANSLATIONS[lang].catCustomNone);
+        showHelp(e, TRANSLATIONS[lang].catCustom, activeNames ? TRANSLATIONS[lang].catCustomActive + activeNames : TRANSLATIONS[lang].catCustomNone);
       },
       onMouseLeave: cancelHelp,
       onClick: function onClick(e) {
@@ -11546,7 +11615,7 @@ var SanskritTrainer = function SanskritTrainer() {
         };
         var activeNamesList = _getActiveCollectionNames2(customCategories);
         var activeNames = activeNamesList.join("; ");
-        showHelp(e, lang === 'de' ? "Eigene Zeichen" : "Custom characters", activeNames ? TRANSLATIONS[lang].catCustomActive + activeNames : TRANSLATIONS[lang].catCustomNone);
+        showHelp(e, TRANSLATIONS[lang].catCustom, activeNames ? TRANSLATIONS[lang].catCustomActive + activeNames : TRANSLATIONS[lang].catCustomNone);
       }
     }, /*#__PURE__*/React.createElement("span", {
       className: "font-bold ".concat(devaSet.includes('custom') ? 'text-rose-700 dark:text-rose-400' : 'text-stone-700 dark:text-stone-300')
@@ -11621,7 +11690,7 @@ var SanskritTrainer = function SanskritTrainer() {
       className: "col-span-1"
     }, /*#__PURE__*/React.createElement("label", {
       className: "block text-sm font-bold text-stone-700 dark:text-stone-300 mb-2"
-    }, lang === 'de' ? "Anzahl" : "Count"), /*#__PURE__*/React.createElement("input", {
+    }, TRANSLATIONS[lang].count), /*#__PURE__*/React.createElement("input", {
       type: "number",
       min: "1",
       max: "999",
@@ -11780,7 +11849,7 @@ var SanskritTrainer = function SanskritTrainer() {
         showHelp(e, TRANSLATIONS[lang].info, currentItem.note);
       },
       className: "absolute top-4 right-4 p-2 text-stone-300 dark:text-stone-600 hover:text-rose-400 transition-colors z-30 cursor-pointer",
-      title: lang === 'de' ? "Hinweis anzeigen" : "Show note"
+      title: TRANSLATIONS[lang].showNote
     }, /*#__PURE__*/React.createElement("svg", {
       xmlns: "http://www.w3.org/2000/svg",
       width: "18",
@@ -11807,7 +11876,7 @@ var SanskritTrainer = function SanskritTrainer() {
       y2: "8"
     }))), isForward && currentItem !== null && currentItem !== void 0 && currentItem.image ? /*#__PURE__*/React.createElement("img", {
       src: currentItem.image,
-      alt: lang === 'de' ? "Frage" : "Question",
+      alt: TRANSLATIONS[lang].questionLabel,
       className: "max-h-[4.1rem] w-auto object-contain bg-transparent dark:invert dark:opacity-90 dark:mix-blend-screen"
     }) : /*#__PURE__*/React.createElement("div", {
       className: isForward ? "text-8xl font-deva leading-none" : "text-6xl iast-sharp font-bold text-rose-700 leading-none",
@@ -11831,7 +11900,7 @@ var SanskritTrainer = function SanskritTrainer() {
         !quizAnswered && idx === quizFocusIndex ? 'border-rose-500 dark:border-rose-400 bg-rose-50/40 dark:bg-rose-950/20' : 'border-transparent hover:border-rose-500')
       }, !isForward && option !== null && option !== void 0 && option.image ? /*#__PURE__*/React.createElement("img", {
         src: option.image,
-        alt: lang === 'de' ? "Antwort" : "Answer",
+        alt: TRANSLATIONS[lang].answerLabel,
         className: "max-h-[1.6rem] w-auto object-contain bg-transparent dark:invert dark:opacity-90 dark:mix-blend-screen"
       }) : /*#__PURE__*/React.createElement("span", {
         className: isForward ? "text-2xl iast-sharp font-bold" : "text-4xl font-deva",
@@ -11920,9 +11989,9 @@ var SanskritTrainer = function SanskritTrainer() {
       href: TRANSLATIONS[lang].istbUrl,
       target: "_blank",
       className: "text-rose-600 hover:underline"
-    }, TRANSLATIONS[lang].libraryTitle === 'Studierbibliothek' ? "Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB]" : "Department of South Asian, Tibetan and Buddhist Studies"), ", ", lang === 'de' ? "Universität Wien" : "University of Vienna", ")"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].period, ":"), " ", lang === 'de' ? "November 2025 – Juni 2026" : "November 2025 – May June"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].techImp, ":"), /*#__PURE__*/React.createElement("br", null), TRANSLATIONS[lang].techImpDesc), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].sources, ":")), /*#__PURE__*/React.createElement("ul", {
+    }, TRANSLATIONS[lang].deptName), ", ", TRANSLATIONS[lang].uniName, ")"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].period, ":"), " ", TRANSLATIONS[lang].periodValue), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].techImp, ":"), /*#__PURE__*/React.createElement("br", null), TRANSLATIONS[lang].techImpDesc), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].sources, ":")), /*#__PURE__*/React.createElement("ul", {
       className: "space-y-1 ml-1 text-xs"
-    }, /*#__PURE__*/React.createElement("li", null, "\u2022 ", /*#__PURE__*/React.createElement("b", null, lang === 'de' ? "360 häufigste Devanāgarī-Ligaturen" : "360 most common Devanāgarī ligatures", ":"), " Stiehl, Ulrich. \u201E2. Die h\xE4ufigsten Ligaturen im klassischen Sanskrit\u201C. Devanagari, Sanskrit Web, S. 7\u201325."), /*#__PURE__*/React.createElement("li", null, "\u2022 ", /*#__PURE__*/React.createElement("b", null, lang === 'de' ? "Devanāgarī-Schriftart" : "Devanāgarī font", ":"), " ", /*#__PURE__*/React.createElement("i", null, "Sanskrit 2003"), ". Version 1.20, Omkarananda Ashram, 30. Juli 2019.")), /*#__PURE__*/React.createElement("p", {
+    }, /*#__PURE__*/React.createElement("li", null, "\u2022 ", /*#__PURE__*/React.createElement("b", null, TRANSLATIONS[lang].ligatureSource, ":"), " Stiehl, Ulrich. \u201E2. Die h\xE4ufigsten Ligaturen im klassischen Sanskrit\u201C. Devanagari, Sanskrit Web, S. 7\u201325."), /*#__PURE__*/React.createElement("li", null, "\u2022 ", /*#__PURE__*/React.createElement("b", null, TRANSLATIONS[lang].devaFont, ":"), " ", /*#__PURE__*/React.createElement("i", null, "Sanskrit 2003"), ". Version 1.20, Omkarananda Ashram, 30. Juli 2019.")), /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-stone-500 dark:text-stone-400 pt-1 pl-4 border-l-2 border-stone-200 dark:border-stone-700 leading-relaxed"
     }, TRANSLATIONS[lang].fontBackupDesc), /*#__PURE__*/React.createElement("div", {
       className: "mt-4 p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900/40 font-sans text-xs"
@@ -11964,7 +12033,7 @@ var SanskritTrainer = function SanskritTrainer() {
   }, /*#__PURE__*/React.createElement(SettingsIcon, {
     className: "mr-2 text-rose-600",
     size: 20
-  }), lang === 'de' ? 'Schriftart (optional)' : 'Font (optional)'), /*#__PURE__*/React.createElement("div", {
+  }), TRANSLATIONS[lang].fontOptional), /*#__PURE__*/React.createElement("div", {
     className: "space-y-4"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm font-bold text-stone-700 dark:text-stone-300 mb-2"
@@ -12341,11 +12410,11 @@ var SanskritTrainer = function SanskritTrainer() {
     }, /*#__PURE__*/React.createElement("option", {
       value: "",
       disabled: true
-    }, TRANSLATIONS[lang].editTitle ? lang === 'de' ? "Aktion..." : "Action..." : "Aktion..."), /*#__PURE__*/React.createElement("option", {
+    }, TRANSLATIONS[lang].editTitle ? TRANSLATIONS[lang].actionLabel : "Aktion..."), /*#__PURE__*/React.createElement("option", {
       value: "move"
-    }, lang === 'de' ? "Verschieben" : "Move"), /*#__PURE__*/React.createElement("option", {
+    }, TRANSLATIONS[lang].actionMove), /*#__PURE__*/React.createElement("option", {
       value: "copy"
-    }, lang === 'de' ? "Kopieren" : "Copy")), /*#__PURE__*/React.createElement("button", {
+    }, TRANSLATIONS[lang].actionCopy)), /*#__PURE__*/React.createElement("button", {
       onClick: function onClick() {
         return deleteCategory(cat.id);
       },
@@ -12491,13 +12560,13 @@ var SanskritTrainer = function SanskritTrainer() {
       }, /*#__PURE__*/React.createElement("option", {
         value: "",
         disabled: true
-      }, lang === 'de' ? "Aktion..." : "Action..."), /*#__PURE__*/React.createElement("option", {
+      }, TRANSLATIONS[lang].actionLabel), /*#__PURE__*/React.createElement("option", {
         value: "move"
-      }, " ", lang === 'de' ? "Verschieben" : "Move"), /*#__PURE__*/React.createElement("option", {
+      }, " ", TRANSLATIONS[lang].actionMove), /*#__PURE__*/React.createElement("option", {
         value: "copy"
-      }, " ", lang === 'de' ? "Kopieren" : "Copy")), /*#__PURE__*/React.createElement("button", {
+      }, " ", TRANSLATIONS[lang].actionCopy)), /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
-          if (window.confirm(lang === 'de' ? 'Sammlung wirklich löschen?' : 'Delete collection?')) {
+          if (window.confirm(TRANSLATIONS[lang].confirmDeleteCat)) {
             setCustomCategories(function (prev) {
               return prev.map(function (c) {
                 return c.id === cat.id ? _objectSpread(_objectSpread({}, c), {}, {
@@ -12629,7 +12698,7 @@ var SanskritTrainer = function SanskritTrainer() {
           }
         })), /*#__PURE__*/React.createElement("input", {
           type: "text",
-          placeholder: lang === 'de' ? "Schriftzeichen" : "Character",
+          placeholder: TRANSLATIONS[lang].charLabel,
           value: item["char"] || '',
           disabled: !!item.image,
           onChange: function onChange(e) {
@@ -12653,7 +12722,7 @@ var SanskritTrainer = function SanskritTrainer() {
           className: "w-16 md:w-32 p-1 text-base font-deva border-b border-stone-200 dark:border-stone-700 bg-transparent outline-none focus:border-rose-500 dark:text-stone-200"
         }), /*#__PURE__*/React.createElement("input", {
           type: "text",
-          placeholder: lang === 'de' ? "+ Fontname (optional)" : "+ Font name (optional)",
+          placeholder: TRANSLATIONS[lang].fontNameOptional,
           value: item.font || '',
           onChange: function onChange(e) {
             var val = e.target.value;
@@ -12708,11 +12777,11 @@ var SanskritTrainer = function SanskritTrainer() {
         }, /*#__PURE__*/React.createElement("option", {
           value: "",
           disabled: true
-        }, lang === 'de' ? "Aktion..." : "Action..."), /*#__PURE__*/React.createElement("option", {
+        }, TRANSLATIONS[lang].actionLabel), /*#__PURE__*/React.createElement("option", {
           value: "move"
-        }, " ", lang === 'de' ? "Verschieben" : "Move"), /*#__PURE__*/React.createElement("option", {
+        }, " ", TRANSLATIONS[lang].actionMove), /*#__PURE__*/React.createElement("option", {
           value: "copy"
-        }, " ", lang === 'de' ? "Kopieren" : "Copy")), /*#__PURE__*/React.createElement("button", {
+        }, " ", TRANSLATIONS[lang].actionCopy)), /*#__PURE__*/React.createElement("button", {
           onClick: function onClick() {
             setCustomCategories(function (prev) {
               return prev.map(function (c) {
@@ -12737,7 +12806,7 @@ var SanskritTrainer = function SanskritTrainer() {
           className: "text-[9px] font-bold text-stone-400 uppercase shrink-0"
         }, "Info:"), /*#__PURE__*/React.createElement("input", {
           type: "text",
-          placeholder: lang === 'de' ? "... (Anmerkung, Merkhilfe etc.)" : "... (note, mnemonic etc.)",
+          placeholder: TRANSLATIONS[lang].notePlaceholder,
           value: item.note || '',
           onChange: function onChange(e) {
             var val = e.target.value;
@@ -12825,7 +12894,7 @@ var SanskritTrainer = function SanskritTrainer() {
                 id: 'item_' + Date.now() + '_' + idx + '_' + Math.random().toString(36).substr(2, 4)
               });
             });
-            var suffix = lang === 'de' ? "Kopie" : "Copy";
+            var suffix = TRANSLATIONS[lang].copySuffix;
             catToProcess = _objectSpread(_objectSpread({}, catToProcess), {}, {
               id: freshCatId,
               name: "".concat(catToProcess.name, " (").concat(suffix, ")"),
@@ -12919,11 +12988,11 @@ var SanskritTrainer = function SanskritTrainer() {
       className: "mb-3 bg-stone-50 dark:bg-stone-900/40 p-3 rounded-lg border border-stone-200 dark:border-stone-800"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider mb-2"
-    }, lang === 'de' ? "Standard-Schriftart der Sammlung" : "Collection default font"), /*#__PURE__*/React.createElement("div", {
+    }, TRANSLATIONS[lang].collDefaultFont), /*#__PURE__*/React.createElement("div", {
       className: "flex gap-2"
     }, /*#__PURE__*/React.createElement("input", {
       type: "text",
-      placeholder: lang === 'de' ? "Standard-Font (z.B. uttara.ttf)..." : "Default font (e.g. uttara.ttf)...",
+      placeholder: TRANSLATIONS[lang].collDefaultFontPlaceholder,
       defaultValue: cat.font || "",
       onBlur: function onBlur(e) {
         var val = e.target.value.trim();
@@ -12962,7 +13031,7 @@ var SanskritTrainer = function SanskritTrainer() {
         });
       },
       className: "text-[10px] bg-stone-200 hover:bg-stone-300 dark:bg-stone-850 dark:hover:bg-stone-750 text-stone-700 dark:text-stone-300 px-3 py-1 rounded font-bold transition-colors shrink-0"
-    }, lang === 'de' ? "Für alle Zeichen erzwingen" : "Force for all characters"))), /*#__PURE__*/React.createElement("div", {
+    }, TRANSLATIONS[lang].forceFont))), /*#__PURE__*/React.createElement("div", {
       className: "bg-rose-50/50 dark:bg-rose-900/10 p-3 rounded-lg border border-rose-100 dark:border-rose-900/20"
     }, /*#__PURE__*/React.createElement("div", {
       className: "flex justify-between items-center mb-2"
@@ -13059,7 +13128,7 @@ var SanskritTrainer = function SanskritTrainer() {
         }
       })), /*#__PURE__*/React.createElement("input", {
         type: "text",
-        placeholder: lang === 'de' ? "Schriftzeichen" : "Character",
+        placeholder: TRANSLATIONS[lang].charLabel,
         value: item["char"] || '',
         disabled: !!item.image,
         onChange: function onChange(e) {
@@ -13078,7 +13147,7 @@ var SanskritTrainer = function SanskritTrainer() {
         className: "w-16 md:w-32 p-1 text-base font-deva border-b border-stone-200 dark:border-stone-700 bg-transparent outline-none focus:border-rose-500 dark:text-stone-200"
       }), /*#__PURE__*/React.createElement("input", {
         type: "text",
-        placeholder: lang === 'de' ? "+ Fontname (optional)" : "+ Font name (optional)",
+        placeholder: TRANSLATIONS[lang].fontNameOptional,
         value: item.font || '',
         onChange: function onChange(e) {
           return setCustomCategories(function (prev) {
@@ -13129,11 +13198,11 @@ var SanskritTrainer = function SanskritTrainer() {
       }, /*#__PURE__*/React.createElement("option", {
         value: "",
         disabled: true
-      }, lang === 'de' ? "Aktion..." : "Action..."), /*#__PURE__*/React.createElement("option", {
+      }, TRANSLATIONS[lang].actionLabel), /*#__PURE__*/React.createElement("option", {
         value: "move"
-      }, " ", lang === 'de' ? "Verschieben" : "Move"), /*#__PURE__*/React.createElement("option", {
+      }, " ", TRANSLATIONS[lang].actionMove), /*#__PURE__*/React.createElement("option", {
         value: "copy"
-      }, " ", lang === 'de' ? "Kopieren" : "Copy")), /*#__PURE__*/React.createElement("button", {
+      }, " ", TRANSLATIONS[lang].actionCopy)), /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
           return setCustomCategories(function (prev) {
             return prev.map(function (c) {
@@ -13154,7 +13223,7 @@ var SanskritTrainer = function SanskritTrainer() {
         className: "text-[9px] font-bold text-stone-400 uppercase shrink-0"
       }, "Info:"), /*#__PURE__*/React.createElement("input", {
         type: "text",
-        placeholder: lang === 'de' ? "... (Anmerkung, Merkhilfe etc.)" : "... (note, mnemonic etc.)",
+        placeholder: TRANSLATIONS[lang].notePlaceholder,
         value: item.note || '',
         onChange: function onChange(e) {
           return setCustomCategories(function (prev) {
@@ -13430,7 +13499,7 @@ var SanskritTrainer = function SanskritTrainer() {
   }, /*#__PURE__*/React.createElement(EyeIcon, {
     size: 28,
     className: "text-rose-600"
-  }), studyModeContent === 'custom' ? lang === 'de' ? 'Eigene Zeichen' : 'Custom characters' : studyModeContent === 'basic' ? TRANSLATIONS[lang].catBasic : studyModeContent === 'diacritics' ? TRANSLATIONS[lang].catDiacritics : studyModeContent === 'ligatures' ? TRANSLATIONS[lang].catLigatures : TRANSLATIONS[lang].catDigits), /*#__PURE__*/React.createElement("p", {
+  }), studyModeContent === 'custom' ? TRANSLATIONS[lang].catCustom : studyModeContent === 'basic' ? TRANSLATIONS[lang].catBasic : studyModeContent === 'diacritics' ? TRANSLATIONS[lang].catDiacritics : studyModeContent === 'ligatures' ? TRANSLATIONS[lang].catLigatures : TRANSLATIONS[lang].catDigits), /*#__PURE__*/React.createElement("p", {
     className: "text-stone-500 mt-1 text-sm flex items-center gap-2"
   }, studySearch ? TRANSLATIONS[lang].searchActive : TRANSLATIONS[lang].libraryTitle, /*#__PURE__*/React.createElement("span", {
     className: "inline-block px-2 py-0.5 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded text-[10px] font-bold text-rose-600 uppercase tracking-wider"
