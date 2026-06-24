@@ -1,8 +1,8 @@
 <!--
-DEVANĀGARĪ TRAINER 3.1.3
+DEVANĀGARĪ TRAINER 3.1.4
 Konzeption: Thomas Kintaert (Institut für Südasien-, Tibet- und Buddhismuskunde [ISTB], Universität Wien) Erstellungszeitraum: November 2025 – Juni 2026
 
-TECHNISCHE UMSETZUNG: Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini- Modelle 2.5, 3, 3.1 und 3.5 (Flash und Pro) und des Claude-Modells Sonnet 4.6 ermöglicht.
+TECHNISCHE UMSETZUNG: Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini-Modelle 2.5, 3, 3.1 und 3.5 (Flash und Pro) und des Claude-Modells Sonnet 4.6 ermöglicht.
 
 QUELLEN & URHEBERRECHTE: • 360 häufigste Devanāgarī-Ligaturen: Stiehl, Ulrich. „2. Die häufigsten Ligaturen im klassischen Sanskrit (The 360 Ligatures of Classical Sanskrit with Frequency >= 0.010%)“. Devanagari, Sanskrit Web, S. 7–25, www.sanskritweb.net/deutsch/devanagari.pdf. Zugriff 6. Jan. 2026.
 
@@ -8637,7 +8637,7 @@ var DEVANAGARI_DATA = {
   }]
 };
 // === VERSION_CHECK_LOGIC ===
-const APP_VERSION = "3.1.3";
+const APP_VERSION = "3.1.4";
 async function checkForUpdates() {
   try {
     // Schutz vor file:// Protokoll: Bricht im lokalen Offline-Modus lautlos ab
@@ -8860,14 +8860,14 @@ var TRANSLATIONS = {
     libraryTitle: "Studierbibliothek",
     istbUrl: "https://stb.univie.ac.at/",
     techImp: "Technische Umsetzung",
-    techImpDesc: "Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini- Modelle 2.5, 3, 3.1 und 3.5 (Flash und Pro) und des Claude-Modells Sonnet 4.6 ermöglicht.",
+    techImpDesc: "Diese Anwendung wurde im dialogischen Prozess mit Künstlicher Intelligenz entwickelt. Die Programmierung wurde durch den Einsatz der Google-Gemini-Modelle 2.5, 3, 3.1 und 3.5 (Flash und Pro) und des Claude-Modells Sonnet 4.6 ermöglicht.",
     sources: "Quellen & Urheberrechte",
     ligatureSource: "360 häufigste Devanāgarī-Ligaturen",
     devaFont: "Devanāgarī-Schriftart",
     fontHint: "Hinweis zur Darstellung: Für eine optimale Anzeige der Schriftzeichen, insbesondere der komplexen Ligaturen, wird die Verwendung der Schriftart <i>Sanskrit2003 - 30.07.2019.otf</i> empfohlen.",
     privacy: "Datenschutz",
-    privacyDesc: "Zur korrekten Darstellung der IAST-Diakritika (Google Fonts) sowie für technische Basisfunktionen (React, Tailwind) lädt diese App externe Ressourcen. Dabei wird technisch bedingt die IP-Adresse an die jeweiligen Anbieter übertragen.",
-    license: "Lizenz",
+    privacyDesc: "Diese Anwendung läuft vollständig lokal in Ihrem Browser. Es werden keinerlei personenbezogene Daten erfasst, gespeichert oder an externe Server übertragen.",
+    license: "Veröffentlicht unter CC BY-NC-SA 4.0. Die App darf geteilt und verändert werden (Namensnennung, nicht-kommerziell, Weitergabe unter gleichen Bedingungen).",
     ccUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de",
     // ── 10. Font ──────────────────────────────────────────────────────────────
     fontLabelCustom: "Schriftart (optional):",
@@ -8877,8 +8877,8 @@ var TRANSLATIONS = {
     fontBackupDesc: "Die App sucht die Schriftart Sanskrit2003 primär in Ihrem lokalen Ordner. Falls nicht vorhanden, wird sie automatisch als Backup von GitHub geladen.",
     // ── 11. Misc ──────────────────────────────────────────────────────────────
     localStatusActive: "Sie führen die App lokal aus. Schriftarten und Sammlungen werden aus Ihrem lokalen Verzeichnis bezogen.",
-    downloadPrompt: "Möchten Sie den Trainer lokal auf Ihrem Computer starten?",
-    downloadBtnText: "App für lokalen Start herunterladen (.zip)"
+    downloadPrompt: "App offline nutzen: Speichern Sie diese Seite auf Ihrem Computer oder Mobilgerät. Danach funktioniert der Trainer auch ohne Internetverbindung.",
+    downloadBtnText: "Möchten Sie den Trainer offline nutzen? Laden Sie die App einfach auf Ihren Computer oder Ihr Mobilgerät herunter. Danach läuft sie auch ohne Internetverbindung."
   },
   en: {
     // ── 1. General ────────────────────────────────────────────────────────────
@@ -9058,7 +9058,7 @@ var TRANSLATIONS = {
     devaFont: "Devanāgarī font",
     fontHint: "Display note: For optimal display of characters, especially complex ligatures, the use of the font <i>Sanskrit2003 - 30.07.2019.otf</i> is recommended.",
     privacy: "Privacy",
-    privacyDesc: "To correctly display IAST diacritics (Google Fonts) and for basic technical functions (React, Tailwind), this app loads external resources. For technical reasons, your IP address is transmitted to the respective providers.",
+    privacyDesc: "This application runs entirely locally in your browser. No personal data is collected, stored, or transmitted to external servers.",
     license: "License",
     ccUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en",
     // ── 10. Font ──────────────────────────────────────────────────────────────
@@ -11985,7 +11985,7 @@ var SanskritTrainer = function SanskritTrainer() {
       className: "w-8 h-8 rounded-full border-2 border-rose-800 dark:border-rose-400 flex items-center justify-center mr-3 text-base font-serif italic"
     }, "i"), TRANSLATIONS[lang].projectInfo), /*#__PURE__*/React.createElement("div", {
       className: "space-y-2 text-stone-700 dark:text-stone-300 leading-relaxed text-sm"
-    }, /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].version, ":"), " Devan\u0101gar\u012B Trainer 3.1.3"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].conception, ":"), " Thomas Kintaert (", /*#__PURE__*/React.createElement("a", {
+    }, /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].version, ":"), " Devan\u0101gar\u012B Trainer 3.1.4"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].conception, ":"), " Thomas Kintaert (", /*#__PURE__*/React.createElement("a", {
       href: TRANSLATIONS[lang].istbUrl,
       target: "_blank",
       className: "text-rose-600 hover:underline"
@@ -11996,7 +11996,7 @@ var SanskritTrainer = function SanskritTrainer() {
     }, TRANSLATIONS[lang].fontBackupDesc), /*#__PURE__*/React.createElement("div", {
       className: "mt-4 p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900/40 font-sans text-xs"
     }, isLocal ? /*#__PURE__*/React.createElement("div", {
-      className: "flex items-start gap-2 text-emerald-600 dark:text-emerald-400 font-medium"
+      className: "flex items-start gap-2 text-rose-700 dark:text-rose-400 font-medium"
     }, /*#__PURE__*/React.createElement("span", {
       className: "text-base leading-none"
     }, "\u2713"), /*#__PURE__*/React.createElement("div", null, TRANSLATIONS[lang].localStatusActive)) : /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
@@ -12009,11 +12009,11 @@ var SanskritTrainer = function SanskritTrainer() {
       className: "pt-2"
     }, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].privacy, ":"), " ", TRANSLATIONS[lang].privacyDesc), /*#__PURE__*/React.createElement("p", {
       className: "pt-1"
-    }, /*#__PURE__*/React.createElement("strong", null, TRANSLATIONS[lang].license, ":"), " ", /*#__PURE__*/React.createElement("a", {
+    }, /*#__PURE__*/React.createElement("strong", null, lang === 'de' ? "Lizenz" : "License", ":"), " ", TRANSLATIONS[lang].license, " Details: ", /*#__PURE__*/React.createElement("a", {
       href: TRANSLATIONS[lang].ccUrl,
       target: "_blank",
       className: "text-rose-600 hover:underline"
-    }, "CC BY-NC-SA 4.0"), ".")), /*#__PURE__*/React.createElement("button", {
+    }, TRANSLATIONS[lang].ccUrl), ".")), /*#__PURE__*/React.createElement("button", {
       onClick: function onClick() {
         return setShowInfo(false);
       },
