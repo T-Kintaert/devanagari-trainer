@@ -7110,7 +7110,7 @@ var TrainerCard = function TrainerCard(_ref21) {
     return /*#__PURE__*/React.createElement("span", {
       className: lang === 'deva' ? 'text-8xl font-deva' : lang === 'iast' ? 'text-3xl iast-sharp font-bold px-2 text-center' : 'text-3xl font-serif font-bold px-2 text-center',
       style: lang === 'deva' && isCustomFont ? {
-        fontFamily: "\"".concat(safeCustomFont, "\", \"Sanskrit2003\", \"Noto Serif Devanagari\", serif")
+        fontFamily: "\"".concat(safeCustomFont, "\", serif")
       } : {},
       dangerouslySetInnerHTML: {
         __html: content
@@ -10127,7 +10127,7 @@ var SanskritTrainer = function SanskritTrainer() {
   var registerCustomFont = function registerCustomFont(fontName) {
     if (!fontName) return;
     var normalized = fontName.trim();
-    if (!normalized) return;
+    if (!normalized || normalized === "CUSTOM_FONT") return;
 
     // Verhindert doppeltes Registrieren direkt über den exakten Namen
     var styleId = "font-face-" + normalized.replace(/[^a-zA-Z0-9]/g, "");
@@ -10138,13 +10138,15 @@ var SanskritTrainer = function SanskritTrainer() {
 
     // Dynamische Ermittlung des Formats anhand der echten Dateiendung
     var isOtf = normalized.toLowerCase().endsWith('.otf');
-    var formatType = isOtf ? 'opentype' : 'truetype';
+    var formatHint = isOtf ? ' format("opentype")' : '';
 
     // Berechnet den reinen PostScript-Namen ohne Endung (z.B. "uttara" aus "uttara.ttf")
     var postScriptName = normalized.replace(/\.[^/.]+$/, "");
+    var capName = postScriptName.charAt(0).toUpperCase() + postScriptName.slice(1);
+    var lowerName = postScriptName.toLowerCase();
     var style = document.createElement("style");
     style.id = styleId;
-    style.appendChild(document.createTextNode("\n                  @font-face {\n                      font-family: \"".concat(normalized, "\";\n                      src: local(\"").concat(postScriptName, "\"),\n                           local(\"").concat(normalized, "\"),\n                           url(\"./").concat(encodeURIComponent(normalized), "\") format(\"").concat(formatType, "\"),\n                           url(\"fonts/").concat(encodeURIComponent(normalized), "\") format(\"").concat(formatType, "\"),\n                           url(\"").concat(githubFontUrl, "\") format(\"").concat(formatType, "\");\n                      font-display: swap;\n                  }\n                  @font-face {\n                      font-family: \"").concat(postScriptName, "\";\n                      src: local(\"").concat(postScriptName, "\"),\n                           local(\"").concat(normalized, "\"),\n                           url(\"./").concat(encodeURIComponent(normalized), "\") format(\"").concat(formatType, "\"),\n                           url(\"fonts/").concat(encodeURIComponent(normalized), "\") format(\"").concat(formatType, "\"),\n                           url(\"").concat(githubFontUrl, "\") format(\"").concat(formatType, "\");\n                      font-display: swap;\n                  }\n              ")));
+    style.appendChild(document.createTextNode("\n                  @font-face {\n                      font-family: \"".concat(normalized, "\";\n                      src: local(\"").concat(postScriptName, "\"),\n                           local(\"").concat(capName, "\"),\n                           local(\"").concat(capName, " Regular\"),\n                           local(\"").concat(capName, "-Regular\"),\n                           local(\"").concat(lowerName, "\"),\n                           local(\"").concat(normalized, "\"),\n                           url(\"./").concat(encodeURIComponent(normalized), "\")").concat(formatHint, ",\n                           url(\"fonts/").concat(encodeURIComponent(normalized), "\")").concat(formatHint, ",\n                           url(\"").concat(githubFontUrl, "\")").concat(formatHint, ";\n                      font-display: swap;\n                  }\n                  @font-face {\n                      font-family: \"").concat(postScriptName, "\";\n                      src: local(\"").concat(postScriptName, "\"),\n                           local(\"").concat(capName, "\"),\n                           local(\"").concat(capName, " Regular\"),\n                           local(\"").concat(capName, "-Regular\"),\n                           local(\"").concat(lowerName, "\"),\n                           local(\"").concat(normalized, "\"),\n                           url(\"./").concat(encodeURIComponent(normalized), "\")").concat(formatHint, ",\n                           url(\"fonts/").concat(encodeURIComponent(normalized), "\")").concat(formatHint, ",\n                           url(\"").concat(githubFontUrl, "\")").concat(formatHint, ";\n                      font-display: swap;\n                  }\n              ")));
     document.head.appendChild(style);
   };
   window.registerCustomFont = registerCustomFont;
@@ -11951,7 +11953,7 @@ var SanskritTrainer = function SanskritTrainer() {
     }) : /*#__PURE__*/React.createElement("div", {
       className: isForward ? "text-8xl font-deva leading-none" : "text-6xl iast-sharp font-bold text-rose-700 leading-none",
       style: isForward && currentItem !== null && currentItem !== void 0 && currentItem.font ? {
-        fontFamily: "\"".concat(currentItem.font, "\", Sanskrit2003, \"Noto Serif Devanagari\", serif")
+        fontFamily: "\"".concat(currentItem.font, "\", serif")
       } : {}
     }, displayQuestion)), /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-2 gap-4"
@@ -11975,7 +11977,7 @@ var SanskritTrainer = function SanskritTrainer() {
       }) : /*#__PURE__*/React.createElement("span", {
         className: isForward ? "text-2xl iast-sharp font-bold" : "text-4xl font-deva",
         style: !isForward && option !== null && option !== void 0 && option.font ? {
-          fontFamily: "\"".concat(option.font, "\", Sanskrit2003, \"Noto Serif Devanagari\", serif")
+          fontFamily: "\"".concat(option.font, "\", serif")
         } : {}
       }, isForward ? option.t : option.d));
     })), /*#__PURE__*/React.createElement("button", {
