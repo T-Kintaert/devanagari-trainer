@@ -6317,6 +6317,55 @@ video {
     }
 </style>
 </head>
+<!-- DIAGNOSE-POPUP: BITTE NACH TEST LÖSCHEN (von hier... -->
+<div id="diag-btn" style="position:fixed;bottom:20px;left:20px;z-index:99999;background:red;color:white;padding:12px;border-radius:8px;font-size:16px;cursor:pointer;font-family:sans-serif;">
+  🔍 Font-Diagnose
+</div>
+<div id="diag-popup" style="display:none;position:fixed;inset:20px;z-index:99999;background:white;color:black;padding:16px;border-radius:12px;overflow-y:auto;font-size:13px;font-family:monospace;border:2px solid red;">
+  <button onclick="document.getElementById('diag-popup').style.display='none'" style="float:right;padding:8px;font-size:16px;">✕</button>
+  <div id="diag-output">wird geladen...</div>
+</div>
+<script>
+document.getElementById('diag-btn').onclick = function() {
+  var out = '';
+  // 1. Computed font-family
+  var el = document.querySelector('.font-deva');
+  if (el) {
+    out += '=== ELEMENT ===\n';
+    out += 'computed: ' + window.getComputedStyle(el).fontFamily + '\n';
+    out += 'inline: ' + (el.style.fontFamily || '(keiner)') + '\n\n';
+  } else {
+    out += 'KEIN .font-deva Element gefunden!\n\n';
+  }
+  // 2. font-face Blöcke
+  out += '=== FONT-FACE REGELN ===\n';
+  Array.from(document.styleSheets).forEach(function(sheet) {
+    try {
+      Array.from(sheet.cssRules || []).forEach(function(rule) {
+        if (rule.type === CSSRule.FONT_FACE_RULE) {
+          var ff = rule.style.getPropertyValue('font-family');
+          var src = rule.style.getPropertyValue('src');
+          if (/siddhanta|sanskrit/i.test(ff)) {
+            out += ff + ':\n' + src.substring(0, 120) + '\n\n';
+          }
+        }
+      });
+    } catch(e) { out += '(sheet nicht lesbar)\n'; }
+  });
+  // 3. FontFace API
+  out += '=== GELADENE FONTS ===\n';
+  if (document.fonts) {
+    document.fonts.forEach(function(f) {
+      if (/siddhanta|sanskrit/i.test(f.family)) {
+        out += f.family + ': ' + f.status + '\n';
+      }
+    });
+  }
+  document.getElementById('diag-output').innerText = out;
+  document.getElementById('diag-popup').style.display = 'block';
+};
+</script>
+<!-- ...bis hier) -->
 <body>
     <div class="app-wrapper">
         <div id="root"></div>
