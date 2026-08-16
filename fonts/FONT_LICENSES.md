@@ -1,8 +1,8 @@
 ## Devanāgarī Font Information & Licenses
 
-This application provides flexible font loading. When using the app online via the GitHub URL, fonts are loaded directly from the repository's fonts folder. For local or offline usage, the app attempts to load the fonts locally from the same directory as the HTML file (falling back to the GitHub repository if connected to the internet). 
+This application provides flexible font loading. **All fonts listed below are embedded directly in the compiled HTML file as Base64 data** — no download, local file, or internet connection is required to display them, whether you open the file locally or use it online.
 
-To use any of the pre-bundled fonts listed below, simply enter the respective filename in the input field below **"Filename of the Devanāgarī font:"**. If you wish to use a custom font that is not included in this list, the corresponding font file must be placed locally in the same folder as the application.
+If you prefer a different Devanāgarī font than the ones listed, you can specify a custom one in the input field below **"Filename of the Devanāgarī font:"**. In that case, the app first checks whether the font is already installed on your system; if not, it looks for the corresponding file in the same folder as the HTML file (or a `fonts` subfolder next to it); and if that also fails and you are connected to the internet, it retrieves the file from this project's GitHub repository via the jsDelivr content delivery network as a last resort. A custom font file itself is never bundled into the HTML file automatically — only the fonts listed below are.
 
 ### Included Fonts (Alphabetical Order)
 *   **Jaini & Jaini Purva (`Jaini-Regular.ttf`, `JainiPurva-Regular.ttf`)**
