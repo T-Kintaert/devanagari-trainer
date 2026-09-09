@@ -1,3161 +1,2828 @@
 [
   {
-    "id": "folder_1779616479460",
+    "id": "folder_1788981756431_0_h08c1vr",
     "name": "The Sanskrit alphasyllabary in other Brāhmī scripts",
     "active": true,
     "isFolder": true,
     "collections": [
       {
-        "id": "c5_1772814730110",
+        "id": "subcat_1788981756431_0_mwwuffy",
         "name": "Bengali",
         "active": true,
         "items": [
           {
-            "id": "item_1779625488428_ppr6gfp6h",
+            "id": "item_1788981756431_0_0_cw8frgyp5",
             "char": "অ",
             "iast": "a",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_vwo1t4g77",
+            "id": "item_1788981756431_0_1_tahqsu4ds",
             "char": "আ",
             "iast": "ā",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_xt0qt207n",
+            "id": "item_1788981756431_0_2_au5jpy8yt",
             "char": "ই",
             "iast": "i",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_rl4g4u8gz",
+            "id": "item_1788981756431_0_3_n6i0mv4qy",
             "char": "ঈ",
             "iast": "ī",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_3e6ujs4ep",
+            "id": "item_1788981756431_0_4_h4q7idvf6",
             "char": "উ",
             "iast": "u",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_9pkjzmm84",
+            "id": "item_1788981756431_0_5_xupwn8upr",
             "char": "ঊ",
             "iast": "ū",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_2l61d4axg",
+            "id": "item_1788981756431_0_6_lsf19cg1p",
             "char": "ঋ",
             "iast": "ṛ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_izszw80jl",
+            "id": "item_1788981756431_0_7_uz62i4mq6",
             "char": "ৠ",
             "iast": "ṝ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_6lkmivmg4",
+            "id": "item_1788981756431_0_8_nfkz84qd3",
             "char": "ঌ",
             "iast": "ḷ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_zfpmeqtoc",
+            "id": "item_1788981756431_0_9_gum6fb8ct",
             "char": "ৡ",
             "iast": "ḹ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_p4m5btvrn",
+            "id": "item_1788981756431_0_10_4opywlyre",
             "char": "এ",
             "iast": "e",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_4ggx7ht4b",
+            "id": "item_1788981756431_0_11_b7sfe0sq3",
             "char": "ঐ",
             "iast": "ai",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_nb1u7x4e4",
+            "id": "item_1788981756431_0_12_9vn3syi9s",
             "char": "ও",
             "iast": "o",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_a9mojo3pe",
+            "id": "item_1788981756431_0_13_qcge3iiyy",
             "char": "ঔ",
             "iast": "au",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_c9o4jj1xp",
+            "id": "item_1788981756431_0_14_7vanqo3uo",
             "char": "অং",
             "iast": "aṃ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_blrx7z44z",
+            "id": "item_1788981756431_0_15_1kpdr14u3",
             "char": "অঃ",
             "iast": "aḥ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_1ayc1lqcv",
+            "id": "item_1788981756431_0_16_mwmu5f90a",
             "char": "ক",
             "iast": "ka",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_xrgw0yfue",
+            "id": "item_1788981756431_0_17_a6tk3tucp",
             "char": "খ",
             "iast": "kha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_g1hc0fxxa",
+            "id": "item_1788981756431_0_18_gziwmfck0",
             "char": "গ",
             "iast": "ga",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_6hhm8l6uf",
+            "id": "item_1788981756431_0_19_jj9g24dgd",
             "char": "ঘ",
             "iast": "gha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_a7zpmj80y",
+            "id": "item_1788981756431_0_20_9r4cr0skd",
             "char": "ঙ",
             "iast": "ṅa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_1rltwsz3t",
+            "id": "item_1788981756431_0_21_voziqq1bi",
             "char": "চ",
             "iast": "ca",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_yjv3z6o57",
+            "id": "item_1788981756431_0_22_57voy5b86",
             "char": "ছ",
             "iast": "cha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_jg7e18fet",
+            "id": "item_1788981756431_0_23_wv7hjbpx7",
             "char": "জ",
             "iast": "ja",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_cwrpsqopb",
+            "id": "item_1788981756431_0_24_uzq2pm5yr",
             "char": "ঝ",
             "iast": "jha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_jkx9ifys2",
+            "id": "item_1788981756431_0_25_m3842bmq8",
             "char": "ঞ",
             "iast": "ña",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_jtgce934u",
+            "id": "item_1788981756431_0_26_w0d6pwsnv",
             "char": "ট",
             "iast": "ṭa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_y27ll61ut",
+            "id": "item_1788981756431_0_27_ytsvnm8d2",
             "char": "ঠ",
             "iast": "ṭha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_4jkvjzvxx",
+            "id": "item_1788981756431_0_28_pk345dh21",
             "char": "ড",
             "iast": "ḍa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_uc8nca50l",
+            "id": "item_1788981756431_0_29_fxctz20v4",
             "char": "ঢ",
             "iast": "ḍha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_lceyfc9f7",
+            "id": "item_1788981756431_0_30_fwxujwg65",
             "char": "ণ",
             "iast": "ṇa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_m21nuuzo2",
+            "id": "item_1788981756431_0_31_h30ipigqk",
             "char": "ত",
             "iast": "ta",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_hop1tpdae",
+            "id": "item_1788981756431_0_32_mqelx2kcp",
             "char": "থ",
             "iast": "tha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_twda5cm6b",
+            "id": "item_1788981756431_0_33_an86txc6j",
             "char": "দ",
             "iast": "da",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_j4jdooacb",
+            "id": "item_1788981756431_0_34_2lx4eg3q5",
             "char": "ধ",
             "iast": "dha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_li9bkbgbe",
+            "id": "item_1788981756431_0_35_iae0t5a8v",
             "char": "ন",
             "iast": "na",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_ioyqeo075",
+            "id": "item_1788981756431_0_36_uvyu0o2vz",
             "char": "প",
             "iast": "pa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_c79vw1t1a",
+            "id": "item_1788981756431_0_37_gde37znta",
             "char": "ফ",
             "iast": "pha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_cxxaebnpo",
+            "id": "item_1788981756431_0_38_hx2mmqktt",
             "char": "ব",
             "iast": "ba",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_iiovmevsr",
+            "id": "item_1788981756431_0_39_kwojl4vdx",
             "char": "ভ",
             "iast": "bha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_229jk6zfo",
+            "id": "item_1788981756431_0_40_d93a1b2vo",
             "char": "ম",
             "iast": "ma",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_brwyozaiq",
+            "id": "item_1788981756431_0_41_ojbc49otr",
             "char": "য",
             "iast": "ya",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_k3cyefd0n",
+            "id": "item_1788981756431_0_42_n1yw8zpy9",
             "char": "র",
             "iast": "ra",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_01uujmadv",
+            "id": "item_1788981756431_0_43_p4x6kbdaz",
             "char": "ল",
             "iast": "la",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_psnadhw58",
+            "id": "item_1788981756431_0_44_aog6uobsj",
             "char": "ব",
             "iast": "va",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_a03m21673",
+            "id": "item_1788981756431_0_45_ofdri9vdm",
             "char": "শ",
             "iast": "śa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_qq73b5si8",
+            "id": "item_1788981756431_0_46_tul6ylw95",
             "char": "ষ",
             "iast": "ṣa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_yr1h6jtkf",
+            "id": "item_1788981756431_0_47_uj4w7kdln",
             "char": "স",
             "iast": "sa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_whoslppnw",
+            "id": "item_1788981756431_0_48_2lznjsm8r",
             "char": "হ",
             "iast": "ha",
             "note": "",
             "font": ""
           }
-        ]
+        ],
+        "isFolder": false,
+        "description": ""
       },
       {
-        "id": "c1775936211738_ls1183wjh",
+        "id": "subcat_1788981756431_1_d46kuys",
         "name": "Brāhmī",
         "active": true,
         "items": [
           {
-            "id": "item_1779625488428_ezpjk4r1u",
+            "id": "item_1788981756431_1_0_qnhghljxz",
             "char": "𑀅",
             "iast": "a",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_ht3xidmzs",
+            "id": "item_1788981756431_1_1_jywykat7i",
             "char": "𑀆",
             "iast": "ā",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_uf74q9000",
+            "id": "item_1788981756431_1_2_qav6lahik",
             "char": "𑀇",
             "iast": "i",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_yprch2hn3",
+            "id": "item_1788981756431_1_3_39cluchcy",
             "char": "𑀈",
             "iast": "ī",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_xgk9pf12d",
+            "id": "item_1788981756431_1_4_my731ugk5",
             "char": "𑀉",
             "iast": "u",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_e3ba1cwxt",
+            "id": "item_1788981756431_1_5_3gy9hpnka",
             "char": "𑀊",
             "iast": "ū",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_sqkowmh9p",
+            "id": "item_1788981756431_1_6_tx4kipiey",
             "char": "𑀋",
             "iast": "ṛ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_j0un1gosr",
+            "id": "item_1788981756431_1_7_vpstn2qcv",
             "char": "𑀌",
             "iast": "ṝ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_te726v198",
+            "id": "item_1788981756431_1_8_bb0a9ily7",
             "char": "𑀍",
             "iast": "ḷ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_9l6452w2w",
+            "id": "item_1788981756431_1_9_m8ult60wi",
             "char": "𑀎",
             "iast": "ḹ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_jp2k1kfeu",
+            "id": "item_1788981756431_1_10_w3ikryzk2",
             "char": "𑀏",
             "iast": "e",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_9ry8nq1y4",
+            "id": "item_1788981756431_1_11_h3a2fyu0e",
             "char": "𑀐",
             "iast": "ai",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_25f41g6d0",
+            "id": "item_1788981756431_1_12_y6nafj5cg",
             "char": "𑀑",
             "iast": "o",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_g3eu1cnor",
+            "id": "item_1788981756431_1_13_8mkzhla92",
             "char": "𑀒",
             "iast": "au",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_c8hz2p8h3",
+            "id": "item_1788981756431_1_14_1bgnfk2tm",
             "char": "𑀅𑀁",
             "iast": "aṃ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_vc5wlo7n0",
+            "id": "item_1788981756431_1_15_b4ayiyghw",
             "char": "𑀅𑀂",
             "iast": "aḥ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_050qflb60",
+            "id": "item_1788981756431_1_16_jlr74myzz",
             "char": "𑀓",
             "iast": "ka",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_8oar9vtrc",
+            "id": "item_1788981756431_1_17_7uswi808p",
             "char": "𑀔",
             "iast": "kha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488428_kg1hiz87u",
+            "id": "item_1788981756431_1_18_2yv914af8",
             "char": "𑀕",
             "iast": "ga",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_co53q1so1",
+            "id": "item_1788981756431_1_19_hkvm6ta56",
             "char": "𑀖",
             "iast": "gha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_78u4nop8v",
+            "id": "item_1788981756431_1_20_b75zh572h",
             "char": "𑀗",
             "iast": "ṅa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ydvkxbehk",
+            "id": "item_1788981756431_1_21_8f7e9lg88",
             "char": "𑀘",
             "iast": "ca",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_kjnyeilg3",
+            "id": "item_1788981756431_1_22_512m0tsfi",
             "char": "𑀙",
             "iast": "cha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_e5idb5rpx",
+            "id": "item_1788981756431_1_23_ccoeojdeo",
             "char": "𑀚",
             "iast": "ja",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_bikmhqk5m",
+            "id": "item_1788981756431_1_24_wz7vnz0ie",
             "char": "𑀛",
             "iast": "jha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_e8sj99fbb",
+            "id": "item_1788981756431_1_25_4o8n1qi1j",
             "char": "𑀜",
             "iast": "ña",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_mqli942ca",
+            "id": "item_1788981756431_1_26_ktax95xc6",
             "char": "𑀝",
             "iast": "ṭa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_3tqt7ucv5",
+            "id": "item_1788981756431_1_27_3fe3ue7xj",
             "char": "𑀞",
             "iast": "ṭha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_aeeccu816",
+            "id": "item_1788981756431_1_28_dtco6shec",
             "char": "𑀟",
             "iast": "ḍa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_7zvnlxgc1",
+            "id": "item_1788981756431_1_29_n6tigpd79",
             "char": "𑀠",
             "iast": "ḍha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_io6801p07",
+            "id": "item_1788981756431_1_30_8d0qbaj6j",
             "char": "𑀡",
             "iast": "ṇa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_cof6bpt15",
+            "id": "item_1788981756431_1_31_51tedk03p",
             "char": "𑀢",
             "iast": "ta",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_fps3y8i5u",
+            "id": "item_1788981756431_1_32_f4yasjcud",
             "char": "𑀣",
             "iast": "tha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_dhetay22d",
+            "id": "item_1788981756431_1_33_2qw2dp4er",
             "char": "𑀤",
             "iast": "da",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_wqan5ksui",
+            "id": "item_1788981756431_1_34_8st67ges2",
             "char": "𑀥",
             "iast": "dha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_bkgoc4bja",
+            "id": "item_1788981756431_1_35_j2lhqj072",
             "char": "𑀦",
             "iast": "na",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ho4f1q27s",
+            "id": "item_1788981756431_1_36_kul7dwr00",
             "char": "𑀧",
             "iast": "pa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_j7mowu781",
+            "id": "item_1788981756431_1_37_542ofrulh",
             "char": "𑀨",
             "iast": "pha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_mrd1rbton",
+            "id": "item_1788981756431_1_38_zckqlw20l",
             "char": "𑀩",
             "iast": "ba",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_lh8j5u2mm",
+            "id": "item_1788981756431_1_39_wyt4ref83",
             "char": "𑀪",
             "iast": "bha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ey7h0sf4h",
+            "id": "item_1788981756431_1_40_5bfu4tn6x",
             "char": "𑀫",
             "iast": "ma",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_cq33wimf8",
+            "id": "item_1788981756431_1_41_kt4gi2877",
             "char": "𑀬",
             "iast": "ya",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_pbs4qa30s",
+            "id": "item_1788981756431_1_42_xcwzm4g8j",
             "char": "𑀭",
             "iast": "ra",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_3ee25j49g",
+            "id": "item_1788981756431_1_43_xjeu3w1pf",
             "char": "𑀮",
             "iast": "la",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_yxp8brg2s",
+            "id": "item_1788981756431_1_44_zv0od75c3",
             "char": "𑀯",
             "iast": "va",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_885xohsup",
+            "id": "item_1788981756431_1_45_25mzg9dna",
             "char": "𑀰",
             "iast": "śa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_06g5a9jxs",
+            "id": "item_1788981756431_1_46_tfs2q9tyq",
             "char": "𑀱",
             "iast": "ṣa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_cp5t3of0r",
+            "id": "item_1788981756431_1_47_fk1rkic8w",
             "char": "𑀲",
             "iast": "sa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_z2zi7tuve",
+            "id": "item_1788981756431_1_48_pegq1jdv1",
             "char": "𑀳",
             "iast": "ha",
             "note": "",
             "font": ""
           }
-        ]
+        ],
+        "isFolder": false,
+        "description": ""
       },
       {
-        "id": "c1775929356778_ar5uqnbsy",
+        "id": "subcat_1788981756431_2_r2bramt",
         "name": "Gujarati",
         "active": true,
         "items": [
           {
-            "id": "item_1779625488429_d04ac70uv",
+            "id": "item_1788981756431_2_0_tr7wsk7rp",
             "char": "અ",
             "iast": "a",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_0kzblclfi",
+            "id": "item_1788981756431_2_1_jf8lkp7zt",
             "char": "આ",
             "iast": "ā",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_6wyat253e",
+            "id": "item_1788981756431_2_2_18itxrewd",
             "char": "ઇ",
             "iast": "i",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_hlmxtgi67",
+            "id": "item_1788981756431_2_3_3jascjpt8",
             "char": "ઈ",
             "iast": "ī",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_mmvnuk5r3",
+            "id": "item_1788981756431_2_4_h0o6izuqb",
             "char": "ઉ",
             "iast": "u",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ynu2dsg9h",
+            "id": "item_1788981756431_2_5_0fkpwyfmf",
             "char": "ઊ",
             "iast": "ū",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_57vs2kj3l",
+            "id": "item_1788981756431_2_6_owim19sqp",
             "char": "ઋ",
             "iast": "ṛ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_lwu6pgy39",
+            "id": "item_1788981756431_2_7_3zy2dvtn6",
             "char": "ૠ",
             "iast": "ṝ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_23k42rnb6",
+            "id": "item_1788981756431_2_8_4licm6hqc",
             "char": "ઌ",
             "iast": "ḷ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_naebnux7q",
+            "id": "item_1788981756431_2_9_w5gw2wrmz",
             "char": "ૡ",
             "iast": "ḹ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_9pd2lzblh",
+            "id": "item_1788981756431_2_10_c2h2au8mx",
             "char": "એ",
             "iast": "e",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_gda1kylhm",
+            "id": "item_1788981756431_2_11_2e1bdrgk1",
             "char": "ઐ",
             "iast": "ai",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_blaeptm0f",
+            "id": "item_1788981756431_2_12_segg2hou4",
             "char": "ઓ",
             "iast": "o",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_8j4hib7bs",
+            "id": "item_1788981756431_2_13_t4fuwy8ru",
             "char": "ઔ",
             "iast": "au",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_epmxvt8w5",
+            "id": "item_1788981756431_2_14_kkuldi2ng",
             "char": "અં",
             "iast": "aṃ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_c39u9bxdm",
+            "id": "item_1788981756431_2_15_v5k0fr57e",
             "char": "અઃ",
             "iast": "aḥ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_8f6rsiusq",
+            "id": "item_1788981756431_2_16_jz2xl972s",
             "char": "ક",
             "iast": "ka",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_tla8h85sv",
+            "id": "item_1788981756431_2_17_thb5xxeg8",
             "char": "ખ",
             "iast": "kha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ae8tdk5wz",
+            "id": "item_1788981756431_2_18_pghpznlnn",
             "char": "ગ",
             "iast": "ga",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_0khemnijv",
+            "id": "item_1788981756431_2_19_v4iy1veq4",
             "char": "ઘ",
             "iast": "gha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_pl9aufg6n",
+            "id": "item_1788981756431_2_20_sclnx1327",
             "char": "ઙ",
             "iast": "ṅa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_godqchypw",
+            "id": "item_1788981756431_2_21_mju2hr0y1",
             "char": "ચ",
             "iast": "ca",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_k71ydah42",
+            "id": "item_1788981756431_2_22_7oit3kkoa",
             "char": "છ",
             "iast": "cha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_qlb5qyyxm",
+            "id": "item_1788981756431_2_23_o7k44kpww",
             "char": "જ",
             "iast": "ja",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_vlv2szwlz",
+            "id": "item_1788981756431_2_24_xp5vqwg9i",
             "char": "ઝ",
             "iast": "jha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_iy9rh0bol",
+            "id": "item_1788981756431_2_25_jjgjb8s5g",
             "char": "ઞ",
             "iast": "ña",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_yujojyz9z",
+            "id": "item_1788981756431_2_26_kwjgdih0a",
             "char": "ટ",
             "iast": "ṭa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_k7gayper3",
+            "id": "item_1788981756431_2_27_qrdipjcw9",
             "char": "ઠ",
             "iast": "ṭha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_lprhbnjuk",
+            "id": "item_1788981756431_2_28_c0n4nghda",
             "char": "ડ",
             "iast": "ḍa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_qarxfx830",
+            "id": "item_1788981756431_2_29_9ihosf4qu",
             "char": "ઢ",
             "iast": "ḍha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_lyox9vyjv",
+            "id": "item_1788981756431_2_30_52k80fdu1",
             "char": "ણ",
             "iast": "ṇa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_4ta8netc1",
+            "id": "item_1788981756431_2_31_o3clb5cnr",
             "char": "ત",
             "iast": "ta",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_00jo3tyd9",
+            "id": "item_1788981756431_2_32_8w09ch2dx",
             "char": "થ",
             "iast": "tha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_dmyxd1q8v",
+            "id": "item_1788981756431_2_33_nxbyv2pp6",
             "char": "દ",
             "iast": "da",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_p3rhsi2wv",
+            "id": "item_1788981756431_2_34_2xpus4rp6",
             "char": "ધ",
             "iast": "dha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_3qhejny8c",
+            "id": "item_1788981756431_2_35_gsvwadeuj",
             "char": "ન",
             "iast": "na",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_n2lxjoy8e",
+            "id": "item_1788981756431_2_36_4z4ltccwb",
             "char": "પ",
             "iast": "pa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_83ugwuqko",
+            "id": "item_1788981756431_2_37_4fqaz75s1",
             "char": "ફ",
             "iast": "pha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_3zeix5o4g",
+            "id": "item_1788981756431_2_38_dp49q414b",
             "char": "બ",
             "iast": "ba",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_zxdyka78o",
+            "id": "item_1788981756431_2_39_sn5mv96nc",
             "char": "ભ",
             "iast": "bha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_7oq9myayn",
+            "id": "item_1788981756431_2_40_9hpqhqn6u",
             "char": "મ",
             "iast": "ma",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_an6nu1zpe",
+            "id": "item_1788981756431_2_41_ikw95cld6",
             "char": "ય",
             "iast": "ya",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_shcvhdzgg",
+            "id": "item_1788981756431_2_42_ahv1vcegs",
             "char": "ર",
             "iast": "ra",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_omp2ao1de",
+            "id": "item_1788981756431_2_43_s67h4if0t",
             "char": "લ",
             "iast": "la",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_x61byo526",
+            "id": "item_1788981756431_2_44_t29whk9x9",
             "char": "વ",
             "iast": "va",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_lgk8xwmnd",
+            "id": "item_1788981756431_2_45_8yrahhjt1",
             "char": "શ",
             "iast": "śa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_092q774m9",
+            "id": "item_1788981756431_2_46_uoi9y346q",
             "char": "ષ",
             "iast": "ṣa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_vwtyziiv2",
+            "id": "item_1788981756431_2_47_3iaupqv59",
             "char": "સ",
             "iast": "sa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_8la8h2pf7",
+            "id": "item_1788981756431_2_48_0vy67cuqs",
             "char": "હ",
             "iast": "ha",
             "note": "",
             "font": ""
           }
-        ]
+        ],
+        "isFolder": false,
+        "description": ""
       },
       {
-        "id": "c1775929340713_bnpwj75oy",
+        "id": "subcat_1788981756431_3_fx0jbz4",
         "name": "Kannada",
         "active": true,
         "items": [
           {
-            "id": "item_1779625488429_j0f09l9md",
+            "id": "item_1788981756431_3_0_0x9drvf4y",
             "char": "ಅ",
             "iast": "a",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ommtyu4b1",
+            "id": "item_1788981756431_3_1_uh1gg15k8",
             "char": "ಆ",
             "iast": "ā",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_rp0ow6iuu",
+            "id": "item_1788981756431_3_2_uo8c3er5g",
             "char": "ಇ",
             "iast": "i",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ut3skblmo",
+            "id": "item_1788981756431_3_3_f3lvh5p8p",
             "char": "ಈ",
             "iast": "ī",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_xl03egox2",
+            "id": "item_1788981756431_3_4_m5za8f3f1",
             "char": "ಉ",
             "iast": "u",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_4gcls1qv2",
+            "id": "item_1788981756431_3_5_jnhxgqm5d",
             "char": "ಊ",
             "iast": "ū",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_67kllvfum",
+            "id": "item_1788981756431_3_6_r4takbey7",
             "char": "ಋ",
             "iast": "ṛ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_bhqd8xpnm",
+            "id": "item_1788981756431_3_7_oktv66b1o",
             "char": "ೠ",
             "iast": "ṝ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_iyutfe1r2",
+            "id": "item_1788981756431_3_8_sede55p1q",
             "char": "ಌ",
             "iast": "ḷ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_qay8hqnkd",
+            "id": "item_1788981756431_3_9_0yot9uocp",
             "char": "ೡ",
             "iast": "ḹ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_gmti2xwum",
+            "id": "item_1788981756431_3_10_sr9xxicns",
             "char": "ಏ",
             "iast": "e",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_mlvvgd7lp",
+            "id": "item_1788981756431_3_11_k5toizdrm",
             "char": "ಐ",
             "iast": "ai",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_2npuhblxz",
+            "id": "item_1788981756431_3_12_g0te1qea6",
             "char": "ಓ",
             "iast": "o",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_pab2z0zw1",
+            "id": "item_1788981756431_3_13_1eb98purf",
             "char": "ಔ",
             "iast": "au",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_2z9dh4zlg",
+            "id": "item_1788981756431_3_14_42nh28293",
             "char": "ಅಂ",
             "iast": "aṃ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_mfc0g9x0u",
+            "id": "item_1788981756431_3_15_kmp8ox3ns",
             "char": "ಅಃ",
             "iast": "aḥ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_leoxbyd2g",
+            "id": "item_1788981756431_3_16_z0gwr8057",
             "char": "ಕ",
             "iast": "ka",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_9o71ppzws",
+            "id": "item_1788981756431_3_17_4oe64nsl2",
             "char": "ಖ",
             "iast": "kha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_zqdkydhlz",
+            "id": "item_1788981756432_3_18_opw6gbd5n",
             "char": "ಗ",
             "iast": "ga",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_jpuin181y",
+            "id": "item_1788981756432_3_19_iecmsppsc",
             "char": "ಘ",
             "iast": "gha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_rhwwpvgec",
+            "id": "item_1788981756432_3_20_gfbwq1sdo",
             "char": "ಙ",
             "iast": "ṅa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_r13m38ejd",
+            "id": "item_1788981756432_3_21_tfgykqgmo",
             "char": "ಚ",
             "iast": "ca",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_oimmivl2h",
+            "id": "item_1788981756432_3_22_p8edy9lig",
             "char": "ಛ",
             "iast": "cha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_s8l2530e6",
+            "id": "item_1788981756432_3_23_6nntmakzb",
             "char": "ಜ",
             "iast": "ja",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ysv1cxavd",
+            "id": "item_1788981756432_3_24_tps7ob3hz",
             "char": "ಝ",
             "iast": "jha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_wtmi9dt1x",
+            "id": "item_1788981756432_3_25_5z70qnh48",
             "char": "ಞ",
             "iast": "ña",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_w2c5iyf1g",
+            "id": "item_1788981756432_3_26_35fnnmagm",
             "char": "ಟ",
             "iast": "ṭa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_7e3px3cet",
+            "id": "item_1788981756432_3_27_uihc8o1i2",
             "char": "ಠ",
             "iast": "ṭha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_gfvumubz8",
+            "id": "item_1788981756432_3_28_19b03z469",
             "char": "ಡ",
             "iast": "ḍa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_97y5eh3qa",
+            "id": "item_1788981756432_3_29_inieo5syl",
             "char": "ಢ",
             "iast": "ḍha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_4whj55tjx",
+            "id": "item_1788981756432_3_30_0rvrquxuv",
             "char": "ಣ",
             "iast": "ṇa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_5xq2wwm1s",
+            "id": "item_1788981756432_3_31_xfs22gyjv",
             "char": "ತ",
             "iast": "ta",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_kqjgzycl3",
+            "id": "item_1788981756432_3_32_y2de923ni",
             "char": "ಥ",
             "iast": "tha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_uhu61217d",
+            "id": "item_1788981756432_3_33_m8uwg2vk0",
             "char": "ದ",
             "iast": "da",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_3acoz0ji1",
+            "id": "item_1788981756432_3_34_9fsc1co2n",
             "char": "ಧ",
             "iast": "dha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_bguh3196t",
+            "id": "item_1788981756432_3_35_oxzyxrfi5",
             "char": "ನ",
             "iast": "na",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_891azis95",
+            "id": "item_1788981756432_3_36_4fi1w2o7s",
             "char": "ಪ",
             "iast": "pa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ojgic2ntt",
+            "id": "item_1788981756432_3_37_w8lhc7kaz",
             "char": "ಫ",
             "iast": "pha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_6nikyqo7i",
+            "id": "item_1788981756432_3_38_8v2vzpg6t",
             "char": "ಬ",
             "iast": "ba",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_zaawjn90c",
+            "id": "item_1788981756432_3_39_j6lyjymql",
             "char": "ಭ",
             "iast": "bha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_g2in4d6rn",
+            "id": "item_1788981756432_3_40_d7crttjhi",
             "char": "ಮ",
             "iast": "ma",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_1bl7obyph",
+            "id": "item_1788981756432_3_41_6ndykd86m",
             "char": "ಯ",
             "iast": "ya",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_mzej7tlvs",
+            "id": "item_1788981756432_3_42_r4wkfi986",
             "char": "ರ",
             "iast": "ra",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_99oph5zhx",
+            "id": "item_1788981756432_3_43_ak0jmg8as",
             "char": "ಲ",
             "iast": "la",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_1bupo3j9w",
+            "id": "item_1788981756432_3_44_tpl4zae2y",
             "char": "ವ",
             "iast": "va",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_9wex2uw56",
+            "id": "item_1788981756432_3_45_qx6ev7a0s",
             "char": "ಶ",
             "iast": "śa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_aq9vm798i",
+            "id": "item_1788981756432_3_46_8wa3m9kky",
             "char": "ಷ",
             "iast": "ṣa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_68bpru3kp",
+            "id": "item_1788981756432_3_47_1jlvywfy3",
             "char": "ಸ",
             "iast": "sa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_sblgxvmmy",
+            "id": "item_1788981756432_3_48_0ewf92h9z",
             "char": "ಹ",
             "iast": "ha",
             "note": "",
             "font": ""
           }
-        ]
+        ],
+        "isFolder": false,
+        "description": ""
       },
       {
-        "id": "c1776266692376_voub5erzd",
+        "id": "subcat_1788981756432_4_e9yjjna",
         "name": "Malayalam",
         "active": true,
         "items": [
           {
-            "id": "item_1779625488429_9i552leph",
+            "id": "item_1788981756432_4_0_ynmnjoiha",
             "char": "അ",
             "iast": "a",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_rarlqxk8q",
+            "id": "item_1788981756432_4_1_61pfgl4fj",
             "char": "ആ",
             "iast": "ā",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_0xhhgbixv",
+            "id": "item_1788981756432_4_2_go9bsyvjg",
             "char": "ഇ",
             "iast": "i",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_274937iub",
+            "id": "item_1788981756432_4_3_xgw9kpdm5",
             "char": "ഈ",
             "iast": "ī",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_b99yy6ckk",
+            "id": "item_1788981756432_4_4_dq9y9nvuh",
             "char": "ഉ",
             "iast": "u",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_xk0cir0pi",
+            "id": "item_1788981756432_4_5_o6tdtv9sq",
             "char": "ഊ",
             "iast": "ū",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_8ezs69g6n",
+            "id": "item_1788981756432_4_6_29q9z6vxh",
             "char": "ഋ",
             "iast": "ṛ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_0ucu4mv2g",
+            "id": "item_1788981756432_4_7_q4qtx8ns2",
             "char": "ൠ",
             "iast": "ṝ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_9ya57gblx",
+            "id": "item_1788981756432_4_8_3g9y1jhbf",
             "char": "ഌ",
             "iast": "ḷ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_rymbwrvzx",
+            "id": "item_1788981756432_4_9_knog658wk",
             "char": "ൡ",
             "iast": "ḹ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_w6b9o1uc1",
+            "id": "item_1788981756432_4_10_fkj4w9kqa",
             "char": "ഏ",
             "iast": "e",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_okqhj5biv",
+            "id": "item_1788981756432_4_11_k7mxpg7rw",
             "char": "ഐ",
             "iast": "ai",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_mp6zvf8y8",
+            "id": "item_1788981756432_4_12_dw2ro35ry",
             "char": "ഓ",
             "iast": "o",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_e1f71v4nc",
+            "id": "item_1788981756432_4_13_cm00mj70d",
             "char": "ഔ",
             "iast": "au",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_jp0rg159g",
+            "id": "item_1788981756432_4_14_kzulepx9w",
             "char": "അം",
             "iast": "aṃ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_d88na238l",
+            "id": "item_1788981756432_4_15_8l1du9ith",
             "char": "അഃ",
             "iast": "aḥ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_l3o3z777c",
+            "id": "item_1788981756432_4_16_ypmzi29ak",
             "char": "ക",
             "iast": "ka",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_89f5jo9m4",
+            "id": "item_1788981756432_4_17_agi57p6lw",
             "char": "ഖ",
             "iast": "kha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_qv72cnwqs",
+            "id": "item_1788981756432_4_18_04fmfp93a",
             "char": "ഗ",
             "iast": "ga",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_olai0rbqg",
+            "id": "item_1788981756432_4_19_d14qjjco2",
             "char": "ഘ",
             "iast": "gha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_cnjsk2bqh",
+            "id": "item_1788981756432_4_20_5a1bbaaim",
             "char": "ങ",
             "iast": "ṅa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_nzpcwgiuk",
+            "id": "item_1788981756432_4_21_s5tw676cd",
             "char": "ച",
             "iast": "ca",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_0vsodzp7s",
+            "id": "item_1788981756432_4_22_jmq142ef3",
             "char": "ഛ",
             "iast": "cha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_x1tshmjxv",
+            "id": "item_1788981756432_4_23_o0ltfy3tn",
             "char": "ജ",
             "iast": "ja",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_me276qva1",
+            "id": "item_1788981756432_4_24_hqqlzeq91",
             "char": "ഝ",
             "iast": "jha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_l31x7fc7f",
+            "id": "item_1788981756432_4_25_p05bfui13",
             "char": "ഞ",
             "iast": "ña",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_3oao08pay",
+            "id": "item_1788981756432_4_26_45kulo2ji",
             "char": "ട",
             "iast": "ṭa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_9radxqhp5",
+            "id": "item_1788981756432_4_27_trr9kx7u5",
             "char": "ഠ",
             "iast": "ṭha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ckps7erns",
+            "id": "item_1788981756432_4_28_rl83om7ps",
             "char": "ഡ",
             "iast": "ḍa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_6b1jbh2rj",
+            "id": "item_1788981756432_4_29_4cgkuxmb4",
             "char": "ഢ",
             "iast": "ḍha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_v412swmta",
+            "id": "item_1788981756432_4_30_tj244reg1",
             "char": "ണ",
             "iast": "ṇa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_wfyu41xt7",
+            "id": "item_1788981756432_4_31_siut5zzzd",
             "char": "ത",
             "iast": "ta",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ncaw0t7bi",
+            "id": "item_1788981756432_4_32_8qfa7pl00",
             "char": "ഥ",
             "iast": "tha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_texrozbd1",
+            "id": "item_1788981756432_4_33_iv3522zqr",
             "char": "ദ",
             "iast": "da",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ufryezbuo",
+            "id": "item_1788981756432_4_34_33tis990t",
             "char": "ധ",
             "iast": "dha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_f0cth6007",
+            "id": "item_1788981756432_4_35_5ehx5hj39",
             "char": "ന",
             "iast": "na",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_lufkctb3x",
+            "id": "item_1788981756432_4_36_0lx4ared2",
             "char": "പ",
             "iast": "pa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ykne77oj0",
+            "id": "item_1788981756432_4_37_la3o1ye4z",
             "char": "ഫ",
             "iast": "pha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_0gw05i6dd",
+            "id": "item_1788981756432_4_38_3gurzuh5j",
             "char": "ബ",
             "iast": "ba",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_i9pb8gzck",
+            "id": "item_1788981756432_4_39_ofn97am2g",
             "char": "ഭ",
             "iast": "bha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_uzzu7us8m",
+            "id": "item_1788981756432_4_40_3vx8e5zm5",
             "char": "മ",
             "iast": "ma",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_yk634t0tw",
+            "id": "item_1788981756432_4_41_fahf6ykju",
             "char": "യ",
             "iast": "ya",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_r63yz3qds",
+            "id": "item_1788981756432_4_42_htwsj3q9g",
             "char": "ര",
             "iast": "ra",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_cwbzm71uy",
+            "id": "item_1788981756432_4_43_e6i5tydv6",
             "char": "ല",
             "iast": "la",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_47k71lu3o",
+            "id": "item_1788981756432_4_44_sz0tmw54e",
             "char": "വ",
             "iast": "va",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_0tuj0ymmq",
+            "id": "item_1788981756432_4_45_gxfytq340",
             "char": "ശ",
             "iast": "śa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_gswxxmzku",
+            "id": "item_1788981756432_4_46_hxpk70ebp",
             "char": "ഷ",
             "iast": "ṣa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_6qsg57kyn",
+            "id": "item_1788981756432_4_47_3lswe20c5",
             "char": "സ",
             "iast": "sa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_qn3t66o19",
+            "id": "item_1788981756432_4_48_orwjwvkni",
             "char": "ഹ",
             "iast": "ha",
             "note": "",
             "font": ""
           }
-        ]
+        ],
+        "isFolder": false,
+        "description": ""
       },
       {
-        "id": "c1776266746256_refzax09q",
+        "id": "subcat_1788981756432_5_tihz8gv",
         "name": "Oriya",
         "active": true,
         "items": [
           {
-            "id": "item_1779625488429_d8t5473x3",
+            "id": "item_1788981756432_5_0_21x1ershx",
             "char": "ଅ",
             "iast": "a",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_tc8a3wg8r",
+            "id": "item_1788981756432_5_1_wxm7et78q",
             "char": "ଆ",
             "iast": "ā",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_mc6m4yg4g",
+            "id": "item_1788981756432_5_2_x6yi8tujk",
             "char": "ଇ",
             "iast": "i",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_lfiygcuh7",
+            "id": "item_1788981756432_5_3_2nn87h1tq",
             "char": "ଈ",
             "iast": "ī",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_fv0isai4e",
+            "id": "item_1788981756432_5_4_uqk33guit",
             "char": "ଉ",
             "iast": "u",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_w5qwxfa7b",
+            "id": "item_1788981756432_5_5_s7k3bru49",
             "char": "ଊ",
             "iast": "ū",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_hfcrnz13k",
+            "id": "item_1788981756432_5_6_vtkq6ny8t",
             "char": "ଋ",
             "iast": "ṛ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_o2rs6bf2k",
+            "id": "item_1788981756432_5_7_aqmo1252j",
             "char": "ୠ",
             "iast": "ṝ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_farcpj8wk",
+            "id": "item_1788981756432_5_8_qtn7tejig",
             "char": "ଌ",
             "iast": "ḷ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_58mkndthn",
+            "id": "item_1788981756432_5_9_1p2uyky5v",
             "char": "ୡ",
             "iast": "ḹ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_mjp3as0sx",
+            "id": "item_1788981756432_5_10_rreoh70gw",
             "char": "ଏ",
             "iast": "e",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_41wce2agw",
+            "id": "item_1788981756432_5_11_valyj21bu",
             "char": "ଐ",
             "iast": "ai",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_eloyw5re0",
+            "id": "item_1788981756432_5_12_afjxsq9ch",
             "char": "ଓ",
             "iast": "o",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_zhbsgtb9o",
+            "id": "item_1788981756432_5_13_76drr1h9v",
             "char": "ଔ",
             "iast": "au",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_27mg31otx",
+            "id": "item_1788981756432_5_14_ocuir2n1d",
             "char": "ଅଂ",
             "iast": "aṃ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_tk4aekatc",
+            "id": "item_1788981756432_5_15_ehrxfoo3e",
             "char": "ଅଃ",
             "iast": "aḥ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_8813fnjs2",
+            "id": "item_1788981756432_5_16_146ezfekj",
             "char": "କ",
             "iast": "ka",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_bgq13hr8f",
+            "id": "item_1788981756432_5_17_x7fjnnsdu",
             "char": "ଖ",
             "iast": "kha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ecamy0esi",
+            "id": "item_1788981756432_5_18_qpp5s6f5e",
             "char": "ଗ",
             "iast": "ga",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_s4j5mah48",
+            "id": "item_1788981756432_5_19_zzf8q74z2",
             "char": "ଘ",
             "iast": "gha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_fjkcq0rfo",
+            "id": "item_1788981756432_5_20_20cqp6zux",
             "char": "ଙ",
             "iast": "ṅa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_euoa76p7p",
+            "id": "item_1788981756432_5_21_7wm7d0nc7",
             "char": "ଚ",
             "iast": "ca",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_h7hcewfvm",
+            "id": "item_1788981756432_5_22_covfrs9lm",
             "char": "ଛ",
             "iast": "cha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_t1f9rtq9w",
+            "id": "item_1788981756432_5_23_1a3uyc92c",
             "char": "ଜ",
             "iast": "ja",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_a1hwzs9sp",
+            "id": "item_1788981756432_5_24_y7id9jj8l",
             "char": "ଝ",
             "iast": "jha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_1n0hjn1gw",
+            "id": "item_1788981756432_5_25_9jgv9ut9l",
             "char": "ଞ",
             "iast": "ña",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_tn4j8je0o",
+            "id": "item_1788981756432_5_26_5mm7vj1nu",
             "char": "ଟ",
             "iast": "ṭa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_02xzc1xr0",
+            "id": "item_1788981756432_5_27_hyi4sgc6j",
             "char": "ଠ",
             "iast": "ṭha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_pvgj14bs6",
+            "id": "item_1788981756432_5_28_u0utww213",
             "char": "ଡ",
             "iast": "ḍa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_mjj2ytc8e",
+            "id": "item_1788981756432_5_29_givigut8p",
             "char": "ଢ",
             "iast": "ḍha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_ojyuypeic",
+            "id": "item_1788981756432_5_30_ivmbswpke",
             "char": "ଣ",
             "iast": "ṇa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_idt99sxns",
+            "id": "item_1788981756432_5_31_gvs884tmn",
             "char": "ତ",
             "iast": "ta",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_svv1e73t9",
+            "id": "item_1788981756432_5_32_yuwqeyipu",
             "char": "ଥ",
             "iast": "tha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488429_y9rgy457f",
+            "id": "item_1788981756432_5_33_dubm37aya",
             "char": "ଦ",
             "iast": "da",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_b86b4pid9",
+            "id": "item_1788981756432_5_34_b7bcsj41j",
             "char": "ଧ",
             "iast": "dha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_mprg7u58l",
+            "id": "item_1788981756432_5_35_1lla02fjb",
             "char": "ନ",
             "iast": "na",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_yez34fttt",
+            "id": "item_1788981756432_5_36_dmnnh8xvm",
             "char": "ପ",
             "iast": "pa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_m5cp1vt2u",
+            "id": "item_1788981756432_5_37_hubmc682m",
             "char": "ଫ",
             "iast": "pha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_5b5g3z9ah",
+            "id": "item_1788981756432_5_38_selt51me7",
             "char": "ବ",
             "iast": "ba",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_2nljtgxmi",
+            "id": "item_1788981756432_5_39_ly21avxh4",
             "char": "ଭ",
             "iast": "bha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_oylb50g16",
+            "id": "item_1788981756432_5_40_x1agk2n3z",
             "char": "ମ",
             "iast": "ma",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_x8o8h04ob",
+            "id": "item_1788981756432_5_41_kv69s0x5o",
             "char": "ଯ",
             "iast": "ya",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_7zlazlqa1",
+            "id": "item_1788981756432_5_42_cmkdb2p62",
             "char": "ର",
             "iast": "ra",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_e0o6w0i09",
+            "id": "item_1788981756432_5_43_i8d0vvw89",
             "char": "ଲ",
             "iast": "la",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_n1lhyattc",
+            "id": "item_1788981756432_5_44_veq4ow8q6",
             "char": "ବ",
             "iast": "va",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_a34gsdomj",
+            "id": "item_1788981756432_5_45_aq5xug6r9",
             "char": "ଶ",
             "iast": "śa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_qz2x88iyk",
+            "id": "item_1788981756432_5_46_k7gdazjts",
             "char": "ଷ",
             "iast": "ṣa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_b9nxpb8m9",
+            "id": "item_1788981756432_5_47_djtt823l2",
             "char": "ସ",
             "iast": "sa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_ixjqeloqn",
+            "id": "item_1788981756432_5_48_8ptfe56q1",
             "char": "ହ",
             "iast": "ha",
             "note": "",
             "font": ""
           }
-        ]
+        ],
+        "isFolder": false,
+        "description": ""
       },
       {
-        "id": "c1776266896577_fivbigh5t",
-        "name": "Punjabi",
-        "active": true,
-        "items": [
-          {
-            "id": "item_1779625488430_ahoheh8qs",
-            "char": "ਅ",
-            "iast": "a",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_5295362i0",
-            "char": "ਆ",
-            "iast": "ā",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_nbcz854do",
-            "char": "ਇ",
-            "iast": "i",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_draqobfjx",
-            "char": "ਈ",
-            "iast": "ī",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_aasupwvqn",
-            "char": "ਉ",
-            "iast": "u",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_wacpn9pbo",
-            "char": "ਊ",
-            "iast": "ū",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_7q1bc5v5r",
-            "char": "ਰੁ",
-            "iast": "ṛ",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_c8xh47gft",
-            "char": "ਰੂ",
-            "iast": "ṝ",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_tgo1jnsud",
-            "char": "ਲੁ",
-            "iast": "ḷ",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_23p9d4wku",
-            "char": "ਲੂ",
-            "iast": "ḹ",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_8i2zt5aab",
-            "char": "ਏ",
-            "iast": "e",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_tkhh5l677",
-            "char": "ਐ",
-            "iast": "ai",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_dzrrgna1w",
-            "char": "ਓ",
-            "iast": "o",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_6oq15ay2k",
-            "char": "ਔ",
-            "iast": "au",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_2200agb3m",
-            "char": "ਅੰ",
-            "iast": "aṃ",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_jvzxbwog4",
-            "char": "ਅਃ",
-            "iast": "aḥ",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_qt0mfyqf2",
-            "char": "ਕ",
-            "iast": "ka",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_hud7wm9y2",
-            "char": "ਖ",
-            "iast": "kha",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_g6qvvjey0",
-            "char": "ਗ",
-            "iast": "ga",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_m8ax495ug",
-            "char": "ਘ",
-            "iast": "gha",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_09fmzgj2e",
-            "char": "ਙ",
-            "iast": "ṅa",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_yrmjtm726",
-            "char": "ਚ",
-            "iast": "ca",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_ekbuyokx4",
-            "char": "ਛ",
-            "iast": "cha",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_323duyic1",
-            "char": "ਜ",
-            "iast": "ja",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_2ct8wdxra",
-            "char": "ਝ",
-            "iast": "jha",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_ndfhu1d55",
-            "char": "ਞ",
-            "iast": "ña",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_5tpn2b6p9",
-            "char": "ਟ",
-            "iast": "ṭa",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_xu3xc949e",
-            "char": "ਠ",
-            "iast": "ṭha",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_t5bd8e4l7",
-            "char": "ਡ",
-            "iast": "ḍa",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_l0q27tyq7",
-            "char": "ਢ",
-            "iast": "ḍha",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_8fnlstogm",
-            "char": "ਣ",
-            "iast": "ṇa",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_0roycktuh",
-            "char": "ਤ",
-            "iast": "ta",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_74w6tt423",
-            "char": "ਥ",
-            "iast": "tha",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_h2j6bjp3e",
-            "char": "ਦ",
-            "iast": "da",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_ecfwo7rnz",
-            "char": "ਧ",
-            "iast": "dha",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_q9a9n4iw6",
-            "char": "ਨ",
-            "iast": "na",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_svo50sona",
-            "char": "ਪ",
-            "iast": "pa",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_qtmiezp1k",
-            "char": "ਫ",
-            "iast": "pha",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_x42j3a30e",
-            "char": "ਬ",
-            "iast": "ba",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_qmpf2wmfh",
-            "char": "ਭ",
-            "iast": "bha",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_wf2jltzp6",
-            "char": "ਮ",
-            "iast": "ma",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_5cfbv400s",
-            "char": "ਯ",
-            "iast": "ya",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_3xostqemr",
-            "char": "ਰ",
-            "iast": "ra",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_0wzykm1oo",
-            "char": "ਲ",
-            "iast": "la",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_rgyqmmy6c",
-            "char": "ਵ",
-            "iast": "va",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_o5gnmovus",
-            "char": "ਸ਼",
-            "iast": "śa",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_3nhkc3udb",
-            "char": "ਸ਼਼",
-            "iast": "ṣa",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_eu6lmynt7",
-            "char": "ਸ",
-            "iast": "sa",
-            "note": "",
-            "font": ""
-          },
-          {
-            "id": "item_1779625488430_5hizedz3x",
-            "char": "ਹ",
-            "iast": "ha",
-            "note": "",
-            "font": ""
-          }
-        ]
-      },
-      {
-        "id": "c1776266936015_66j0s1mpr",
+        "id": "subcat_1788981756432_7_htys7j5",
         "name": "Telugu",
         "active": true,
         "items": [
           {
-            "id": "item_1779625488430_agyq1ckvd",
+            "id": "item_1788981756432_7_0_bbs1ev4us",
             "char": "అ",
             "iast": "a",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_6okaz0wav",
+            "id": "item_1788981756432_7_1_5fdqrll6d",
             "char": "ఆ",
             "iast": "ā",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_dmx3ozgz3",
+            "id": "item_1788981756432_7_2_2prmb9x5n",
             "char": "ఇ",
             "iast": "i",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_qgghbquzk",
+            "id": "item_1788981756432_7_3_a3ow0763k",
             "char": "ఈ",
             "iast": "ī",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_ygztheokr",
+            "id": "item_1788981756432_7_4_6n45qkxom",
             "char": "ఉ",
             "iast": "u",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_hz1i27fn7",
+            "id": "item_1788981756432_7_5_uabw8n4rs",
             "char": "ఊ",
             "iast": "ū",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_1tohwlov7",
+            "id": "item_1788981756432_7_6_rfx7scxph",
             "char": "ఋ",
             "iast": "ṛ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_t1q0f0v8b",
+            "id": "item_1788981756432_7_7_16ninmxjd",
             "char": "ౠ",
             "iast": "ṝ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_tfjtos3iw",
+            "id": "item_1788981756432_7_8_ktq5rr68x",
             "char": "ఌ",
             "iast": "ḷ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_za4b5gr5e",
+            "id": "item_1788981756432_7_9_7x2v6quze",
             "char": "ౡ",
             "iast": "ḹ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_3sh4a6b7t",
+            "id": "item_1788981756432_7_10_rpx1uz7h6",
             "char": "ఏ",
             "iast": "e",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_xz5evpk8x",
+            "id": "item_1788981756432_7_11_mlgzb8vc4",
             "char": "ఐ",
             "iast": "ai",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_lz83lz3tk",
+            "id": "item_1788981756432_7_12_qcy23zpx9",
             "char": "ఓ",
             "iast": "o",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_rsopksud5",
+            "id": "item_1788981756432_7_13_x1zt53vy0",
             "char": "ఔ",
             "iast": "au",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_wp04lv9ru",
+            "id": "item_1788981756432_7_14_8d6mlytty",
             "char": "అం",
             "iast": "aṃ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_903sd8jzn",
+            "id": "item_1788981756432_7_15_ubnp0p8t0",
             "char": "అః",
             "iast": "aḥ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_sfc2p2tch",
+            "id": "item_1788981756432_7_16_5wpdmscb9",
             "char": "క",
             "iast": "ka",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_6iwtsl8u6",
+            "id": "item_1788981756432_7_17_0h36b5uid",
             "char": "ఖ",
             "iast": "kha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_vvzkqtkfw",
+            "id": "item_1788981756432_7_18_aywymeynr",
             "char": "గ",
             "iast": "ga",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_azbak7ihr",
+            "id": "item_1788981756432_7_19_p0yhmmaos",
             "char": "ఘ",
             "iast": "gha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_hm61n07d0",
+            "id": "item_1788981756432_7_20_7qe4zh0vz",
             "char": "ఙ",
             "iast": "ṅa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_uq1glhxu0",
+            "id": "item_1788981756432_7_21_vu9dtf5ud",
             "char": "చ",
             "iast": "ca",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_sn12vif51",
+            "id": "item_1788981756432_7_22_fjs84qlb5",
             "char": "ఛ",
             "iast": "cha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_ww8ro09do",
+            "id": "item_1788981756432_7_23_9tydymrex",
             "char": "జ",
             "iast": "ja",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_afj9d59qy",
+            "id": "item_1788981756432_7_24_zptarcrgd",
             "char": "ఝ",
             "iast": "jha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_5dccyxmuz",
+            "id": "item_1788981756432_7_25_3txyb85yq",
             "char": "ఞ",
             "iast": "ña",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_u3zw4frsd",
+            "id": "item_1788981756432_7_26_uz1fxbm6a",
             "char": "ట",
             "iast": "ṭa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_gq1svyaxj",
+            "id": "item_1788981756432_7_27_5i70s49s0",
             "char": "ఠ",
             "iast": "ṭha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_7bzn5hvk0",
+            "id": "item_1788981756432_7_28_q39am6thp",
             "char": "డ",
             "iast": "ḍa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_2ggat5gjj",
+            "id": "item_1788981756432_7_29_6vq22dlaj",
             "char": "ఢ",
             "iast": "ḍha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_wpukb6ncv",
+            "id": "item_1788981756432_7_30_tui5xb8kf",
             "char": "ణ",
             "iast": "ṇa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_ghui4byf8",
+            "id": "item_1788981756432_7_31_gjbd9rukr",
             "char": "త",
             "iast": "ta",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_skyzf8agy",
+            "id": "item_1788981756432_7_32_l4juepzsp",
             "char": "థ",
             "iast": "tha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_uiuqa8lau",
+            "id": "item_1788981756432_7_33_pxp1cyy8z",
             "char": "ద",
             "iast": "da",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_g2gt0qglk",
+            "id": "item_1788981756432_7_34_r4he5udfc",
             "char": "ధ",
             "iast": "dha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_1itgfv1a6",
+            "id": "item_1788981756432_7_35_s8rttk5a0",
             "char": "న",
             "iast": "na",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_apfc8oasp",
+            "id": "item_1788981756432_7_36_x5a0nivay",
             "char": "ప",
             "iast": "pa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_u7vmrlck7",
+            "id": "item_1788981756432_7_37_afo6dftu0",
             "char": "ఫ",
             "iast": "pha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_ucfkzca8d",
+            "id": "item_1788981756432_7_38_e4uricp5e",
             "char": "బ",
             "iast": "ba",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_e5d5m3k2u",
+            "id": "item_1788981756432_7_39_50cgpg8qm",
             "char": "భ",
             "iast": "bha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_58oj0q11d",
+            "id": "item_1788981756432_7_40_9wt007lxw",
             "char": "మ",
             "iast": "ma",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_5frz1s2nb",
+            "id": "item_1788981756432_7_41_pazcnj3tn",
             "char": "య",
             "iast": "ya",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_szums95gi",
+            "id": "item_1788981756432_7_42_oxyeuo0qz",
             "char": "ర",
             "iast": "ra",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_epjgldifn",
+            "id": "item_1788981756432_7_43_a2a7sj2dh",
             "char": "ల",
             "iast": "la",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_8t0s3xbrj",
+            "id": "item_1788981756432_7_44_5u46q6ym8",
             "char": "వ",
             "iast": "va",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_zyprhqms2",
+            "id": "item_1788981756432_7_45_pg8qqhnr5",
             "char": "శ",
             "iast": "śa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_woewrmyn9",
+            "id": "item_1788981756432_7_46_j6b0fab0c",
             "char": "ష",
             "iast": "ṣa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_8cn5bxspj",
+            "id": "item_1788981756432_7_47_rdmzidgjw",
             "char": "స",
             "iast": "sa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_zy3q3msf7",
+            "id": "item_1788981756432_7_48_ek57y4ys8",
             "char": "హ",
             "iast": "ha",
             "note": "",
             "font": ""
           }
-        ]
+        ],
+        "isFolder": false,
+        "description": ""
       },
       {
-        "id": "c1776266969647_5vdy70lud",
+        "id": "subcat_1788981756432_8_iluhwi4",
         "name": "Tibetan (dbu can)",
         "active": true,
         "items": [
           {
-            "id": "item_1779625488430_n17wph4uf",
+            "id": "item_1788981756432_8_0_4m2abh15j",
             "char": "ཨ",
             "iast": "a",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_qq5ndsddd",
+            "id": "item_1788981756432_8_1_iyu42xugf",
             "char": "ཨཱ",
             "iast": "ā",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_k9mglqx58",
+            "id": "item_1788981756432_8_2_jjw3ydogl",
             "char": "ཨི",
             "iast": "i",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_8hwotl9i6",
+            "id": "item_1788981756432_8_3_aagkbtqw0",
             "char": "ཨཱི",
             "iast": "ī",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_j2nyga56k",
+            "id": "item_1788981756432_8_4_0ui2hx4l5",
             "char": "ཨུ",
             "iast": "u",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_jmuldd06i",
+            "id": "item_1788981756432_8_5_lwfcu35ok",
             "char": "ཨཱུ",
             "iast": "ū",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_mh4ie5dp6",
+            "id": "item_1788981756432_8_6_9ryo5xy9n",
             "char": "རྀ",
             "iast": "ṛ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_4aofhlye3",
+            "id": "item_1788981756432_8_7_brudpcrtl",
             "char": "རཱྀ",
             "iast": "ṝ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_6l1hehba7",
+            "id": "item_1788981756432_8_8_id49fnjuf",
             "char": "ལྀ",
             "iast": "ḷ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_uxcbrqcz8",
+            "id": "item_1788981756432_8_9_f374ur9z3",
             "char": "ལཱྀ",
             "iast": "ḹ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_akejj313w",
+            "id": "item_1788981756432_8_10_bxbcxlxgv",
             "char": "ཨེ",
             "iast": "e",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_70kc438dm",
+            "id": "item_1788981756432_8_11_7o3cgywun",
             "char": "ཨཻ",
             "iast": "ai",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_akdwhrj4f",
+            "id": "item_1788981756432_8_12_u67in9x7y",
             "char": "ཨོ",
             "iast": "o",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_jl4hqn0bk",
+            "id": "item_1788981756432_8_13_syrkmovf5",
             "char": "ཨཽ",
             "iast": "au",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_ybxr9aru5",
+            "id": "item_1788981756432_8_14_hpqaxr2ia",
             "char": "ཨཾ",
             "iast": "aṃ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_3036nlunj",
+            "id": "item_1788981756432_8_15_r5or2wb3n",
             "char": "ཨཿ",
             "iast": "aḥ",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_4xtb487yx",
+            "id": "item_1788981756432_8_16_18em2mxh7",
             "char": "ཀ",
             "iast": "ka",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_p9zrxqm0e",
+            "id": "item_1788981756432_8_17_efg8levd5",
             "char": "ཁ",
             "iast": "kha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_ag7k9vxby",
+            "id": "item_1788981756432_8_18_b4aay05gz",
             "char": "ག",
             "iast": "ga",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_38es9dgf0",
+            "id": "item_1788981756432_8_19_eevjjhag2",
             "char": "གྷ",
             "iast": "gha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_9badlii91",
+            "id": "item_1788981756432_8_20_7flloy881",
             "char": "ང",
             "iast": "ṅa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_iga8f6vwk",
+            "id": "item_1788981756432_8_21_x2wp89src",
             "char": "ཙ",
             "iast": "ca",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_popkd7yeu",
+            "id": "item_1788981756432_8_22_4vwm9xb1o",
             "char": "ཚ",
             "iast": "cha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_hbkpxg7b6",
+            "id": "item_1788981756432_8_23_980a4n1lu",
             "char": "ཛ",
             "iast": "ja",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_0axmj7xr7",
+            "id": "item_1788981756432_8_24_v3o05ynax",
             "char": "ཛྷ",
             "iast": "jha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_fchxtmhwh",
+            "id": "item_1788981756432_8_25_q4v25ta7i",
             "char": "ཉ",
             "iast": "ña",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_l9emlwpq0",
+            "id": "item_1788981756432_8_26_9gj980efz",
             "char": "ཊ",
             "iast": "ṭa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_164typd49",
+            "id": "item_1788981756432_8_27_ewxjpj421",
             "char": "ཋ",
             "iast": "ṭha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_0umy986l7",
+            "id": "item_1788981756432_8_28_usfkmu070",
             "char": "ཌ",
             "iast": "ḍa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_5ss2kb1kq",
+            "id": "item_1788981756432_8_29_lvanb0hns",
             "char": "ཌྷ",
             "iast": "ḍha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_341mxgcyg",
+            "id": "item_1788981756432_8_30_pf4aenrt7",
             "char": "ཎ",
             "iast": "ṇa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_iphxlt4jl",
+            "id": "item_1788981756432_8_31_khz0qkc2u",
             "char": "ཏ",
             "iast": "ta",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_sfx2v9cxo",
+            "id": "item_1788981756432_8_32_olttjmlix",
             "char": "ཐ",
             "iast": "tha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_lfz7hlc97",
+            "id": "item_1788981756432_8_33_05ah3covk",
             "char": "ད",
             "iast": "da",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_69gsqxhly",
+            "id": "item_1788981756432_8_34_soy6x3bx0",
             "char": "དྷ",
             "iast": "dha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_lx23e7yu5",
+            "id": "item_1788981756432_8_35_u9qnvr6wa",
             "char": "ན",
             "iast": "na",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_s7cihabjs",
+            "id": "item_1788981756432_8_36_cplst1cnq",
             "char": "པ",
             "iast": "pa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_vnp6zorzc",
+            "id": "item_1788981756432_8_37_joufrs5nq",
             "char": "ཕ",
             "iast": "pha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_u1wgjtb6r",
+            "id": "item_1788981756432_8_38_iejndntx5",
             "char": "བ",
             "iast": "ba",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_id478f9zc",
+            "id": "item_1788981756432_8_39_t8vpychkt",
             "char": "བྷ",
             "iast": "bha",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_wk7f06gx9",
+            "id": "item_1788981756432_8_40_u75v1b8yj",
             "char": "མ",
             "iast": "ma",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_kpd63w3yn",
+            "id": "item_1788981756432_8_41_owvgbo9o7",
             "char": "ཡ",
             "iast": "ya",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_0siccswie",
+            "id": "item_1788981756432_8_42_cy53lu0pf",
             "char": "ར",
             "iast": "ra",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_nn5fi51wa",
+            "id": "item_1788981756432_8_43_lm5etqh3f",
             "char": "ལ",
             "iast": "la",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_knh6qzaxz",
+            "id": "item_1788981756432_8_44_6witoot0i",
             "char": "བ",
             "iast": "va",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_f5bn7tfhg",
+            "id": "item_1788981756432_8_45_ke1blvn3e",
             "char": "ཤ",
             "iast": "śa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_5w3esdghj",
+            "id": "item_1788981756432_8_46_fykonsg8n",
             "char": "ཥ",
             "iast": "ṣa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_hkhph91o0",
+            "id": "item_1788981756432_8_47_ne9y2jaz4",
             "char": "ས",
             "iast": "sa",
             "note": "",
             "font": ""
           },
           {
-            "id": "item_1779625488430_ie4ssmlrl",
+            "id": "item_1788981756432_8_48_7w7nq72n2",
             "char": "ཧ",
             "iast": "ha",
             "note": "",
             "font": ""
           }
-        ]
+        ],
+        "isFolder": false,
+        "description": ""
       }
     ],
-    "_rerender": 1779632861998
+    "_rerender": 1779632861998,
+    "description": "Das Alphasyllabar des Sanskrit in Bengali, Brāhmī, Gujarati, Kannada, Malayalam, Odiya, Panjabi, Telugu und Tibetisch (dbu can). Erzeugt mit Hilfe von Aksharamukha (https://www.aksharamukha.com/converter)."
   }
 ]
