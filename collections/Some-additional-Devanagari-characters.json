@@ -104,14 +104,35 @@
         "id": "item_1788983726634_0_13_7wlq3ey53",
         "char": "ळ",
         "iast": "ḻa",
-        "note": "Retroflex l (with inherent a). Appears in Vedic Sanskrit as an intervocalic allophone of ḍ. Sometimes transliterated as l̤.",
+        "note": "Retroflex l (with inherent a). Appears in Vedic Sanskrit as an intervocalic allophone of ḍa. Sometimes transliterated as l̤a.",
         "font": ""
       },
       {
         "id": "item_1788983726634_0_14_k5xpe3u6n",
         "char": "ळ्ह",
         "iast": "ḻha",
-        "note": "Aspirated retroflex l (with inherent a). Appears in Vedic Sanskrit as an intervocalic allophone of ḍh. Sometimes transliterated as l̤h.",
+        "note": "Aspirated retroflex l (with inherent a). Appears in Vedic Sanskrit as an intervocalic allophone of ḍha. Sometimes transliterated as l̤ha.",
+        "font": ""
+      },
+      {
+        "id": "item_1788984738405",
+        "char": "क्",
+        "iast": "k",
+        "note": "The diagonal stroke is the virāma, a vowel omission sign.",
+        "font": ""
+      },
+      {
+        "id": "item_1788985179473",
+        "char": "।",
+        "iast": ".",
+        "note": "The daṇḍa, a punctuation mark at the end of a sentence or half-verse.",
+        "font": ""
+      },
+      {
+        "id": "item_1788985198975",
+        "char": "॥",
+        "iast": "",
+        "note": "The double daṇḍa, a punctuation mark at the end of a paragraph, section or verse.",
         "font": ""
       }
     ],
