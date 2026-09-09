@@ -115,10 +115,17 @@
         "font": ""
       },
       {
+        "id": "item_1788985692596",
+        "char": "ऽ",
+        "iast": "’",
+        "note": "The avagraha, a merger/loss mark that signals the absorption or elision of an initial vowel 'a'.",
+        "font": ""
+      },
+      {
         "id": "item_1788984738405",
         "char": "क्",
         "iast": "k",
-        "note": "The diagonal stroke is the virāma, a vowel omission sign.",
+        "note": "The diagonal stroke is the virāma, a vowel-cancellation sign that suppresses the inherent vowel 'a' of a consonant-based character.",
         "font": ""
       },
       {
