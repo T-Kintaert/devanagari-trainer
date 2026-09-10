@@ -1,10 +1,10 @@
 {
-  "alternative_zeichen": {
-    "filename": "Some-alternative-Devanagari-characters.json",
-    "name_de": "Einige alternative Devanāgarī-Zeichen",
-    "name_en": "Some alternative Devanāgarī characters",
-    "desc_de": "Sammlung von zusätzlichen und abweichenden Schriftzeichen, einschließlich nördlicher Formen.",
-    "desc_en": "Collection of additional and variant characters, including Northern forms.",
+  "zusätzliche_zeichen": {
+    "filename": "Additional-Devanagari-characters.json",
+    "name_de": "Zusätzliche Devanāgarī-Zeichen",
+    "name_en": "Additional Devanāgarī characters",
+    "desc_de": "Sammlung von zusätzlichen und abweichenden Schriftzeichen, avagraha, virāma und Satzzeichen.",
+    "desc_en": "Collection of additional and variant characters, avagraha, virāma and punctuation marks.",
     "author": "T. Kintaert"
   },
   "807_belegte_ligaturen": {
